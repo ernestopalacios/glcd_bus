@@ -2,7 +2,7 @@
  *       Kradac Robotics & Electronics        *
  *                                            *
  *  Proyecto:     Kioskos UTPL                *
- *  Programador:  Vicente Q && Ernesto P      *
+ *  Programador:  Vicente Q && Ernesto P && David Novillo      *
  *  version:      1.0.1                       *
  *  Fecha:        11/08/2014                  *
  *                                            *
