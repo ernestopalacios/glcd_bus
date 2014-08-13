@@ -141,7 +141,7 @@ WarningExternalDeclaredNeverDefined=1
 WarningUnknownPragma=1
 DebugBootLoader=0
 WatchAVR8LAutoVariables=0
-Build=1467
+Build=1468
 UseEEPROMLocation0=1
 ExternalInterruptVectors=0
 IncludePath0=
@@ -617,9 +617,10 @@ Blocks=0
 [FoldedCode17]
 Blocks=0
 [HeadersList]
-Files=2
+Files=3
 F1=C:\Users\JEF\Desktop\PROGRAMA DISPLAY\Disp1\disp.c
 F2=D:\Documentos Ernesto\KRADAC_Files\Caja Comun\GLCD VICHE\Disp_prueba\Disp_prueba\disp.c
+F3=D:\Documentos Ernesto\KRADAC_Files\Caja Comun\GLCD VICHE\GIT\glcd_bus\disp.c
 [Header1]
 Files=11
 F1=C:\cvavr2\inc\mega324.h
@@ -654,3 +655,16 @@ Blocks=0
 Blocks=0
 [FoldedCode10]
 Blocks=0
+[Header3]
+Files=11
+F1=C:\Program Files\CVAVR2\inc\mega324.h
+F2=C:\Program Files\CVAVR2\inc\mega324_bits.h
+F3=C:\Program Files\CVAVR2\inc\delay.h
+F4=C:\Program Files\CVAVR2\inc\stdio.h
+F5=C:\Program Files\CVAVR2\inc\stdarg.h
+F6=C:\Program Files\CVAVR2\inc\stdlib.h
+F7=Includes\GLCD.h
+F8=C:\Program Files\CVAVR2\inc\math.h
+F9=C:\Program Files\CVAVR2\inc\string.h
+F10=Includes\font.h
+F11=Includes\bus.h

@@ -28,7 +28,8 @@ typedef unsigned char byte;
 //#define DEBUG_READ 0
 //#define DEBUG_GLCD 0
 //----------------------
-#define E_DELAY 3
+#define E_DELAY 50
+#define GLCD_DELAY_US 50
 #define DATAPORT PORTC
 #define DATADDR DDRC
 #define DATAPIN PINC
@@ -157,7 +158,7 @@ void glcd_write(byte b)
    RS = 1;          //RS high --> data
    RW = 0;          //RW low --> write     
    DATAPORT = b;    //put data on data port  
-   delay_us(1);   
+   delay_us(GLCD_DELAY_US);   
    trigger();
 }
 //------------------------
@@ -187,23 +188,23 @@ byte is_busy()
     byte status = 0;        //Read data here
     
     EN = 0;                 //Low Enable
-    delay_us(1);            //tf
+    delay_us(GLCD_DELAY_US)            //tf
     RW = 1;                 //Read
     RS = 0;                 //Status         
-    delay_us(1);            //tasu
+    delay_us(GLCD_DELAY_US)            //tasu
     EN = 1;                 //High Enable
-    delay_us(5);            //tr + max(td,twh)->twh
+    delay_us(GLCD_DELAY_US * 5);            //tr + max(td,twh)->twh
     
     //Dummy read
     EN = 0;                 //Low Enable
-    delay_us(5);            //tf + twl + chineese error    
+    delay_us(GLCD_DELAY_US * 5);            //tf + twl + chineese error    
     
     EN = 1;                 //High Enable
-    delay_us(1);            //tr + td        
+    delay_us(GLCD_DELAY_US)            //tr + td        
                                   
     status = DATAPIN;    //Input data
     EN = 0;                 //Low Enable
-    delay_us(1);            //tdhr
+    delay_us(GLCD_DELAY_US)            //tdhr
     #ifdef DEBUG_READ
         printf("S:%x\n\r",status);
     #endif
@@ -224,9 +225,9 @@ byte glcd_read(byte column)
         CS1 = (column<64);  //Enable/Disable CS1
     #endif
     CS2 = !CS1;         //Disable/Enable CS2
-    delay_us(1);        //tasu
+    delay_us(GLCD_DELAY_US)        //tasu
     EN = 1;             //Latch RAM data into ouput register
-    delay_us(1);        //twl + tf
+    delay_us(GLCD_DELAY_US)        //twl + tf
     
     //Dummy read
     //while(is_busy());
@@ -234,11 +235,11 @@ byte glcd_read(byte column)
     delay_us(20);       //tf + twl + chineese error    
     
     EN = 1;             //latch data from output register to data bus
-    delay_us(1);        //tr + td(twh)       
+    delay_us(GLCD_DELAY_US)        //tr + td(twh)       
                                   
     read_data = DATAPIN;    //Input data    
     EN = 0;             //Low Enable to remove data from the bus 
-    delay_us(1);        //tdhr
+    delay_us(GLCD_DELAY_US)        //tdhr
     #ifdef DEBUG_READ
         printf("R:%x\n\r",read_data);
     #endif

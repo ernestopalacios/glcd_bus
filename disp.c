@@ -1,16 +1,19 @@
 /**********************************************\
  *       Kradac Robotics & Electronics        *
  *                                            *
- *  Proyecto:     Kioskos UTPL                *
- *  Programador:  Vicente Q && Ernesto P && David Novillo      *
- *  version:      1.0.1                       *
- *  Fecha:        11/08/2014                  *
+ *  Proyecto:       GLCD BUS LOJA             *
+ *  Programadores:  Vicente Q &&              *
+ *                  Ernesto P &&              *
+ *                  David Novillo             *
+ *  version:        1.0.1                     *
+ *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
  *
  *  
- *  TEXTO AGREGADO
- *  
+ *  uC:             ATmega324P
+ *  Compilador:     CodeVision 2.x
+ *  Cryst:          11.092 MHz
  *  
  *
  *  
@@ -64,7 +67,10 @@
 
 #define NOMBRE_PANTALLA  "SITU"
 #define NUMERO_PANTALLA  "BUS1697"
-#define DELAY_BUZZER     100
+#define DELAY_BUZZER_MS     100
+#define DELAY_BOTONES_MS    200
+#define INIT_DELAY_GLCD_MS   10
+#define DELAY_PANTALLA_INI 2000
 
 #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
 char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
@@ -77,7 +83,7 @@ unsigned int rx_wr_index0,rx_rd_index0,rx_counter0;
 
 // This flag is set on USART0 Receiver buffer overflow
 bit rx_buffer_overflow0;
-bit d;
+bit BIT_UART;
 
 
 /** \brief USART0 Receiver interrupt service routine
@@ -89,7 +95,7 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
    char status,data;
    status = UCSR0A;
    data   = UDR0;
-   d = UCSR0A & 0b10000000;
+   BIT_UART = UCSR0A & 0b10000000;
 
    if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN)) == 0)
    {
@@ -123,8 +129,8 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
 
 
 //-----------------------VARIABLES---------------------------------
-char str2[] = NOMBRE_PANTALLA;
-char str3[] = NUMERO_PANTALLA;
+char NOMBRE_DISP[] = NOMBRE_PANTALLA;
+char NUM_DISP[] = NUMERO_PANTALLA;
 
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  //variables botones
 char aux;
@@ -150,16 +156,17 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    {
       seg++; 
       time_count = 0;  //reiniciar contador
-      //Comprobar nombre
-          if(seg==4) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
-          if(seg==9) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
+      
+      //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
+         if(seg==4) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+         if(seg==9) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
           
       if (seg>9)
       {
          seg=0; seg1++;
       
          //Envío pra ver antenas, igualar hora y fecha...
-         // Envio cada dos minutos
+         // Envio cada 20 segundos
          if (seg1%2==0)  
          {
             printf("AT$TTNETIP?\n\r");
@@ -195,12 +202,12 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
 /** \brief Genera el sonido del buffer
  *
- * El tiempo que suena depende de la variable DELAY BUZZER
+ * El tiempo que suena depende del Macro: DELAY BUZZER
  */
 void buzz()
 {       //Sonido de Buzzer
-   buzzer=1; delay_ms(DELAY_BUZZER);
-   buzzer=0; delay_ms(DELAY_BUZZER);
+   buzzer=1; delay_ms( DELAY_BUZZER_MS );
+   buzzer=0; delay_ms( DELAY_BUZZER_MS );
 }
 
 /** \brief Boton Uno - Cambiar de ruta
@@ -209,13 +216,13 @@ void buzz()
  */
 void boton1()
 {  
-   if( BT1 == 0)
+   if( BT1 == 0 )
    {
       btn1++;
       buzz();
       aux = 1;
       
-      delay_ms(200);
+      delay_ms( DELAY_BOTONES_MS );
       
       if(btn1 > 1)  // No pasa al caso 2
          btn1 = 0;
@@ -265,7 +272,7 @@ void boton2()
    {
       btn2++; 
       buzz(); 
-      delay_ms(200);
+      delay_ms( DELAY_BOTONES_MS );
 
       if(btn2>12) 
          btn2=0;
@@ -328,8 +335,9 @@ btn5++;
  * 
  *
  */
-void sen (void){
-    switch (ind_sen) {
+void dibujar_senal(void)
+{
+    switch (ind_sen){
     case 1:
     bmp_disp(GSM3,0,0,20,1);
     break;
@@ -354,7 +362,7 @@ void sen (void){
 void obt(void)
 {
 
-   int i,j,n=0,n1,n2,n3,n4,ini,coma=0,pos1=0,pos2=0,pos3=0,sen;
+   int i,j,n=0,n1,n2,n3,n4,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
    
    for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
    {     
@@ -366,25 +374,32 @@ void obt(void)
               rx_b0[i+3]== 'Q' &&   //81d
                rx_b0[i+4]== ':')    //58d
       { 
-        // Valor decimal
-        sen = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
+        // Valor decimal de la intensidad de la señal
+        barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 
-        
-        if(sen>10 && sen<15){
+        // Dibuja las barras en la panalla de acuerdo a la intensidad
+        // de la señal
+        if( barras > 10 && barras < 15 ){
         ind_sen=1;
         }
 
-        else if(sen>=15 && sen<18){
+        else if( barras >= 15 && barras < 18){
         ind_sen=2;
         } 
 
-        else if(sen>=18 && sen<31){
+        else if( barras >= 18 && barras < 31){
         ind_sen=3;
         }
 
-        else{
+        else if( barras > 31 && barras < 50){
         ind_sen=4;
         }
+
+        // En caso de que el valor en barras
+        // no sea ninguno de los anteriores, es posible
+        // que la trama recibida no sea valida.
+        else{   }
+
      }
      
       //NETIP
@@ -450,10 +465,10 @@ void obt(void)
          //Comprobar nombre      
          if(rx_b0[pos1+1]==34)
          { 
-            if( rx_b0[pos1+2]==str3[0] && 
-                rx_b0[pos1+3]==str3[1] && 
-                rx_b0[pos1+4]==str3[2] && 
-                rx_b0[pos1+5]==str3[3] )
+            if( rx_b0[pos1+2] == NUM_DISP[0] && 
+                rx_b0[pos1+3] == NUM_DISP[1] && 
+                rx_b0[pos1+4] == NUM_DISP[2] && 
+                rx_b0[pos1+5] == NUM_DISP[3] )
             {
             
                act=1;  // PANTALLA Y EQUIPO CORRECTA !!!
@@ -471,12 +486,12 @@ void obt(void)
          }
       }
      
-      //Encabezado: GPRMC
-      if ( rx_b0[i]==71 && 
-            rx_b0[i+1]==80 && 
-             rx_b0[i+2]==82 && 
-              rx_b0[i+3]==77 && 
-               rx_b0[i+4]==67)
+      //Encabezado: GPRMC para igualar el reloj desde trama GPS
+      if ( rx_b0[i+0] == 'G' && 
+            rx_b0[i+1] == 'P' && 
+             rx_b0[i+2] == 'R' && 
+              rx_b0[i+3] == 'M' && 
+               rx_b0[i+4] == 'C')
       { 
       
          ini=i+4;
@@ -495,8 +510,13 @@ void obt(void)
          glcd_clrln(4);   
          glcd_clrln(5);
 
+         
+         // Comprueba que las comas no esten seguidas
+         // en caso de no haber señal gps.
          if( (rx_b0[ pos1+1 ]-48)>= 0 && 
-             (rx_b0[ pos1+1 ]-48)< 10 )
+             (rx_b0[ pos1+1 ]-48)< 10 &&
+              pos2 != (pos1 +1)
+           )
          {
      
             seg  =rx_b0[pos1 + 6 ]-48;
@@ -518,6 +538,7 @@ void obt(void)
             
             hora = n4 % 10;
             hora1= n4 / 10;
+         
          }
     
          gps = rx_b0 [ pos2 + 1 ]; 
@@ -554,7 +575,7 @@ void obt(void)
    rx_counter0  = 0;
    rx_wr_index0 = 0; 
     
-   d=1;     
+   BIT_UART=1;     
    
    for (j=0;j<201;j++) 
    {
@@ -628,7 +649,7 @@ void main(void)
 
    // Inicilizar GLCD
    glcd_on();
-   delay_ms(10);
+   delay_ms(INIT_DELAY_GLCD_MS);
    glcd_clear();
 
    buzz();
@@ -636,20 +657,21 @@ void main(void)
 
    // Dibuja KRADAC
    bmp_disp(arr,0,0,127,7);
-   delay_ms(2000);
+   delay_ms( DELAY_PANTALLA_INI );
    glcd_clear();
 
    // Dibuja BUS
    bmp_disp(bus,0,0,45,7);
 
    // Escribe NOMBRE_PANTALLA "SITU"
-   glcd_puts(str2,55,2,0,2,-1);    
+   glcd_puts(NOMBRE_DISP,55,2,0,2,-1);    
 
    // Escribe NUMERO_PANTALLA "BUS####"
    //glcd_puts("BUS",55,5,0,1,-1);
-   glcd_puts(str3,59,5,0,1,-1);
+   glcd_puts(NUM_DISP,59,5,0,1,-1);
 
-   delay_ms(2000); 
+   //Tiempo q muestra la pantalla de inicio
+   delay_ms( DELAY_PANTALLA_INI ); 
    glcd_clear();             
 
    // Encender interrupciones
@@ -658,7 +680,7 @@ void main(void)
    // Muestra vacio
    bmp_disp(vacio,0,5,25,7);
 
-   // Pide el ID del Skypatrol
+   // Pide el ID del Skypatrol para verificar la pantalla
    printf("AT$TTDEVID?\n\r"); 
    delay_us( 500 );
    obt();
@@ -666,22 +688,24 @@ void main(void)
    while (1)
    {
 
-      if( d == 0 ) 
+      // Verifica la bandera de interrupcion serial
+      if( BIT_UART == 0 ) 
       {   
          obt();
-         d=1;  
+         BIT_UART=1;  
       }
       
+      // Verifica el estado de los botones
       boton1();
 
       boton2();                                          
 
-      sen();
+      dibujar_senal();
       
       // act = autoirzado
       if(act==1)
       {
-         if(gsm==1)
+         if( gsm == 1)
          {
             glcd_putchar('E',19,0,1,1);
          }else{
@@ -722,5 +746,5 @@ void main(void)
       }  
          
          bmp_disp(frente,105,5,127,7);  
-      }
+   } // Fin del While
 }

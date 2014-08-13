@@ -188,10 +188,10 @@ byte is_busy()
     byte status = 0;        //Read data here
     
     EN = 0;                 //Low Enable
-    delay_us(GLCD_DELAY_US)            //tf
+    delay_us(GLCD_DELAY_US);            //tf
     RW = 1;                 //Read
     RS = 0;                 //Status         
-    delay_us(GLCD_DELAY_US)            //tasu
+    delay_us(GLCD_DELAY_US);            //tasu
     EN = 1;                 //High Enable
     delay_us(GLCD_DELAY_US * 5);            //tr + max(td,twh)->twh
     
@@ -200,11 +200,11 @@ byte is_busy()
     delay_us(GLCD_DELAY_US * 5);            //tf + twl + chineese error    
     
     EN = 1;                 //High Enable
-    delay_us(GLCD_DELAY_US)            //tr + td        
+    delay_us(GLCD_DELAY_US);            //tr + td        
                                   
     status = DATAPIN;    //Input data
     EN = 0;                 //Low Enable
-    delay_us(GLCD_DELAY_US)            //tdhr
+    delay_us(GLCD_DELAY_US);            //tdhr
     #ifdef DEBUG_READ
         printf("S:%x\n\r",status);
     #endif
@@ -225,9 +225,9 @@ byte glcd_read(byte column)
         CS1 = (column<64);  //Enable/Disable CS1
     #endif
     CS2 = !CS1;         //Disable/Enable CS2
-    delay_us(GLCD_DELAY_US)        //tasu
+    delay_us(GLCD_DELAY_US);        //tasu
     EN = 1;             //Latch RAM data into ouput register
-    delay_us(GLCD_DELAY_US)        //twl + tf
+    delay_us(GLCD_DELAY_US);        //twl + tf
     
     //Dummy read
     //while(is_busy());
@@ -235,11 +235,11 @@ byte glcd_read(byte column)
     delay_us(20);       //tf + twl + chineese error    
     
     EN = 1;             //latch data from output register to data bus
-    delay_us(GLCD_DELAY_US)        //tr + td(twh)       
+    delay_us(GLCD_DELAY_US);        //tr + td(twh)       
                                   
     read_data = DATAPIN;    //Input data    
     EN = 0;             //Low Enable to remove data from the bus 
-    delay_us(GLCD_DELAY_US)        //tdhr
+    delay_us(GLCD_DELAY_US);        //tdhr
     #ifdef DEBUG_READ
         printf("R:%x\n\r",read_data);
     #endif
