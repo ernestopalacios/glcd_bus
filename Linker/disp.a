@@ -5,7 +5,7 @@
 ; *  Programadores:  Vicente Q &&              *
 ; *                  Ernesto P &&              *
 ; *                  David Novillo             *
-; *  version:        1.0.1                     *
+; *  version:        0.8.1                     *
 ; *  Fecha:          11/08/2014                *
 ; *                                            *
 ; **********************************************
@@ -4747,16 +4747,20 @@ _0xEE:
 ;PCODE: $00000ECE VOL: 0
 ; 0000 0301 
 ; 0000 0302 
-; 0000 0303  // Para mostrar el  Reloj
-; 0000 0304          if(pt==0) {
+; 0000 0303          // Para mostrar el  Reloj
+; 0000 0304          if(pt==0)
 ;PCODE: $00000ECF VOL: 0
 ;PCODE: $00000ED0 VOL: 0
 ;PCODE: $00000ED1 VOL: 0
-; 0000 0305          sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
+; 0000 0305          {
+; 0000 0306             // En caso de que no haya recibido tramas del sky
+; 0000 0307             if (hora1 == 0xff )
 ;PCODE: $00000ED2 VOL: 0
 ;PCODE: $00000ED3 VOL: 0
 ;PCODE: $00000ED4 VOL: 0
 ;PCODE: $00000ED5 VOL: 0
+; 0000 0308             {
+; 0000 0309                hora1 = 0; min1 = 0; seg1 = 0;
 ;PCODE: $00000ED6 VOL: 0
 ;PCODE: $00000ED7 VOL: 0
 ;PCODE: $00000ED8 VOL: 0
@@ -4766,6 +4770,7 @@ _0xEE:
 ;PCODE: $00000EDC VOL: 0
 ;PCODE: $00000EDD VOL: 0
 ;PCODE: $00000EDE VOL: 0
+; 0000 030A                  hora = 0; minu = 0;  seg = 0;
 ;PCODE: $00000EDF VOL: 0
 ;PCODE: $00000EE0 VOL: 0
 ;PCODE: $00000EE1 VOL: 0
@@ -4775,6 +4780,8 @@ _0xEE:
 ;PCODE: $00000EE5 VOL: 0
 ;PCODE: $00000EE6 VOL: 0
 ;PCODE: $00000EE7 VOL: 0
+; 0000 030B             }
+; 0000 030C             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
 ;PCODE: $00000EE8 VOL: 0
 ;PCODE: $00000EE9 VOL: 0
 ;PCODE: $00000EEA VOL: 0
@@ -4786,7 +4793,6 @@ _0xEE:
 ;PCODE: $00000EF0 VOL: 0
 ;PCODE: $00000EF1 VOL: 0
 ;PCODE: $00000EF2 VOL: 0
-; 0000 0306          glcd_puts(reloj,7,2,0,2,-1);
 ;PCODE: $00000EF3 VOL: 0
 ;PCODE: $00000EF4 VOL: 0
 ;PCODE: $00000EF5 VOL: 0
@@ -4800,123 +4806,123 @@ _0xEE:
 ;PCODE: $00000EFD VOL: 0
 ;PCODE: $00000EFE VOL: 0
 ;PCODE: $00000EFF VOL: 0
-; 0000 0307           }
-; 0000 0308 
-; 0000 0309           else
 ;PCODE: $00000F00 VOL: 0
 ;PCODE: $00000F01 VOL: 0
-; 0000 030A           {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
-; 0000 030B                glcd_clrln(2);
 ;PCODE: $00000F02 VOL: 0
 ;PCODE: $00000F03 VOL: 0
 ;PCODE: $00000F04 VOL: 0
-; 0000 030C                glcd_clrln(3);
 ;PCODE: $00000F05 VOL: 0
 ;PCODE: $00000F06 VOL: 0
 ;PCODE: $00000F07 VOL: 0
-; 0000 030D                glcd_clrln(4);
 ;PCODE: $00000F08 VOL: 0
 ;PCODE: $00000F09 VOL: 0
+; 0000 030D             glcd_puts(reloj,7,2,0,2,-1);
 ;PCODE: $00000F0A VOL: 0
-; 0000 030E                glcd_clrln(5);
 ;PCODE: $00000F0B VOL: 0
 ;PCODE: $00000F0C VOL: 0
 ;PCODE: $00000F0D VOL: 0
-; 0000 030F            delay_ms(1);
 ;PCODE: $00000F0E VOL: 0
 ;PCODE: $00000F0F VOL: 0
 ;PCODE: $00000F10 VOL: 0
-; 0000 0310            glcd_puts("Punto de control",5,2,0,1,-1);
 ;PCODE: $00000F11 VOL: 0
 ;PCODE: $00000F12 VOL: 0
 ;PCODE: $00000F13 VOL: 0
 ;PCODE: $00000F14 VOL: 0
 ;PCODE: $00000F15 VOL: 0
 ;PCODE: $00000F16 VOL: 0
+; 0000 030E          }
+; 0000 030F 
+; 0000 0310          else
 ;PCODE: $00000F17 VOL: 0
 ;PCODE: $00000F18 VOL: 0
+; 0000 0311          {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
+; 0000 0312                glcd_clrln(2);
 ;PCODE: $00000F19 VOL: 0
 ;PCODE: $00000F1A VOL: 0
 ;PCODE: $00000F1B VOL: 0
+; 0000 0313                glcd_clrln(3);
 ;PCODE: $00000F1C VOL: 0
 ;PCODE: $00000F1D VOL: 0
 ;PCODE: $00000F1E VOL: 0
-; 0000 0311            glcd_puts(punto,34,4,0,1,-1);
+; 0000 0314                glcd_clrln(4);
 ;PCODE: $00000F1F VOL: 0
 ;PCODE: $00000F20 VOL: 0
 ;PCODE: $00000F21 VOL: 0
+; 0000 0315                glcd_clrln(5);
 ;PCODE: $00000F22 VOL: 0
 ;PCODE: $00000F23 VOL: 0
 ;PCODE: $00000F24 VOL: 0
+; 0000 0316            delay_ms(1);
 ;PCODE: $00000F25 VOL: 0
 ;PCODE: $00000F26 VOL: 0
 ;PCODE: $00000F27 VOL: 0
+; 0000 0317            glcd_puts("Punto de control",5,2,0,1,-1);
 ;PCODE: $00000F28 VOL: 0
 ;PCODE: $00000F29 VOL: 0
 ;PCODE: $00000F2A VOL: 0
 ;PCODE: $00000F2B VOL: 0
-; 0000 0312            buzz();
 ;PCODE: $00000F2C VOL: 0
-; 0000 0313            buzz();
 ;PCODE: $00000F2D VOL: 0
-; 0000 0314            delay_ms(2000);
 ;PCODE: $00000F2E VOL: 0
 ;PCODE: $00000F2F VOL: 0
 ;PCODE: $00000F30 VOL: 0
-; 0000 0315            pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00000F31 VOL: 0
 ;PCODE: $00000F32 VOL: 0
-; 0000 0316               glcd_clrln(2);
 ;PCODE: $00000F33 VOL: 0
 ;PCODE: $00000F34 VOL: 0
 ;PCODE: $00000F35 VOL: 0
-; 0000 0317                glcd_clrln(3);
+; 0000 0318            glcd_puts(punto,34,4,0,1,-1);
 ;PCODE: $00000F36 VOL: 0
 ;PCODE: $00000F37 VOL: 0
 ;PCODE: $00000F38 VOL: 0
-; 0000 0318                glcd_clrln(4);
 ;PCODE: $00000F39 VOL: 0
 ;PCODE: $00000F3A VOL: 0
 ;PCODE: $00000F3B VOL: 0
-; 0000 0319                glcd_clrln(5);
 ;PCODE: $00000F3C VOL: 0
 ;PCODE: $00000F3D VOL: 0
 ;PCODE: $00000F3E VOL: 0
-; 0000 031A           }
 ;PCODE: $00000F3F VOL: 0
-; 0000 031B 
-; 0000 031C 
-; 0000 031D          // Con señal GPS
-; 0000 031E          if( gps == 'A' )
 ;PCODE: $00000F40 VOL: 0
 ;PCODE: $00000F41 VOL: 0
 ;PCODE: $00000F42 VOL: 0
-; 0000 031F          {
-; 0000 0320             bmp_disp(GPS1,95,0,127,1);
+; 0000 0319            buzz();
 ;PCODE: $00000F43 VOL: 0
+; 0000 031A            buzz();
 ;PCODE: $00000F44 VOL: 0
+; 0000 031B            delay_ms(2000);
 ;PCODE: $00000F45 VOL: 0
 ;PCODE: $00000F46 VOL: 0
 ;PCODE: $00000F47 VOL: 0
+; 0000 031C            pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00000F48 VOL: 0
 ;PCODE: $00000F49 VOL: 0
+; 0000 031D               glcd_clrln(2);
 ;PCODE: $00000F4A VOL: 0
 ;PCODE: $00000F4B VOL: 0
 ;PCODE: $00000F4C VOL: 0
+; 0000 031E                glcd_clrln(3);
 ;PCODE: $00000F4D VOL: 0
-; 0000 0321             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00000F4E VOL: 0
 ;PCODE: $00000F4F VOL: 0
+; 0000 031F                glcd_clrln(4);
 ;PCODE: $00000F50 VOL: 0
 ;PCODE: $00000F51 VOL: 0
 ;PCODE: $00000F52 VOL: 0
+; 0000 0320                glcd_clrln(5);
 ;PCODE: $00000F53 VOL: 0
 ;PCODE: $00000F54 VOL: 0
 ;PCODE: $00000F55 VOL: 0
+; 0000 0321           }
 ;PCODE: $00000F56 VOL: 0
+; 0000 0322 
+; 0000 0323 
+; 0000 0324          // Con señal GPS
+; 0000 0325          if( gps == 'A' )
 ;PCODE: $00000F57 VOL: 0
 ;PCODE: $00000F58 VOL: 0
 ;PCODE: $00000F59 VOL: 0
+; 0000 0326          {
+; 0000 0327             bmp_disp(GPS1,95,0,127,1);
 ;PCODE: $00000F5A VOL: 0
 ;PCODE: $00000F5B VOL: 0
 ;PCODE: $00000F5C VOL: 0
@@ -4928,20 +4934,25 @@ _0xEE:
 ;PCODE: $00000F62 VOL: 0
 ;PCODE: $00000F63 VOL: 0
 ;PCODE: $00000F64 VOL: 0
+; 0000 0328 
+; 0000 0329             // En caso de que no haya recibido tramas del sky
+; 0000 032A             if (hora1 == 0xff )
 ;PCODE: $00000F65 VOL: 0
 ;PCODE: $00000F66 VOL: 0
 ;PCODE: $00000F67 VOL: 0
 ;PCODE: $00000F68 VOL: 0
+; 0000 032B             {
+; 0000 032C                hora1 = 0; min1 = 0; seg1 = 0;
 ;PCODE: $00000F69 VOL: 0
 ;PCODE: $00000F6A VOL: 0
 ;PCODE: $00000F6B VOL: 0
 ;PCODE: $00000F6C VOL: 0
 ;PCODE: $00000F6D VOL: 0
 ;PCODE: $00000F6E VOL: 0
-; 0000 0322             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00000F6F VOL: 0
 ;PCODE: $00000F70 VOL: 0
 ;PCODE: $00000F71 VOL: 0
+; 0000 032D                  hora = 0; minu = 0;  seg = 0;
 ;PCODE: $00000F72 VOL: 0
 ;PCODE: $00000F73 VOL: 0
 ;PCODE: $00000F74 VOL: 0
@@ -4951,11 +4962,9 @@ _0xEE:
 ;PCODE: $00000F78 VOL: 0
 ;PCODE: $00000F79 VOL: 0
 ;PCODE: $00000F7A VOL: 0
+; 0000 032E             }
+; 0000 032F             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00000F7B VOL: 0
-; 0000 0323 
-; 0000 0324          }
-; 0000 0325          // Sin señal GPS
-; 0000 0326          else if (gps == 'V' || gps == '9' )
 ;PCODE: $00000F7C VOL: 0
 ;PCODE: $00000F7D VOL: 0
 ;PCODE: $00000F7E VOL: 0
@@ -4966,8 +4975,6 @@ _0xEE:
 ;PCODE: $00000F83 VOL: 0
 ;PCODE: $00000F84 VOL: 0
 ;PCODE: $00000F85 VOL: 0
-; 0000 0327          {
-; 0000 0328             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00000F86 VOL: 0
 ;PCODE: $00000F87 VOL: 0
 ;PCODE: $00000F88 VOL: 0
@@ -4979,7 +4986,6 @@ _0xEE:
 ;PCODE: $00000F8E VOL: 0
 ;PCODE: $00000F8F VOL: 0
 ;PCODE: $00000F90 VOL: 0
-; 0000 0329             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00000F91 VOL: 0
 ;PCODE: $00000F92 VOL: 0
 ;PCODE: $00000F93 VOL: 0
@@ -4992,6 +4998,7 @@ _0xEE:
 ;PCODE: $00000F9A VOL: 0
 ;PCODE: $00000F9B VOL: 0
 ;PCODE: $00000F9C VOL: 0
+; 0000 0330             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00000F9D VOL: 0
 ;PCODE: $00000F9E VOL: 0
 ;PCODE: $00000F9F VOL: 0
@@ -5005,6 +5012,10 @@ _0xEE:
 ;PCODE: $00000FA7 VOL: 0
 ;PCODE: $00000FA8 VOL: 0
 ;PCODE: $00000FA9 VOL: 0
+; 0000 0331 
+; 0000 0332          }
+; 0000 0333          // Sin señal GPS
+; 0000 0334          else if (gps == 'V' || gps == '9' )
 ;PCODE: $00000FAA VOL: 0
 ;PCODE: $00000FAB VOL: 0
 ;PCODE: $00000FAC VOL: 0
@@ -5013,9 +5024,10 @@ _0xEE:
 ;PCODE: $00000FAF VOL: 0
 ;PCODE: $00000FB0 VOL: 0
 ;PCODE: $00000FB1 VOL: 0
-; 0000 032A             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00000FB2 VOL: 0
 ;PCODE: $00000FB3 VOL: 0
+; 0000 0335          {
+; 0000 0336             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00000FB4 VOL: 0
 ;PCODE: $00000FB5 VOL: 0
 ;PCODE: $00000FB6 VOL: 0
@@ -5027,14 +5039,15 @@ _0xEE:
 ;PCODE: $00000FBC VOL: 0
 ;PCODE: $00000FBD VOL: 0
 ;PCODE: $00000FBE VOL: 0
-; 0000 032B          }
-; 0000 032C          else
+; 0000 0337 
+; 0000 0338             // En caso de que no haya recibido tramas del sky
+; 0000 0339             if (hora1 == 0xff )
 ;PCODE: $00000FBF VOL: 0
 ;PCODE: $00000FC0 VOL: 0
-; 0000 032D          {
-; 0000 032E             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00000FC1 VOL: 0
 ;PCODE: $00000FC2 VOL: 0
+; 0000 033A             {
+; 0000 033B                hora1 = 0; min1 = 0; seg1 = 0;
 ;PCODE: $00000FC3 VOL: 0
 ;PCODE: $00000FC4 VOL: 0
 ;PCODE: $00000FC5 VOL: 0
@@ -5044,21 +5057,18 @@ _0xEE:
 ;PCODE: $00000FC9 VOL: 0
 ;PCODE: $00000FCA VOL: 0
 ;PCODE: $00000FCB VOL: 0
-; 0000 032F          }
+; 0000 033C                  hora = 0; minu = 0;  seg = 0;
 ;PCODE: $00000FCC VOL: 0
 ;PCODE: $00000FCD VOL: 0
-; 0000 0330       }
-; 0000 0331 
-; 0000 0332       else
 ;PCODE: $00000FCE VOL: 0
 ;PCODE: $00000FCF VOL: 0
-; 0000 0333       {
-; 0000 0334          glcd_puts("Pantalla",30,2,0,1,-1);
 ;PCODE: $00000FD0 VOL: 0
 ;PCODE: $00000FD1 VOL: 0
 ;PCODE: $00000FD2 VOL: 0
 ;PCODE: $00000FD3 VOL: 0
 ;PCODE: $00000FD4 VOL: 0
+; 0000 033D             }
+; 0000 033E             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00000FD5 VOL: 0
 ;PCODE: $00000FD6 VOL: 0
 ;PCODE: $00000FD7 VOL: 0
@@ -5068,7 +5078,6 @@ _0xEE:
 ;PCODE: $00000FDB VOL: 0
 ;PCODE: $00000FDC VOL: 0
 ;PCODE: $00000FDD VOL: 0
-; 0000 0335          glcd_puts("No Autorizada",15,4,0,1,-1);
 ;PCODE: $00000FDE VOL: 0
 ;PCODE: $00000FDF VOL: 0
 ;PCODE: $00000FE0 VOL: 0
@@ -5083,10 +5092,7 @@ _0xEE:
 ;PCODE: $00000FE9 VOL: 0
 ;PCODE: $00000FEA VOL: 0
 ;PCODE: $00000FEB VOL: 0
-; 0000 0336       }
 ;PCODE: $00000FEC VOL: 0
-; 0000 0337 
-; 0000 0338          bmp_disp(frente,105,5,127,7);
 ;PCODE: $00000FED VOL: 0
 ;PCODE: $00000FEE VOL: 0
 ;PCODE: $00000FEF VOL: 0
@@ -5097,15 +5103,99 @@ _0xEE:
 ;PCODE: $00000FF4 VOL: 0
 ;PCODE: $00000FF5 VOL: 0
 ;PCODE: $00000FF6 VOL: 0
+; 0000 033F             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00000FF7 VOL: 0
-; 0000 0339    } // Fin del While
 ;PCODE: $00000FF8 VOL: 0
 ;PCODE: $00000FF9 VOL: 0
-; 0000 033A }
 ;PCODE: $00000FFA VOL: 0
 ;PCODE: $00000FFB VOL: 0
 ;PCODE: $00000FFC VOL: 0
+;PCODE: $00000FFD VOL: 0
+;PCODE: $00000FFE VOL: 0
+;PCODE: $00000FFF VOL: 0
+;PCODE: $00001000 VOL: 0
+;PCODE: $00001001 VOL: 0
+;PCODE: $00001002 VOL: 0
+;PCODE: $00001003 VOL: 0
+; 0000 0340          }
+; 0000 0341          else
+;PCODE: $00001004 VOL: 0
+;PCODE: $00001005 VOL: 0
+; 0000 0342          {
+; 0000 0343             bmp_disp(GPS2,95,0,127,1);
+;PCODE: $00001006 VOL: 0
+;PCODE: $00001007 VOL: 0
+;PCODE: $00001008 VOL: 0
+;PCODE: $00001009 VOL: 0
+;PCODE: $0000100A VOL: 0
+;PCODE: $0000100B VOL: 0
+;PCODE: $0000100C VOL: 0
+;PCODE: $0000100D VOL: 0
+;PCODE: $0000100E VOL: 0
+;PCODE: $0000100F VOL: 0
+;PCODE: $00001010 VOL: 0
+; 0000 0344          }
+;PCODE: $00001011 VOL: 0
+;PCODE: $00001012 VOL: 0
+; 0000 0345       }
+; 0000 0346 
+; 0000 0347       else
+;PCODE: $00001013 VOL: 0
+;PCODE: $00001014 VOL: 0
+; 0000 0348       {
+; 0000 0349          glcd_puts("Pantalla",30,2,0,1,-1);
+;PCODE: $00001015 VOL: 0
+;PCODE: $00001016 VOL: 0
+;PCODE: $00001017 VOL: 0
+;PCODE: $00001018 VOL: 0
+;PCODE: $00001019 VOL: 0
+;PCODE: $0000101A VOL: 0
+;PCODE: $0000101B VOL: 0
+;PCODE: $0000101C VOL: 0
+;PCODE: $0000101D VOL: 0
+;PCODE: $0000101E VOL: 0
+;PCODE: $0000101F VOL: 0
+;PCODE: $00001020 VOL: 0
+;PCODE: $00001021 VOL: 0
+;PCODE: $00001022 VOL: 0
+; 0000 034A          glcd_puts("No Autorizada",15,4,0,1,-1);
+;PCODE: $00001023 VOL: 0
+;PCODE: $00001024 VOL: 0
+;PCODE: $00001025 VOL: 0
+;PCODE: $00001026 VOL: 0
+;PCODE: $00001027 VOL: 0
+;PCODE: $00001028 VOL: 0
+;PCODE: $00001029 VOL: 0
+;PCODE: $0000102A VOL: 0
+;PCODE: $0000102B VOL: 0
+;PCODE: $0000102C VOL: 0
+;PCODE: $0000102D VOL: 0
+;PCODE: $0000102E VOL: 0
+;PCODE: $0000102F VOL: 0
+;PCODE: $00001030 VOL: 0
+; 0000 034B       }
+;PCODE: $00001031 VOL: 0
+; 0000 034C 
+; 0000 034D          bmp_disp(frente,105,5,127,7);
+;PCODE: $00001032 VOL: 0
+;PCODE: $00001033 VOL: 0
+;PCODE: $00001034 VOL: 0
+;PCODE: $00001035 VOL: 0
+;PCODE: $00001036 VOL: 0
+;PCODE: $00001037 VOL: 0
+;PCODE: $00001038 VOL: 0
+;PCODE: $00001039 VOL: 0
+;PCODE: $0000103A VOL: 0
+;PCODE: $0000103B VOL: 0
+;PCODE: $0000103C VOL: 0
+; 0000 034E    } // Fin del While
+;PCODE: $0000103D VOL: 0
+;PCODE: $0000103E VOL: 0
+; 0000 034F }
+;PCODE: $0000103F VOL: 0
+;PCODE: $00001040 VOL: 0
+;PCODE: $00001041 VOL: 0
 
 	.DSEG
-_0x171:
+_0x172:
 	.BYTE 0x28

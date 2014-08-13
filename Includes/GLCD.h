@@ -28,8 +28,8 @@ typedef unsigned char byte;
 //#define DEBUG_READ 0
 //#define DEBUG_GLCD 0
 //----------------------
-#define E_DELAY 50
-#define GLCD_DELAY_US 50
+#define E_DELAY 15
+#define GLCD_DELAY_US 80
 #define DATAPORT PORTC
 #define DATADDR DDRC
 #define DATAPIN PINC

@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        1.0.1                     *
+ *  version:        0.8.1                     *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -768,14 +768,21 @@ void main(void)
          } 
       
 
- // Para mostrar el  Reloj
-         if(pt==0) {
-         sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
-         glcd_puts(reloj,7,2,0,2,-1);     
-          } 
-          
-          else
-          {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
+         // Para mostrar el  Reloj
+         if(pt==0) 
+         {
+            // En caso de que no haya recibido tramas del sky
+            if (hora1 == 0xff )
+            {
+               hora1 = 0; min1 = 0; seg1 = 0;
+                 hora = 0; minu = 0;  seg = 0;
+            }
+            sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
+            glcd_puts(reloj,7,2,0,2,-1);     
+         } 
+         
+         else
+         {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
                glcd_clrln(2); 
                glcd_clrln(3); 
                glcd_clrln(4); 
@@ -798,6 +805,13 @@ void main(void)
          if( gps == 'A' )
          {     
             bmp_disp(GPS1,95,0,127,1);   
+
+            // En caso de que no haya recibido tramas del sky
+            if (hora1 == 0xff )
+            {
+               hora1 = 0; min1 = 0; seg1 = 0;
+                 hora = 0; minu = 0;  seg = 0;
+            }
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
             glcd_puts(fecha,34,5,0,1,-1); 
          
@@ -806,6 +820,13 @@ void main(void)
          else if (gps == 'V' || gps == '9' )
          {
             bmp_disp(GPS2,95,0,127,1);
+            
+            // En caso de que no haya recibido tramas del sky
+            if (hora1 == 0xff )
+            {
+               hora1 = 0; min1 = 0; seg1 = 0;
+                 hora = 0; minu = 0;  seg = 0;
+            }
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
             glcd_puts(fecha,34,5,0,1,-1);
          }
