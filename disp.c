@@ -18,7 +18,7 @@
  *
  *  
  *
- *  
+ *  ////
  *  
  *
  */
@@ -131,6 +131,8 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
 //-----------------------VARIABLES---------------------------------
 char NOMBRE_DISP[] = NOMBRE_PANTALLA;
 char NUM_DISP[] = NUMERO_PANTALLA;
+char ruta = ' ';
+bit bandera2=0;
 
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  //variables botones
 char aux;
@@ -268,58 +270,85 @@ void boton1()
  */
 void boton2()
 {     
-   if(BT2==0 && btn1==1)
+   if(BT2==0 && btn1==1 && bandera2==0)
    {
       btn2++; 
-      buzz(); 
-      delay_ms( DELAY_BOTONES_MS );
+      buzz();
+      bandera2=1;  
+      if(btn2>12 && btn2!=15) 
+         btn2=1;
+      delay_ms(200);
 
-      if(btn2>12) 
-         btn2=0;
+      
    }  
-      switch (btn2){
+   else if(BT2==1 && bandera2==1){
+      bandera2=0;
+   }
+   switch (btn2){
       case 1:
-      glcd_putchar('A',77,7,0,1);
+        ruta='A';
+     
+        break;
+      case 2:  
+        ruta='B';
+     
       break;
-      case 2:
-      glcd_putchar('B',77,7,0,1);
+      case 3:   
+        ruta='C';
+    
+      break; 
+      case 4:  
+        ruta='D';
+    
+      break; 
+      case 5:  
+        ruta='E';
+    
+      break; 
+      case 6:    
+        ruta='F';
+     
+      break; 
+      case 7:  
+        ruta='G';
+        
+      break; 
+      case 8:  
+        ruta='H';
+        
       break;
-      case 3:
-      glcd_putchar('C',77,7,0,1);
+      case 9:  
+        ruta='I';
+        
       break; 
-      case 4:
-      glcd_putchar('D',77,7,0,1);
+      case 10: 
+        ruta='J';
+        
       break; 
-      case 5:
-      glcd_putchar('E',77,7,0,1);
-      break; 
-      case 6:
-      glcd_putchar('F',77,7,0,1);
-      break; 
-      case 7:
-      glcd_putchar('G',77,7,0,1);
-      break; 
-      case 8:
-      glcd_putchar('H',77,7,0,1);
+      case 11: 
+        ruta='K';
+        
       break;
-      case 9:
-      glcd_putchar('I',77,7,0,1);
+      case 12: 
+        ruta='L';
+        
+      break;  
+      case 15:
+        ruta=' ';
       break; 
-      case 10:
-      glcd_putchar('J',79,7,0,1);
-      break; 
-      case 11:
-      glcd_putchar('K',79,7,0,1);
-      break;
-      case 12:
-      glcd_putchar('L',79,7,0,1);
-      break;   
-      }; 
-     //printf("AT$TTDEVID?\n\r")                
+   };         
+      
+     //printf("AT$TTDEVID?\n\r")                     
 }
 
 void boton3(){     //Botón 3
-btn3++;
+if (BT3==0){ 
+    btn2=15;
+    ruta=' ';  
+    buzz(); 
+    delay_ms(200);
+    
+  }
 }
 
 void boton4(){     //Botón 4
@@ -696,9 +725,15 @@ void main(void)
       }
       
       // Verifica el estado de los botones
+      glcd_putchar(ruta,79,7,0,1);  
+      
+       
+      
       boton1();
 
-      boton2();                                          
+      boton2();    
+      
+      boton3();                                      
 
       dibujar_senal();
       
