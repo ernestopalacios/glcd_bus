@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.1                     *
+ *  version:        0.8.3                     *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -126,17 +126,21 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
 ///////////////////////////////////////////////////////////////////
 
 
-//-----------------------VARIABLES---------------------------------
-char NOMBRE_DISP[] = NOMBRE_PANTALLA;
-char NUM_DISP[] = NUMERO_PANTALLA;
-char ruta = ' ';
-bit bandera2=0;
-
-unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  //variables botones
+//------------------------------------------------------------ VARIABLES ---------------------------------------------------//
+char NOMBRE_DISP[] = NOMBRE_PANTALLA;                 // variable 
+char NUM_DISP[] = NUMERO_PANTALLA;                    // variable
+char ruta_aux = ' ';                                  // variable auxiliar para almacenar la ruta a seleccionar
+char ruta= ' ';                                       // variable donde se almacena la ruta que se enviará al servidor
+bit bandera1=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 1
+bit bandera2=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 2
+bit bandera3=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 3
+bit bandera4=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 4
+bit aceptar=0;                                        // variable que permite enviar ruta de trabajo al servidor
+bit fin_de_ruta=0;                                    // variable que permita enviar al servidor la indicación que se ha terminado la ruta de trabajo
+unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  // variables botones
 char aux;
-
-char punto[4], pt=0;   //variables para reconocer geocercas
-//----------------------------------------------------------------//
+char punto[4], pt=0;                                  // variables para reconocer geocercas
+//-------------------------------------------------------------------------------------------------------------------------//
 
 static unsigned int time_count, act;
 eeprom int seg=0,seg1=0,minu=0,min1=0,hora=0,hora1=0,dia=0,dia1=0,mes=0,mes1=0,an=0,an1=0; //hora y fecha
@@ -148,6 +152,8 @@ char reloj[8], fecha[8];  //vectores para imprmir GLCD
  *
  * Genera una interrupcíon cada: 
  */
+
+ /////////////////////////////// INTERRUPCIÓN DEL TIMER0 /////////////////////////////////
 interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
    TCNT0 = 6; 
@@ -198,36 +204,42 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       }
    }
 }
+//-------------------------------------------------------------------------------------//
 
-//-----------------------FUNCIONES---------------------------------
+
+////////////////////////////////// FUNCIONES ////////////////////////////////////////////
 
 /** \brief Genera el sonido del buffer
  *
  * El tiempo que suena depende del Macro: DELAY BUZZER
  */
+
+////////////////// FUNCIÓN PARA EL SONIDO DEL BUZZER //////////////////
 void buzz()
 {       //Sonido de Buzzer
    buzzer=1; delay_ms( DELAY_BUZZER_MS );
    buzzer=0; delay_ms( DELAY_BUZZER_MS );
 }
+//-------------------------------------------------------------------//
 
-/** \brief Boton Uno - Cambiar de ruta
- *
- * Selecciona la acción de cambio de ruta
- */
+
+
+ ////////////////////// FUNCIÓN DEL BOTÓN 1 (INICIO/FIN DE JORNADA) //////////////////////////
 void boton1()
 {  
-   if( BT1 == 0 )
+   if( BT1 == 0 && bandera1==0)
    {
       btn1++;
+      bandera1=1;
       buzz();
       aux = 1;
-      
       delay_ms( DELAY_BOTONES_MS );
-      
       if(btn1 > 1)  // No pasa al caso 2
          btn1 = 0;
    } 
+   else if(BT1==1 && bandera1==1){
+      bandera1=0;
+   }
 
    switch (btn1) {
       case 0:
@@ -261,15 +273,14 @@ void boton1()
       break;
    };  
 }
+//------------------------------------------------------------------------------------------//
 
-/** \brief Boton Dos - Selecciona la ruta
- *
- * Selecciona la ruta en la cual se va a trabajar
- *
- */
+
+
+//////////////////////// FUNCIÓN DEL BOTÓN 2 (ESCOGER RUTA) /////////////////////////////////
 void boton2()
 {     
-   if(BT2==0 && btn1==1 && bandera2==0)
+   if(BT2==0 && btn1==1 && bandera2==0 && aceptar==0)
    {
       btn2++; 
       buzz();
@@ -285,84 +296,111 @@ void boton2()
    }
    switch (btn2){
       case 1:
-        ruta='A';
+        ruta_aux='A';
      
         break;
       case 2:  
-        ruta='B';
+        ruta_aux='B';
      
       break;
       case 3:   
-        ruta='C';
+        ruta_aux='C';
     
       break; 
       case 4:  
-        ruta='D';
+        ruta_aux='D';
     
       break; 
       case 5:  
-        ruta='E';
+        ruta_aux='E';
     
       break; 
       case 6:    
-        ruta='F';
+        ruta_aux='F';
      
       break; 
       case 7:  
-        ruta='G';
+        ruta_aux='G';
         
       break; 
       case 8:  
-        ruta='H';
+        ruta_aux='H';
         
       break;
       case 9:  
-        ruta='I';
+        ruta_aux='I';
         
       break; 
       case 10: 
-        ruta='J';
+        ruta_aux='J';
         
       break; 
       case 11: 
-        ruta='K';
+        ruta_aux='K';
         
       break;
       case 12: 
-        ruta='L';
+        ruta_aux='L';
         
       break;  
       case 15:
-        ruta=' ';
+        ruta_aux=' ';
       break; 
    };         
       
      //printf("AT$TTDEVID?\n\r")                     
 }
+//----------------------------------------------------------------------------------------//
 
+
+
+/////////////////////// FUNCIÓN DEL BOTÓN 3 (ACEPTAR RUTA) /////////////////////////////////
 void boton3(){     //Botón 3
-if (BT3==0){ 
-    btn2=15;
-    ruta=' ';  
-    buzz(); 
+  if (BT3==0 && bandera3==0 && aceptar==0){ 
+    bandera3=1;
+    ruta=ruta_aux;
+    aceptar=1;
+    buzz();
     delay_ms(200);
-    
+
+    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA
+  }
+  else if(BT3==1 && bandera3==1){
+    bandera3=0;
   }
 }
+//----------------------------------------------------------------------------------------//
 
+
+
+//////////////////////// FUNCIÓN DEL BOTÓN 4 (FIN DE RUTA) /////////////////////////////////
 void boton4(){     //Botón 4
-btn4++;
+  if (BT4==0 && bandera4==0){
+    bandera4=1;
+    ruta=' ';
+    aceptar=0;
+    buzz();
+    delay_ms(200);
+    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA VACÍA (FIN DE RUTA)
+  }
+  else if(BT4==1 && bandera4==1){
+    bandera4=0;
+  }
+  
 }
+//----------------------------------------------------------------------------------------//
 
+
+
+////////////////////// FUNCIÓN DEL BOTÓN 5 (ESTADO MECÁNICO) //////////////////////////////
 void boton5(){     //Botón 5
-btn5++;
+  btn5++;
 }
+//----------------------------------------------------------------------------------------//
 
-/** \brief ??
- *
- * 
- *
- */
+
+
+////////////////////////////////// DIBUJAR SEÑAL GPRS //////////////////////////////////////
 void dibujar_senal(void)
 {
     switch (ind_sen){
@@ -381,12 +419,10 @@ void dibujar_senal(void)
     }; 
 
 }
+//---------------------------------------------------------------------------------------//
 
-/** \brief Recorrer el arreglo que envia el SKYPATROL
- *
- * Obtiene las tramas
- *
- */
+
+/////////////////////////////////// FUNCIÓN PARA OBTENER LA TRAMA DEL GPS SKYPATROLL+ //////////////////////////////////
 void obt(void)
 {
 
@@ -428,12 +464,12 @@ void obt(void)
         // que la trama recibida no sea valida.
         else{   }
 
-     }
+      }
      
      
           //________________________
      //PARA PUNTO DE CONTROL: 
-//por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
+      //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
       if ( rx_b0[i+0]== 'B' &&    
             rx_b0[i+1]== 'U' &&     
              rx_b0[i+2]== 'S')    
@@ -444,7 +480,7 @@ void obt(void)
         punto[1] = rx_b0[i+17];
         punto[0] = rx_b0[i+16];
         
-//El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
+      //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
         if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
         pt = 1;   
          }
@@ -630,11 +666,16 @@ void obt(void)
    {
       rx_b0[j]=0;
    };
-
 }
 
-//---------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
 
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//******************************************** PROGRAMA PRINCIPAL *************************************************//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void main(void)
 {
    #pragma optsize-
@@ -745,7 +786,7 @@ void main(void)
       }
       
       // Verifica el estado de los botones
-      glcd_putchar(ruta,79,7,0,1);  
+      glcd_putchar(ruta_aux,79,7,0,1);  
       
        
       
@@ -845,3 +886,4 @@ void main(void)
          bmp_disp(frente,105,5,127,7);  
    } // Fin del While
 }
+//---------------------------------------- FIN DEL PROGRAMA PRINCIPAL ---------------------------------------------//
