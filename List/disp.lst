@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Wed Aug 13 12:25:05 2014
+AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Wed Aug 13 15:38:25 2014
 
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1053): warning: Register r4 already defined by the .DEF directive
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1054): warning: Register r3 already defined by the .DEF directive
