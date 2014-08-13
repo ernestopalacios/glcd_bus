@@ -812,8 +812,6 @@ void main(void)
          else
          { 
             bmp_disp(GPS2,95,0,127,1);
-            glcd_puts(reloj,7,2,0,2,-1);  
-            glcd_puts(fecha,34,5,0,1,-1);
          }
       }
       

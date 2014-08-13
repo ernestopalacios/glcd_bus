@@ -9,16 +9,17 @@ rx_b0                                                             0339h      200
 NOMBRE_DISP                                                       0401h        5
 NUM_DISP                                                          0406h        8
 btn5                                                              040Eh        2
-punto                                                             0410h        4
-pt                                                                0414h        1
-time_count                                                        0415h        2
-act                                                               0417h        2
-gsm                                                               0419h        2
-gps                                                               041Bh        2
-ind_sen                                                           041Dh        2
-reloj                                                             041Fh        8
-fecha                                                             0427h        8
-_seed                                                             042Fh        4
+aux                                                               0410h        1
+punto                                                             0411h        4
+pt                                                                0415h        1
+time_count                                                        0416h        2
+act                                                               0418h        2
+gsm                                                               041Ah        2
+gps                                                               041Ch        2
+ind_sen                                                           041Eh        2
+reloj                                                             0420h        8
+fecha                                                             0428h        8
+_seed                                                             0430h        4
 
 EEPROM Allocation
 Variable                                                          Address   Size
@@ -44,8 +45,9 @@ rx_rd_index0                                                      R3           1
 rx_counter0                                                       R6           1
 rx_buffer_overflow0                                               GPIOR0.0  1bit
 BIT_UART                                                          GPIOR0.1  1bit
+ruta                                                              R5           1
+bandera2                                                          GPIOR0.2  1bit
 btn1                                                              R7,R8        2
 btn2                                                              R9,R10       2
 btn3                                                              R11,R12      2
 btn4                                                              R13,R14      2
-aux                                                               R5           1
