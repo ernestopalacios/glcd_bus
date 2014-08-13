@@ -23,8 +23,6 @@
  *
  */
 
-
-
 //SE AGREGAN LAS LIBRERIAS QUE SE VAN A UTILIZAR
 #include <mega324.h>
 #include <delay.h>
@@ -136,13 +134,14 @@ bit bandera2=0;
 
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  //variables botones
 char aux;
+
+char punto[4], pt=0;   //variables para reconocer geocercas
 //----------------------------------------------------------------//
 
 static unsigned int time_count, act;
 eeprom int seg=0,seg1=0,minu=0,min1=0,hora=0,hora1=0,dia=0,dia1=0,mes=0,mes1=0,an=0,an1=0; //hora y fecha
 int gsm, gps, ind_sen; //indicadores de señal
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
-
 
 
 /** \brief Timer 0 overflow interrupt service routine
@@ -431,6 +430,27 @@ void obt(void)
 
      }
      
+     
+          //________________________
+     //PARA PUNTO DE CONTROL: 
+//por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
+      if ( rx_b0[i+0]== 'B' &&    
+            rx_b0[i+1]== 'U' &&     
+             rx_b0[i+2]== 'S')    
+      { 
+        // Datos de punto de control, en cada posición del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
+        punto[3] = rx_b0[i+19];
+        punto[2] = rx_b0[i+18];
+        punto[1] = rx_b0[i+17];
+        punto[0] = rx_b0[i+16];
+        
+//El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
+        if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
+        pt = 1;   
+         }
+     }
+
+     
       //NETIP
       if ( rx_b0[i+0]== 'N' && 
             rx_b0[i+1]== 'E' && 
@@ -713,7 +733,7 @@ void main(void)
    printf("AT$TTDEVID?\n\r"); 
    delay_us( 500 );
    obt();
-
+   act =1;
    while (1)
    {
 
@@ -747,9 +767,32 @@ void main(void)
             glcd_putchar(' ',19,0,1,1);
          } 
       
-         // Iguala Reloj
+
+ // Para mostrar el  Reloj
+         if(pt==0) {
          sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
          glcd_puts(reloj,7,2,0,2,-1);     
+          } 
+          
+          else
+          {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
+               glcd_clrln(2); 
+               glcd_clrln(3); 
+               glcd_clrln(4); 
+               glcd_clrln(5);
+           delay_ms(1);
+           glcd_puts("Punto de control",5,2,0,1,-1);
+           glcd_puts(punto,34,4,0,1,-1);       
+           buzz();
+           buzz();
+           delay_ms(2000);
+           pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+              glcd_clrln(2); 
+               glcd_clrln(3); 
+               glcd_clrln(4); 
+               glcd_clrln(5); 
+          }
+
 
          // Con señal GPS
          if( gps == 'A' )
