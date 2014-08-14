@@ -1,15 +1,14 @@
 RAM Allocation
 Variable                                                          Address   Size
 --------------------------------------------------------------------------------
-prevLet                                                           0334h        2
-stat                                                              0336h        1
-prevX                                                             0337h        1
-prevY                                                             0338h        1
-rx_b0                                                             0339h      200
-NOMBRE_DISP                                                       0401h        5
-NUM_DISP                                                          0406h        8
-btn5                                                              040Eh        2
-aux                                                               0410h        1
+prevLet                                                           0338h        2
+stat                                                              033Ah        1
+prevX                                                             033Bh        1
+prevY                                                             033Ch        1
+rx_b0                                                             033Dh      200
+NOMBRE_DISP                                                       0405h        5
+NUM_DISP                                                          040Ah        5
+btn5                                                              040Fh        2
 punto                                                             0411h        4
 pt                                                                0415h        1
 time_count                                                        0416h        2
@@ -24,18 +23,19 @@ _seed                                                             0430h        4
 EEPROM Allocation
 Variable                                                          Address   Size
 --------------------------------------------------------------------------------
-seg                                                               0000h        2
-seg1                                                              0002h        2
-minu                                                              0004h        2
-min1                                                              0006h        2
-hora                                                              0008h        2
-hora1                                                             000Ah        2
-dia                                                               000Ch        2
-dia1                                                              000Eh        2
-mes                                                               0010h        2
-mes1                                                              0012h        2
-an                                                                0014h        2
-an1                                                               0016h        2
+seg                                                               0010h        2
+seg1                                                              0012h        2
+minu                                                              0014h        2
+min1                                                              0016h        2
+hora                                                              0018h        2
+hora1                                                             001Ah        2
+dia                                                               001Ch        2
+dia1                                                              001Eh        2
+mes                                                               0020h        2
+mes1                                                              0022h        2
+an                                                                0024h        2
+an1                                                               0026h        2
+num_ruta                                                          0028h        1
 
 Register Allocation
 Variable                                                          Register  Size
@@ -45,9 +45,14 @@ rx_rd_index0                                                      R3           1
 rx_counter0                                                       R6           1
 rx_buffer_overflow0                                               GPIOR0.0  1bit
 BIT_UART                                                          GPIOR0.1  1bit
-ruta                                                              R5           1
-bandera2                                                          GPIOR0.2  1bit
-btn1                                                              R7,R8        2
-btn2                                                              R9,R10       2
-btn3                                                              R11,R12      2
-btn4                                                              R13,R14      2
+ruta_aux                                                          R5           1
+ruta                                                              R8           1
+bandera1                                                          GPIOR0.2  1bit
+bandera2                                                          GPIOR0.3  1bit
+bandera3                                                          GPIOR0.4  1bit
+bandera4                                                          GPIOR0.5  1bit
+aceptar                                                           GPIOR0.6  1bit
+btn1                                                              R9,R10       2
+btn2                                                              R11,R12      2
+btn3                                                              R13,R14      2
+aux                                                               R7           1

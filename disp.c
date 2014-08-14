@@ -62,13 +62,15 @@
 #define RX_COMPLETE (1<<RXC)
 
 
+typedef char int8;    //sirve para definir enteros consigno de 8
 
 #define NOMBRE_PANTALLA  "SITU"
-#define NUMERO_PANTALLA  "BUS1697"
+#define NUMERO_PANTALLA  "1697"
 #define DELAY_BUZZER_MS     100
 #define DELAY_BOTONES_MS    200
 #define INIT_DELAY_GLCD_MS   10
 #define DELAY_PANTALLA_INI 2000
+#define TOTAL_RUTAS          10  //Número total de rutas
 
 #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
 char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
@@ -136,14 +138,30 @@ bit bandera2=0;                                       // variable auxiliar para 
 bit bandera3=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 3
 bit bandera4=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 4
 bit aceptar=0;                                        // variable que permite enviar ruta de trabajo al servidor
-bit fin_de_ruta=0;                                    // variable que permita enviar al servidor la indicación que se ha terminado la ruta de trabajo
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  // variables botones
 char aux;
 char punto[4], pt=0;                                  // variables para reconocer geocercas
 //-------------------------------------------------------------------------------------------------------------------------//
 
-static unsigned int time_count, act;
-eeprom int seg=0,seg1=0,minu=0,min1=0,hora=0,hora1=0,dia=0,dia1=0,mes=0,mes1=0,an=0,an1=0; //hora y fecha
+static unsigned int time_count;   // Contador del timer para los segundos
+static unsigned int act;          // Variable que guarda si la pantalla es autorizada
+
+eeprom int seg   @0x10;
+eeprom int seg1  @0x12;    // segundos en unidades y decenas
+eeprom int minu  @0x14;   
+eeprom int min1  @0x16;    // minutos en unidades y decenas
+eeprom int hora  @0x18;  
+eeprom int hora1 @0x1A;   // hora en unidades y decenas
+eeprom int dia   @0x1C;   
+eeprom int dia1  @0x1E;    // dias en unidades y decenas
+eeprom int mes   @0x20;   
+eeprom int mes1  @0x22;    // mes en unidades y decenas
+eeprom int an    @0x24;
+eeprom int an1   @0x26;     // anos en unidades y decenas
+
+eeprom int8 num_ruta @0x28;        // Transforma la letra de la ruta a un número
+
+
 int gsm, gps, ind_sen; //indicadores de señal
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
 
@@ -209,12 +227,13 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
 ////////////////////////////////// FUNCIONES ////////////////////////////////////////////
 
+
+
+////////////////// FUNCIÓN PARA EL SONIDO DEL BUZZER //////////////////
 /** \brief Genera el sonido del buffer
  *
  * El tiempo que suena depende del Macro: DELAY BUZZER
  */
-
-////////////////// FUNCIÓN PARA EL SONIDO DEL BUZZER //////////////////
 void buzz()
 {       //Sonido de Buzzer
    buzzer=1; delay_ms( DELAY_BUZZER_MS );
@@ -222,6 +241,27 @@ void buzz()
 }
 //-------------------------------------------------------------------//
 
+
+////////////////// FUNCIÓN PARA CALCULAR NUMERO DE RUTA //////////////////
+/** \brief Transforma el caracter de ruta a un número
+ *
+ * Cambia de A -> 1; B->2 ...  etc, en caso de que el caracter pasado no 
+ * Corresponda a una letra devolvera -1
+ * 
+ * Solo soporta un carcater, máximo se puede tener 35 rutas.
+ */
+int8 calcuar_ruta( char ruta )
+{
+   int8 num_ruta = ruta - 0x48;
+
+   // Verificar que la letra corresponde a un número de ruta
+   // se puede crecer hasta 5 rutas mas de las definidas
+   if ( num_ruta > 0 && num_ruta <= TOTAL_RUTAS + 5 )
+      return num_ruta;
+   else
+      return 0; // El caracter no corresponde a una ruta.
+
+}
 
 
  ////////////////////// FUNCIÓN DEL BOTÓN 1 (INICIO/FIN DE JORNADA) //////////////////////////
@@ -356,18 +396,29 @@ void boton2()
 
 /////////////////////// FUNCIÓN DEL BOTÓN 3 (ACEPTAR RUTA) /////////////////////////////////
 void boton3(){     //Botón 3
-  if (BT3==0 && bandera3==0 && aceptar==0){ 
-    bandera3=1;
-    ruta=ruta_aux;
-    aceptar=1;
-    buzz();
-    delay_ms(200);
+   if (BT3==0 && bandera3==0 && aceptar==0){ 
+      bandera3=1;
+      ruta=ruta_aux;
+      aceptar=1;
+      buzz();
+      delay_ms(200);
 
-    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA
-  }
-  else if(BT3==1 && bandera3==1){
-    bandera3=0;
-  }
+      // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA
+      num_ruta = calcuar_ruta( ruta );
+
+      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+                              NUM_DISP, 
+                                   dia1,dia,
+                                   mes1,mes,
+                                   an1,an,
+                                       hora1,hora,
+                                       min1,min,
+                                       seg1,seg,
+                                          num_ruta,aceptar  );
+   }
+   else if(BT3==1 && bandera3==1){
+      bandera3=0;
+   }
 }
 //----------------------------------------------------------------------------------------//
 
@@ -375,13 +426,26 @@ void boton3(){     //Botón 3
 
 //////////////////////// FUNCIÓN DEL BOTÓN 4 (FIN DE RUTA) /////////////////////////////////
 void boton4(){     //Botón 4
-  if (BT4==0 && bandera4==0){
-    bandera4=1;
-    ruta=' ';
-    aceptar=0;
-    buzz();
-    delay_ms(200);
-    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA VACÍA (FIN DE RUTA)
+   if (BT4==0 && bandera4==0){
+      btn2 = 15;
+      bandera4=1;
+      ruta=' ';
+      aceptar=0;
+      buzz();
+      delay_ms(200);
+    
+      // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA VACÍA (FIN DE RUTA)
+      num_ruta = calcuar_ruta( ruta );
+
+      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+                              NUM_DISP, 
+                                   dia1,dia,
+                                   mes1,mes,
+                                   an1,an,
+                                       hora1,hora,
+                                       min1,min,
+                                       seg1,seg,
+                                          num_ruta,aceptar  );
   }
   else if(BT4==1 && bandera4==1){
     bandera4=0;
@@ -757,12 +821,34 @@ void main(void)
    glcd_puts(NOMBRE_DISP,55,2,0,2,-1);    
 
    // Escribe NUMERO_PANTALLA "BUS####"
-   //glcd_puts("BUS",55,5,0,1,-1);
-   glcd_puts(NUM_DISP,59,5,0,1,-1);
+   glcd_puts("BUS",59,5,0,1,-1);
+   glcd_puts(NUM_DISP,82,5,0,1,-1);
 
    //Tiempo q muestra la pantalla de inicio
    delay_ms( DELAY_PANTALLA_INI ); 
    glcd_clear();             
+
+   
+   ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
+
+   // En caso de que no haya recibido tramas del sky
+   // previene que muestre valores de -1 en la hora y fecha
+   if (hora1 < 0 )
+   {
+      hora1 = 0; min1 = 0; seg1 = 0;
+        hora = 0; minu = 0;  seg = 0;
+   }
+
+   // En caso de que no haya fecha
+   if (mes < 0 )
+   {
+      dia = 0; dia1 = 0; 
+       mes = 0; mes1 = 0;
+        an = 0;  an1 = 0; 
+   }
+
+   if (num_ruta < 0) num_ruta = 0;
+   
 
    // Encender interrupciones
    #asm("sei")
@@ -774,7 +860,12 @@ void main(void)
    printf("AT$TTDEVID?\n\r"); 
    delay_us( 500 );
    obt();
+   
    act =1;
+   bandera1 = 0;
+   bandera2 = 0;
+   bandera3 = 0;
+
    while (1)
    {
 
@@ -794,7 +885,9 @@ void main(void)
 
       boton2();    
       
-      boton3();                                      
+      boton3();
+
+      boton4();                                      
 
       dibujar_senal();
       
@@ -812,12 +905,7 @@ void main(void)
          // Para mostrar el  Reloj
          if(pt==0) 
          {
-            // En caso de que no haya recibido tramas del sky
-            if (hora1 == 0xff )
-            {
-               hora1 = 0; min1 = 0; seg1 = 0;
-                 hora = 0; minu = 0;  seg = 0;
-            }
+            
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
             glcd_puts(reloj,7,2,0,2,-1);     
          } 
@@ -828,14 +916,14 @@ void main(void)
                glcd_clrln(3); 
                glcd_clrln(4); 
                glcd_clrln(5);
-           delay_ms(1);
-           glcd_puts("Punto de control",5,2,0,1,-1);
-           glcd_puts(punto,34,4,0,1,-1);       
-           buzz();
-           buzz();
-           delay_ms(2000);
-           pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-              glcd_clrln(2); 
+               delay_ms(1);
+               glcd_puts("Punto de control",5,2,0,1,-1);
+               glcd_puts(punto,34,4,0,1,-1);       
+               buzz();
+               buzz();
+               delay_ms(2000);
+               pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+               glcd_clrln(2); 
                glcd_clrln(3); 
                glcd_clrln(4); 
                glcd_clrln(5); 
