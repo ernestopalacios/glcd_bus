@@ -11,14 +11,9 @@
  **********************************************
  *
  *  
- *  uC:             ATmega324P
+ *  uC:             ATmega324PA
  *  Compilador:     CodeVision 2.x
  *  Cryst:          11.092 MHz
- *  
- *
- *  
- *
- *  
  *  
  *
  */
@@ -32,7 +27,7 @@
 #include "Includes/bus.h"
 
 
-////////////////////   INTERRUPCIÓN SERIAL  /////////////////////
+//////////////////////////////// INTERRUPCIÃ“N SERIAL /////////////////////////////////
 #ifndef RXB8
 #define RXB8 1
 #endif
@@ -112,48 +107,45 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
       #endif
    }
 }
-////////////////////  FIN INTERRUPCIÓN SERIAL  ///////////////////
+//-----------------------------  FIN INTERRUPCIÃ“N SERIAL  -----------------------------//
 
 
 
-////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////
+////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////
 #define BT5 PINA.0
 #define BT4 PINA.1
 #define BT3 PINA.2
 #define BT2 PINA.3
 #define BT1 PINA.4
 #define buzzer PORTD.4
-///////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------//
 
 
-//------------------------------------------------------------ VARIABLES ---------------------------------------------------//
+///////////////////////////////////////////////////////////////////////// VARIABLES ///////////////////////////////////////////////////////////////
 char NOMBRE_DISP[] = NOMBRE_PANTALLA;                 // variable 
 char NUM_DISP[] = NUMERO_PANTALLA;                    // variable
 char ruta_aux = ' ';                                  // variable auxiliar para almacenar la ruta a seleccionar
-char ruta= ' ';                                       // variable donde se almacena la ruta que se enviará al servidor
-bit bandera1=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 1
-bit bandera2=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 2
-bit bandera3=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 3
-bit bandera4=0;                                       // variable auxiliar para evitar el rebote al oprimir el botón 4
+char ruta= ' ';                                       // variable donde se almacena la ruta que se enviarÃ¡ al servidor
+bit bandera1=0;                                       // variable auxiliar para evitar el rebote al oprimir el botÃ³n 1
+bit bandera2=0;                                       // variable auxiliar para evitar el rebote al oprimir el botÃ³n 2
+bit bandera3=0;                                       // variable auxiliar para evitar el rebote al oprimir el botÃ³n 3
+bit bandera4=0;                                       // variable auxiliar para evitar el rebote al oprimir el botÃ³n 4
 bit aceptar=0;                                        // variable que permite enviar ruta de trabajo al servidor
-bit fin_de_ruta=0;                                    // variable que permita enviar al servidor la indicación que se ha terminado la ruta de trabajo
+bit fin_de_ruta=0;                                    // variable que permita enviar al servidor la indicaciÃ³n que se ha terminado la ruta de trabajo
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  // variables botones
 char aux;
 char punto[4], pt=0;                                  // variables para reconocer geocercas
-//-------------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------------------------------//
 
 static unsigned int time_count, act;
 eeprom int seg=0,seg1=0,minu=0,min1=0,hora=0,hora1=0,dia=0,dia1=0,mes=0,mes1=0,an=0,an1=0; //hora y fecha
-int gsm, gps, ind_sen; //indicadores de señal
+int gsm, gps, ind_sen; //indicadores de seÃ±al
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
 
 
-/** \brief Timer 0 overflow interrupt service routine
- *
- * Genera una interrupcíon cada: 
- */
 
- /////////////////////////////// INTERRUPCIÓN DEL TIMER0 /////////////////////////////////
+
+ /////////////////////////////////////////////// INTERRUPCIÃ“N DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
 interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
    TCNT0 = 6; 
@@ -164,7 +156,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       seg++; 
       time_count = 0;  //reiniciar contador
       
-      //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
+      //Envia las tramas para validar el nombre y la seÃ±al del equipo - cada segundo
          if(seg==4) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
          if(seg==9) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
           
@@ -172,7 +164,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       {
          seg=0; seg1++;
       
-         //Envío pra ver antenas, igualar hora y fecha...
+         //EnvÃ­o pra ver antenas, igualar hora y fecha...
          // Envio cada 20 segundos
          if (seg1%2==0)  
          {
@@ -204,27 +196,26 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       }
    }
 }
-//-------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------------------------------//
 
 
-////////////////////////////////// FUNCIONES ////////////////////////////////////////////
+\
+//***********************************************************************************************************************************//
+//////////////////////////////////////////////////////////// FUNCIONES ////////////////////////////////////////////////////////////////
+//***********************************************************************************************************************************//
 
-/** \brief Genera el sonido del buffer
- *
- * El tiempo que suena depende del Macro: DELAY BUZZER
- */
 
-////////////////// FUNCIÓN PARA EL SONIDO DEL BUZZER //////////////////
+////////////////// FUNCIÃ“N PARA EL SONIDO DEL BUZZER (El tiempo que suena depende del Macro: DELAY BUZZER) ////////////////// 
 void buzz()
 {       //Sonido de Buzzer
    buzzer=1; delay_ms( DELAY_BUZZER_MS );
    buzzer=0; delay_ms( DELAY_BUZZER_MS );
 }
-//-------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------------------------------//
 
 
 
- ////////////////////// FUNCIÓN DEL BOTÓN 1 (INICIO/FIN DE JORNADA) //////////////////////////
+ ////////////////////// FUNCIÃ“N DEL BOTÃ“N 1 (INICIO/FIN DE JORNADA) //////////////////////////
 void boton1()
 {  
    if( BT1 == 0 && bandera1==0)
@@ -236,6 +227,7 @@ void boton1()
       delay_ms( DELAY_BOTONES_MS );
       if(btn1 > 1)  // No pasa al caso 2
          btn1 = 0;
+
    } 
    else if(BT1==1 && bandera1==1){
       bandera1=0;
@@ -277,9 +269,11 @@ void boton1()
 
 
 
-//////////////////////// FUNCIÓN DEL BOTÓN 2 (ESCOGER RUTA) /////////////////////////////////
-void boton2()
-{     
+///////////////////////// FUNCIÃ“N DEL BOTÃ“N 2 (ESCOGER RUTA AUMENTAR LETRA) /////////////////////////////////
+
+
+
+void boton2(){     
    if(BT2==0 && btn1==1 && bandera2==0 && aceptar==0)
    {
       btn2++; 
@@ -354,53 +348,66 @@ void boton2()
 
 
 
-/////////////////////// FUNCIÓN DEL BOTÓN 3 (ACEPTAR RUTA) /////////////////////////////////
-void boton3(){     //Botón 3
-  if (BT3==0 && bandera3==0 && aceptar==0){ 
-    bandera3=1;
+/////////////////////// FUNCIÃ“N DEL BOTÃ“N 3 (ESCOGER RUTA DECREMENTAR LETRA) /////////////////////////////////
+void boton3(){     //BotÃ³n 3
+   if(BT3==0 && btn1==1 && bandera3==0 && aceptar==0)
+   {
+      btn2--; 
+      buzz();
+      bandera3=1;  
+      if(btn2<=0 && btn2!=15) 
+         btn2=12;
+      delay_ms(200);
+   }  
+   else if(BT3==1 && bandera3==1){
+      bandera3=0;
+   }
+}
+//------------------------------------------------------------------------------------------------------//
+
+
+
+//////////////////////// FUNCIÃ“N DEL BOTÃ“N 4 (INICIO/FIN DE RUTA) /////////////////////////////////
+void boton4(){     //BotÃ³n 4
+   if (BT4==0 && bandera4==0 && aceptar==0){ 
+    bandera4=bandera4+1;
     ruta=ruta_aux;
     aceptar=1;
     buzz();
     delay_ms(200);
 
-    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA
+    // AQUÃ SE DEBE ENVIAR LA TRAMA CON LA RUTA
+    // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
   }
-  else if(BT3==1 && bandera3==1){
-    bandera3=0;
+  else if(BT4==1 && bandera3==1){
+    bandera4=bandera4+1;
   }
-}
-//----------------------------------------------------------------------------------------//
-
-
-
-//////////////////////// FUNCIÓN DEL BOTÓN 4 (FIN DE RUTA) /////////////////////////////////
-void boton4(){     //Botón 4
-  if (BT4==0 && bandera4==0){
-    bandera4=1;
+  if (BT4==0 && bandera4==2){
+    btn2=15;
+    bandera4=bandera4+1;
     ruta=' ';
     aceptar=0;
     buzz();
     delay_ms(200);
-    // AQUÍ SE DEBE ENVIAR LA TRAMA CON LA RUTA VACÍA (FIN DE RUTA)
+    // AQUÃ SE DEBE ENVIAR LA TRAMA CON LA RUTA VACÃA (FIN DE RUTA)
   }
-  else if(BT4==1 && bandera4==1){
+  else if(BT4==1 && bandera4==3){
     bandera4=0;
   }
-  
 }
 //----------------------------------------------------------------------------------------//
 
 
 
-////////////////////// FUNCIÓN DEL BOTÓN 5 (ESTADO MECÁNICO) //////////////////////////////
-void boton5(){     //Botón 5
+////////////////////// FUNCIÃ“N DEL BOTÃ“N 5 (ESTADO MECÃNICO) //////////////////////////////
+void boton5(){     //BotÃ³n 5
   btn5++;
 }
 //----------------------------------------------------------------------------------------//
 
 
 
-////////////////////////////////// DIBUJAR SEÑAL GPRS //////////////////////////////////////
+////////////////////////////////// DIBUJAR BARRAS DE SEÃ‘AL GPRS //////////////////////////////////////
 void dibujar_senal(void)
 {
     switch (ind_sen){
@@ -419,10 +426,11 @@ void dibujar_senal(void)
     }; 
 
 }
-//---------------------------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------//
 
 
-/////////////////////////////////// FUNCIÓN PARA OBTENER LA TRAMA DEL GPS SKYPATROLL+ //////////////////////////////////
+
+/////////////////////////////////// FUNCIÃ“N PARA OBTENER LA TRAMA DEL GPS SKYPATROLL+ //////////////////////////////////
 void obt(void)
 {
 
@@ -438,11 +446,11 @@ void obt(void)
               rx_b0[i+3]== 'Q' &&   //81d
                rx_b0[i+4]== ':')    //58d
       { 
-        // Valor decimal de la intensidad de la señal
+        // Valor decimal de la intensidad de la seÃ±al
         barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 
         // Dibuja las barras en la panalla de acuerdo a la intensidad
-        // de la señal
+        // de la seÃ±al
         if( barras > 10 && barras < 15 ){
         ind_sen=1;
         }
@@ -474,7 +482,7 @@ void obt(void)
             rx_b0[i+1]== 'U' &&     
              rx_b0[i+2]== 'S')    
       { 
-        // Datos de punto de control, en cada posición del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
+        // Datos de punto de control, en cada posiciÃ³n del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
         punto[3] = rx_b0[i+19];
         punto[2] = rx_b0[i+18];
         punto[1] = rx_b0[i+17];
@@ -516,7 +524,7 @@ void obt(void)
                 (rx_b0[pos1+8] - 48) == 0 && 
                 (rx_b0[pos1+9] - 48) == 0)
             { 
-               gsm=0;   // Sin señal GSM
+               gsm=0;   // Sin seÃ±al GSM
             
             }else
                gsm=1;
@@ -597,7 +605,7 @@ void obt(void)
 
          
          // Comprueba que las comas no esten seguidas
-         // en caso de no haber señal gps.
+         // en caso de no haber seÃ±al gps.
          if( (rx_b0[ pos1+1 ]-48)>= 0 && 
              (rx_b0[ pos1+1 ]-48)< 10 &&
               pos2 != (pos1 +1)
@@ -629,7 +637,7 @@ void obt(void)
          gps = rx_b0 [ pos2 + 1 ]; 
          printf( "%c", gps);
      
-         //Obtener Hora y día
+         //Obtener Hora y dÃ­a
          if( (rx_b0[pos3+1]-48) >= 0 && 
              (rx_b0[pos3+1]-48) < 10 )
          {
@@ -794,7 +802,9 @@ void main(void)
 
       boton2();    
       
-      boton3();                                      
+      boton3();   
+
+      boton4();                                   
 
       dibujar_senal();
       
@@ -842,7 +852,7 @@ void main(void)
           }
 
 
-         // Con señal GPS
+         // Con seÃ±al GPS
          if( gps == 'A' )
          {     
             bmp_disp(GPS1,95,0,127,1);   
@@ -857,7 +867,7 @@ void main(void)
             glcd_puts(fecha,34,5,0,1,-1); 
          
          }
-         // Sin señal GPS
+         // Sin seÃ±al GPS
          else if (gps == 'V' || gps == '9' )
          {
             bmp_disp(GPS2,95,0,127,1);
