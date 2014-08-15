@@ -271,7 +271,7 @@ void boton1()
       buzz();
       aux = 1;  
       delay_ms( DELAY_BOTONES_MS );
-      if(btn1 > 1)  // No pasa al caso 2
+      if(btn1 > 1 && btn1!=5)  // No pasa al caso 2
          btn1 = 0;
 
    } 
@@ -318,6 +318,13 @@ void boton1()
          break;
       
       case 2:
+        if(aux==5){
+          //Muestra el chofer
+            bmp_disp(chofer,0,5,35,7); 
+
+            // Muestra la ruta
+            glcd_puts("MENSAJE ENVIADO",35,7,0,1,-1);
+        }
       break;
    };  
 }
@@ -444,7 +451,7 @@ void boton4()
       aceptar = 1;
       buzz();
       delay_ms(200);
-
+      aux=5;
       // AQUI SE DEBE ENVIAR LA TRAMA CON LA RUTA
       // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
       num_ruta = calcuar_ruta( ruta );
@@ -463,15 +470,15 @@ void boton4()
    }
 
    
-   //  ?? Porq
+   //  
    // si esque ya se ha presionado el BOTON 3 y se levanta el BOTON 4
-   else if(BT4 == 1 && bandera3==1)
+   else if(BT4 == 1 && bandera4==1)
    {
       bandera4++;
    }
    
    // La segunda vez que se presiona el boton dos
-   if ( BT4==0 && aceptar == 1)
+   if ( BT4==0 && aceptar == 1 bandera4==2)
    {
       btn2=15;
       bandera4++;
@@ -496,7 +503,7 @@ void boton4()
    }
    
    // si se ha presionado el boton cuatro por tercera vez
-   else if(BT4==1 && bandera4==1)
+   else if(BT4==1 && bandera4==3)
    {
       bandera4=0;
    }

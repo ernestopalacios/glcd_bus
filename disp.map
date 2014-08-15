@@ -1,26 +1,26 @@
 RAM Allocation
 Variable                                                          Address   Size
 --------------------------------------------------------------------------------
-prevLet                                                           0339h        2
-stat                                                              033Bh        1
-prevX                                                             033Ch        1
-prevY                                                             033Dh        1
-rx_b0                                                             033Eh      200
-NOMBRE_DISP                                                       0406h        5
-NUM_DISP                                                          040Bh        5
-btn2                                                              0410h        2
-btn5                                                              0412h        2
-aux                                                               0414h        1
-punto                                                             0415h        4
-pt                                                                0419h        1
-time_count                                                        041Ah        2
-act                                                               041Ch        2
-gsm                                                               041Eh        2
-gps                                                               0420h        2
-ind_sen                                                           0422h        2
-reloj                                                             0424h        8
-fecha                                                             042Ch        8
-_seed                                                             0434h        4
+prevLet                                                           0349h        2
+stat                                                              034Bh        1
+prevX                                                             034Ch        1
+prevY                                                             034Dh        1
+rx_b0                                                             034Eh      200
+NOMBRE_DISP                                                       0416h        5
+NUM_DISP                                                          041Bh        5
+btn2                                                              0420h        2
+btn5                                                              0422h        2
+aux                                                               0424h        1
+punto                                                             0425h        4
+pt                                                                0429h        1
+time_count                                                        042Ah        2
+act                                                               042Ch        2
+gsm                                                               042Eh        2
+gps                                                               0430h        2
+ind_sen                                                           0432h        2
+reloj                                                             0434h        8
+fecha                                                             043Ch        8
+_seed                                                             0444h        4
 
 EEPROM Allocation
 Variable                                                          Address   Size
