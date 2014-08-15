@@ -27,7 +27,7 @@
 #include "Includes/bus.h"
 
 
-//////////////////////////////// INTERRUPCI脫N SERIAL /////////////////////////////////
+//////////////////////////////// INTERRUPCION SERIAL /////////////////////////////////
 #ifndef RXB8
 #define RXB8 1
 #endif
@@ -57,13 +57,15 @@
 #define RX_COMPLETE (1<<RXC)
 
 
+typedef char int8;    //sirve para definir enteros consigno de 8
 
 #define NOMBRE_PANTALLA  "SITU"
-#define NUMERO_PANTALLA  "BUS1697"
+#define NUMERO_PANTALLA  "1697"
 #define DELAY_BUZZER_MS     100
 #define DELAY_BOTONES_MS    200
 #define INIT_DELAY_GLCD_MS   10
 #define DELAY_PANTALLA_INI 2000
+#define TOTAL_RUTAS          10  //N鷐ero total de rutas
 
 #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
 char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
@@ -107,7 +109,7 @@ interrupt [USART0_RXC] void usart0_rx_isr(void)
       #endif
    }
 }
-//-----------------------------  FIN INTERRUPCI脫N SERIAL  -----------------------------//
+//-----------------------------  FIN INTERRUPCION SERIAL  -----------------------------//
 
 
 
@@ -126,26 +128,43 @@ char NOMBRE_DISP[] = NOMBRE_PANTALLA;                 // variable
 char NUM_DISP[] = NUMERO_PANTALLA;                    // variable
 char ruta_aux = ' ';                                  // variable auxiliar para almacenar la ruta a seleccionar
 char ruta= ' ';                                       // variable donde se almacena la ruta que se enviar谩 al servidor
-bit bandera1=0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 1
-bit bandera2=0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 2
-bit bandera3=0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 3
-bit bandera4=0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 4
-bit aceptar=0;                                        // variable que permite enviar ruta de trabajo al servidor
-bit fin_de_ruta=0;                                    // variable que permita enviar al servidor la indicaci贸n que se ha terminado la ruta de trabajo
+char bandera1 = 0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 1
+char bandera2 = 0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 2
+char bandera3 = 0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 3
+char bandera4 = 0;                                       // variable auxiliar para evitar el rebote al oprimir el bot贸n 4
+char aceptar  = 0;                                        // variable que permite enviar ruta de trabajo al servidor
+
 unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  // variables botones
 char aux;
 char punto[4], pt=0;                                  // variables para reconocer geocercas
 //--------------------------------------------------------------------------------------------------------------------------------------------//
 
-static unsigned int time_count, act;
-eeprom int seg=0,seg1=0,minu=0,min1=0,hora=0,hora1=0,dia=0,dia1=0,mes=0,mes1=0,an=0,an1=0; //hora y fecha
-int gsm, gps, ind_sen; //indicadores de se帽al
+static unsigned int time_count;   // Contador del timer para los segundos
+static unsigned int act;          // Variable que guarda si la pantalla es autorizada
+
+eeprom int seg   @0x10;
+eeprom int seg1  @0x12;    // segundos en unidades y decenas
+eeprom int minu  @0x14;   
+eeprom int min1  @0x16;    // minutos en unidades y decenas
+eeprom int hora  @0x18;  
+eeprom int hora1 @0x1A;   // hora en unidades y decenas
+eeprom int dia   @0x1C;   
+eeprom int dia1  @0x1E;    // dias en unidades y decenas
+eeprom int mes   @0x20;   
+eeprom int mes1  @0x22;    // mes en unidades y decenas
+eeprom int an    @0x24;
+eeprom int an1   @0x26;     // anos en unidades y decenas
+
+eeprom int8 num_ruta @0x28;        // Transforma la letra de la ruta a un n鷐ero
+eeprom laborando     @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
+
+int gsm, gps, ind_sen; //indicadores de se馻l
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
 
 
 
 
- /////////////////////////////////////////////// INTERRUPCI脫N DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
+/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
 interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
    TCNT0 = 6; 
@@ -205,7 +224,12 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 //***********************************************************************************************************************************//
 
 
-////////////////// FUNCI脫N PARA EL SONIDO DEL BUZZER (El tiempo que suena depende del Macro: DELAY BUZZER) ////////////////// 
+
+////////////////// FUNCI覰 PARA EL SONIDO DEL BUZZER //////////////////
+/** \brief Genera el sonido del buffer
+ *
+ * El tiempo que suena depende del Macro: DELAY BUZZER
+ */
 void buzz()
 {       //Sonido de Buzzer
    buzzer=1; delay_ms( DELAY_BUZZER_MS );
@@ -214,8 +238,29 @@ void buzz()
 //------------------------------------------------------------------------------------------------------------------------//
 
 
+////////////////// FUNCI覰 PARA CALCULAR NUMERO DE RUTA //////////////////
+/** \brief Transforma el caracter de ruta a un n鷐ero
+ *
+ * Cambia de A -> 1; B->2 ...  etc, en caso de que el caracter pasado no 
+ * Corresponda a una letra devolvera -1
+ * 
+ * Solo soporta un carcater, m醲imo se puede tener 35 rutas.
+ */
+int8 calcuar_ruta( char ruta )
+{
+   int8 num_ruta = ruta - 0x40;
 
- ////////////////////// FUNCI脫N DEL BOT脫N 1 (INICIO/FIN DE JORNADA) //////////////////////////
+   // Verificar que la letra corresponde a un n鷐ero de ruta
+   // se puede crecer hasta 5 rutas mas de las definidas
+   if ( num_ruta > 0 && num_ruta <= TOTAL_RUTAS + 5 )
+      return num_ruta;
+   else
+      return 0; // El caracter no corresponde a una ruta.
+
+}
+
+
+///////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) //////////////////////////
 void boton1()
 {  
    if( BT1 == 0 && bandera1==0)
@@ -223,7 +268,7 @@ void boton1()
       btn1++;
       bandera1=1;
       buzz();
-      aux = 1;
+      aux = 1;  
       delay_ms( DELAY_BOTONES_MS );
       if(btn1 > 1)  // No pasa al caso 2
          btn1 = 0;
@@ -234,24 +279,34 @@ void boton1()
    }
 
    switch (btn1) {
-      case 0:
-         if(aux==1)
-         {
-            bmp_disp( vacio, 0, 5, 25, 7);
-            btn2=0; 
-            aux=0; 
-            
-            // Borra un caracter
-            glcd_putchar(' ',76,7,0,1); 
-            // Borra una trama de caracteres
-            glcd_puts("     ",44,7,0,1,-1); 
-         }      
-         break; 
       
+      //solamente quita la ruta de la pantalla
+      //no cierra sesion de la ruta actual
+      case 0:
+         if(aux == 1) // El aux 1 es para que se ejecute este codigo solo una vez?
+         {
+            bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+            btn2 = 15;                       // Carrera Vacia
+            aux = 0;                         // Hace una vez mientras se presione 
+                                             // el boton
+            
+            laborando = 0;  // No se encuentra en laborando.
+
+            // Borra el caracter de la carrera
+            glcd_putchar(' ',79,7,0,1); 
+            // Borra una trama de caracteres RUTA:
+            glcd_puts("      ",44,7,0,1,-1); 
+         }      
+      break; 
+      
+
       case 1:
          if(aux==1)
          {
             aux=0; 
+
+            // Muestra la RUTA A: primero y por defecto
+            btn2 = 1;
             
             //Muestra el chofer
             bmp_disp(chofer,0,5,35,7); 
@@ -269,25 +324,35 @@ void boton1()
 
 
 
-///////////////////////// FUNCI脫N DEL BOT脫N 2 (ESCOGER RUTA AUMENTAR LETRA) /////////////////////////////////
+///////////////////////// FUNCION DEL BOTON 2 (ESCOGER RUTA AUMENTAR LETRA) /////////////////////////////////
 
 
 
 void boton2(){     
-   if(BT2==0 && btn1==1 && bandera2==0 && aceptar==0)
+   
+   // Si se presiona el boton dos, luego de haber presionado el boton
+   // uno, una vez. Y a鷑 no se ha aceptado carrera
+   if(BT2==0 && btn1==1 && bandera2==0 && aceptar == 0)
    {
       btn2++; 
       buzz();
-      bandera2=1;  
-      if(btn2>12 && btn2!=15) 
-         btn2=1;
-      delay_ms(200);
-
+      bandera2 = 1;  
+      if( btn2 > 12 && btn2 != 15) 
+         btn2 = 1;
+      delay_ms(DELAY_BOTONES_MS);
       
    }  
-   else if(BT2==1 && bandera2==1){
+   
+   // Luego de presionar el boton, puede volver a presionarlo.
+   else if(BT2==1 && bandera2==1)
+   {
       bandera2=0;
    }
+
+   
+   // El switch lo hace constantemente, ya que esta en el main y
+   // no depende de ningun IF
+
    switch (btn2){
       case 1:
         ruta_aux='A';
@@ -338,7 +403,7 @@ void boton2(){
         
       break;  
       case 15:
-        ruta_aux=' ';
+        ruta_aux=' ';  // Carrera vacia
       break; 
    };         
       
@@ -348,9 +413,10 @@ void boton2(){
 
 
 
-/////////////////////// FUNCI脫N DEL BOT脫N 3 (ESCOGER RUTA DECREMENTAR LETRA) /////////////////////////////////
-void boton3(){     //Bot贸n 3
-   if(BT3==0 && btn1==1 && bandera3==0 && aceptar==0)
+/////////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) /////////////////////////////////
+void boton3()
+{     //Boton 3
+   if(BT3 == 0 && btn1==1 && bandera3==0 && aceptar==0)
    {
       btn2--; 
       buzz();
@@ -367,40 +433,82 @@ void boton3(){     //Bot贸n 3
 
 
 
-//////////////////////// FUNCI脫N DEL BOT脫N 4 (INICIO/FIN DE RUTA) /////////////////////////////////
-void boton4(){     //Bot贸n 4
-   if (BT4==0 && bandera4==0 && aceptar==0){ 
-    bandera4=bandera4+1;
-    ruta=ruta_aux;
-    aceptar=1;
-    buzz();
-    delay_ms(200);
+//////////////////////// FUNCION DEL BOTON 4 (INICIO/FIN DE RUTA) /////////////////////////////////
+void boton4()
+{     //Boton 4
+   
 
-    // AQU脥 SE DEBE ENVIAR LA TRAMA CON LA RUTA
-    // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
-  }
-  else if(BT4==1 && bandera3==1){
-    bandera4=bandera4+1;
-  }
-  if (BT4==0 && bandera4==2){
-    btn2=15;
-    bandera4=bandera4+1;
-    ruta=' ';
-    aceptar=0;
-    buzz();
-    delay_ms(200);
-    // AQU脥 SE DEBE ENVIAR LA TRAMA CON LA RUTA VAC脥A (FIN DE RUTA)
-  }
-  else if(BT4==1 && bandera4==3){
-    bandera4=0;
-  }
+   // Primera presi髇n del boton 4. Acepta la carrera. 
+   if ( BT4 == 0 && bandera4 == 0 && aceptar==0  )
+   { 
+      bandera4++;
+      ruta = ruta_aux;
+      aceptar = 1;
+      buzz();
+      delay_ms(200);
+
+      // AQUI SE DEBE ENVIAR LA TRAMA CON LA RUTA
+      // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
+      num_ruta = calcuar_ruta( ruta );
+
+      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+                                 NUM_DISP, 
+                                      dia1,dia,
+                                      mes1,mes,
+                                      an1,an,
+                                          hora1,hora,
+                                          min1,min,
+                                          seg1,seg,
+                                             num_ruta,aceptar  );
+      
+
+   }
+
+   
+   //  ?? Porq
+   // si esque ya se ha presionado el BOTON 3 y se levanta el BOTON 4
+   else if(BT4 == 1 && bandera3==1)
+   {
+      bandera4++;
+   }
+   
+   // La segunda vez que se presiona el boton dos
+   if ( BT4==0 && aceptar == 1)
+   {
+      btn2=15;
+      bandera4++;
+      ruta=' ';
+      aceptar=0;
+      buzz();
+      delay_ms( DELAY_BOTONES_MS );
+      
+      // AQU蛵 SE DEBE ENVIAR LA TRAMA CON LA RUTA VACIA (FIN DE RUTA)
+      num_ruta = calcuar_ruta( ruta );
+
+      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+                              NUM_DISP, 
+                                   dia1,dia,
+                                   mes1,mes,
+                                   an1,an,
+                                       hora1,hora,
+                                       min1,min,
+                                       seg1,seg,
+                                          num_ruta,aceptar  );
+
+   }
+   
+   // si se ha presionado el boton cuatro por tercera vez
+   else if(BT4==1 && bandera4==1)
+   {
+      bandera4=0;
+   }
 }
 //----------------------------------------------------------------------------------------//
 
 
 
-////////////////////// FUNCI脫N DEL BOT脫N 5 (ESTADO MEC脕NICO) //////////////////////////////
-void boton5(){     //Bot贸n 5
+////////////////////// FUNCION DEL BOTON 5 (ESTADO MEC脕NICO) //////////////////////////////
+void boton5(){     //Boton 5
   btn5++;
 }
 //----------------------------------------------------------------------------------------//
@@ -765,12 +873,36 @@ void main(void)
    glcd_puts(NOMBRE_DISP,55,2,0,2,-1);    
 
    // Escribe NUMERO_PANTALLA "BUS####"
-   //glcd_puts("BUS",55,5,0,1,-1);
-   glcd_puts(NUM_DISP,59,5,0,1,-1);
+   glcd_puts("BUS",59,5,0,1,-1);
+   glcd_puts(NUM_DISP,82,5,0,1,-1);
 
    //Tiempo q muestra la pantalla de inicio
    delay_ms( DELAY_PANTALLA_INI ); 
    glcd_clear();             
+
+   
+   ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
+
+   // En caso de que no haya recibido tramas del sky
+   // previene que muestre valores de -1 en la hora y fecha
+   if (hora1 < 0 )
+   {
+      hora1 = 0; min1 = 0; seg1 = 0;
+        hora = 0; minu = 0;  seg = 0;
+   }
+
+   // En caso de que no haya fecha
+   if (mes < 0 )
+   {
+      dia = 0; dia1 = 0; 
+       mes = 0; mes1 = 0;
+        an = 0;  an1 = 0; 
+   }
+
+   if (num_ruta < 0) num_ruta = 0;
+
+   ////////////////////////////////////////////////////////////////////
+   
 
    // Encender interrupciones
    #asm("sei")
@@ -782,7 +914,12 @@ void main(void)
    printf("AT$TTDEVID?\n\r"); 
    delay_us( 500 );
    obt();
+   
    act =1;
+   bandera1 = 0;
+   bandera2 = 0;
+   bandera3 = 0;
+
    while (1)
    {
 
@@ -793,18 +930,17 @@ void main(void)
          BIT_UART=1;  
       }
       
-      // Verifica el estado de los botones
+      // GRAFICA LA RUTA ACTUAL.
       glcd_putchar(ruta_aux,79,7,0,1);  
       
-       
-      
+             
       boton1();
 
       boton2();    
       
-      boton3();   
+      boton3();
 
-      boton4();                                   
+      boton4();                                      
 
       dibujar_senal();
       
@@ -822,12 +958,7 @@ void main(void)
          // Para mostrar el  Reloj
          if(pt==0) 
          {
-            // En caso de que no haya recibido tramas del sky
-            if (hora1 == 0xff )
-            {
-               hora1 = 0; min1 = 0; seg1 = 0;
-                 hora = 0; minu = 0;  seg = 0;
-            }
+            
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
             glcd_puts(reloj,7,2,0,2,-1);     
          } 
@@ -838,14 +969,14 @@ void main(void)
                glcd_clrln(3); 
                glcd_clrln(4); 
                glcd_clrln(5);
-           delay_ms(1);
-           glcd_puts("Punto de control",5,2,0,1,-1);
-           glcd_puts(punto,34,4,0,1,-1);       
-           buzz();
-           buzz();
-           delay_ms(2000);
-           pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-              glcd_clrln(2); 
+               delay_ms(1);
+               glcd_puts("Punto de control",5,2,0,1,-1);
+               glcd_puts(punto,34,4,0,1,-1);       
+               buzz();
+               buzz();
+               delay_ms(2000);
+               pt=0;   //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+               glcd_clrln(2); 
                glcd_clrln(3); 
                glcd_clrln(4); 
                glcd_clrln(5); 
