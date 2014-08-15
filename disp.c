@@ -156,7 +156,7 @@ eeprom int an    @0x24;
 eeprom int an1   @0x26;     // anos en unidades y decenas
 
 eeprom int8 num_ruta @0x28;        // Transforma la letra de la ruta a un número
-eeprom laborando     @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
+eeprom int laborando     @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
 
 int gsm, gps, ind_sen; //indicadores de señal
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
@@ -235,7 +235,7 @@ void buzz()
    buzzer=1; delay_ms( DELAY_BUZZER_MS );
    buzzer=0; delay_ms( DELAY_BUZZER_MS );
 }
-//------------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------//
 
 
 ////////////////// FUNCIÓN PARA CALCULAR NUMERO DE RUTA //////////////////
@@ -267,6 +267,7 @@ void boton1()
    {
       btn1++;
       bandera1=1;
+      laborando=1;
       buzz();
       aux = 1;  
       delay_ms( DELAY_BOTONES_MS );
@@ -325,9 +326,6 @@ void boton1()
 
 
 ///////////////////////// FUNCION DEL BOTON 2 (ESCOGER RUTA AUMENTAR LETRA) /////////////////////////////////
-
-
-
 void boton2(){     
    
    // Si se presiona el boton dos, luego de haber presionado el boton
@@ -439,7 +437,7 @@ void boton4()
    
 
    // Primera presiónn del boton 4. Acepta la carrera. 
-   if ( BT4 == 0 && bandera4 == 0 && aceptar==0  )
+   if ( BT4 == 0 && bandera4 == 0 && aceptar==0 && laborando==1 )
    { 
       bandera4++;
       ruta = ruta_aux;

@@ -38,6 +38,7 @@ mes1                                                              0022h        2
 an                                                                0024h        2
 an1                                                               0026h        2
 num_ruta                                                          0028h        1
+laborando                                                         002Ah        2
 
 Register Allocation
 Variable                                                          Register  Size

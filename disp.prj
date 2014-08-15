@@ -21,22 +21,22 @@ Active0=0
 EditorPanel0=0
 PageIndex0=0
 EditorPanel1=0
-TimeStamp1=1158505217
+TimeStamp1=1158632302
 PageIndex1=1
 OF2=Includes\bus.h
 Active2=0
 EditorPanel2=0
-TimeStamp2=1111116677
+TimeStamp2=1158567444
 PageIndex2=2
 OF3=Includes\GLCD.h
 Active3=0
 EditorPanel3=0
-TimeStamp3=1158453493
+TimeStamp3=1158567444
 PageIndex3=3
 OF4=Includes\font.h
 Active4=0
 EditorPanel4=0
-TimeStamp4=1109888581
+TimeStamp4=1158567444
 PageIndex4=4
 F1=disp.c
 TimeStamp0=1150794674
@@ -141,7 +141,7 @@ WarningExternalDeclaredNeverDefined=1
 WarningUnknownPragma=1
 DebugBootLoader=0
 WatchAVR8LAutoVariables=0
-Build=1536
+Build=1539
 UseEEPROMLocation0=1
 ExternalInterruptVectors=0
 IncludePath0=
@@ -208,6 +208,7 @@ LibraryPath28=
 LibraryPath29=
 LibraryPath30=
 LibraryPath31=
+COFFileTimeStamp=-1
 [Assembler]
 OutputFormat=1
 [Libraries]
@@ -330,11 +331,11 @@ BK7=-1
 BK8=-1
 BK9=-1
 [Bookmarks2]
-TimeStamp=1158505217
-Row=10
-Column=56
+TimeStamp=1158632302
+Row=0
+Column=0
 ScrollPosX=0
-ScrollPosY=2
+ScrollPosY=0
 BK0=-1
 BK1=-1
 BK2=-1
@@ -350,7 +351,7 @@ Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1158505316
+TimeStamp=1158632388
 [Bookmarks3]
 TimeStamp=1109596746
 Row=2
@@ -402,7 +403,7 @@ BK7=-1
 BK8=-1
 BK9=-1
 [Bookmarks6]
-TimeStamp=1109888581
+TimeStamp=1158567444
 Row=0
 Column=0
 ScrollPosX=0
@@ -478,11 +479,11 @@ Blocks=0
 [FoldedCode4]
 Blocks=0
 [Bookmarks10]
-TimeStamp=1111116677
-Row=558
-Column=8
+TimeStamp=1158567444
+Row=0
+Column=0
 ScrollPosX=0
-ScrollPosY=555
+ScrollPosY=0
 BK0=-1
 BK1=-1
 BK2=-1
@@ -494,11 +495,11 @@ BK7=-1
 BK8=-1
 BK9=-1
 [Bookmarks11]
-TimeStamp=1158505204
-Row=241
-Column=28
+TimeStamp=1158567444
+Row=0
+Column=0
 ScrollPosX=0
-ScrollPosY=232
+ScrollPosY=0
 BK0=-1
 BK1=-1
 BK2=-1
@@ -617,14 +618,6 @@ BK9=-1
 Blocks=0
 [FoldedCode17]
 Blocks=0
-[FoldedCode2]
-Blocks=0
-[FoldedCode6]
-Blocks=0
-[FoldedCode11]
-Blocks=0
-[FoldedCode10]
-Blocks=0
 [Bookmarks18]
 TimeStamp=1158571661
 Row=13
@@ -643,19 +636,71 @@ BK8=-1
 BK9=-1
 [FoldedCode18]
 Blocks=0
+[CompilerDebug]
+Build=1538
+RebuildAll=0
+LinkageInformationPresent=1
+UseEEPROMLocation0=1
+[BuildInfoCompiler]
+L1=Build configuration: Release
+L2=Chip: ATmega324P
+L3=Clock frequency: 11.059200 MHz
+L4=Program type: Application
+L5=Memory model: Small
+L6=Optimize for: Size
+L7=(s)printf features: int, width
+L8=(s)scanf features: int, width
+L9=Promote 'char' to 'int': Yes
+L10='char' is unsigned: Yes
+L11=global 'const' stored in FLASH: No
+L12=8 bit enums: Yes
+L13=Enhanced function parameters passing: Yes
+L14=Automatic register allocation: Yes
+L15=Smart register allocation: Yes
+L16=
+L17=Build: 1537
+L18=15100 line(s) compiled
+L19=No errors
+L20=5 warning(s)
+L21=Data Stack area: 0x100 to 0x2FF
+L22=Data Stack size: 512 byte(s)
+L23=Estimated Data Stack usage: 145 byte(s)
+L24=
+L25=RAM Global variables area: 0x300 to 0x437
+L26=RAM Global variables size: 312 byte(s)
+L27=
+L28=Hardware Stack area: 0x438 to 0x8FF
+L29=Hardware Stack size: 1224 byte(s)
+L30=
+L31=Heap size: 0 byte(s)
+L32=
+L33=EEPROM usage: 0 byte(s), 0.0% of EEPROM
+L34=
+L35=EEPROM usage: 0 byte(s), 0.0% of EEPROM
+Lines=33
+[BuildInfoAssembler]
+Lines=0
 [HeadersList]
 Files=1
-F1=C:\Users\DELL\GIT\glcd_bus\disp.c
+F1=C:\Users\David\GIT\glcd_bus\disp.c
 [Header1]
 Files=11
-F1=C:\Program Files\CVAVR2\inc\mega324.h
-F2=C:\Program Files\CVAVR2\inc\mega324_bits.h
-F3=C:\Program Files\CVAVR2\inc\delay.h
-F4=C:\Program Files\CVAVR2\inc\stdio.h
-F5=C:\Program Files\CVAVR2\inc\stdarg.h
-F6=C:\Program Files\CVAVR2\inc\stdlib.h
+F1=c:\Program Files\CVAVR2\inc\mega324.h
+F2=c:\Program Files\CVAVR2\inc\mega324_bits.h
+F3=c:\Program Files\CVAVR2\inc\delay.h
+F4=c:\Program Files\CVAVR2\inc\stdio.h
+F5=c:\Program Files\CVAVR2\inc\stdarg.h
+F6=c:\Program Files\CVAVR2\inc\stdlib.h
 F7=Includes\GLCD.h
-F8=C:\Program Files\CVAVR2\inc\math.h
-F9=C:\Program Files\CVAVR2\inc\string.h
+F8=c:\Program Files\CVAVR2\inc\math.h
+F9=c:\Program Files\CVAVR2\inc\string.h
 F10=Includes\font.h
 F11=Includes\bus.h
+[FoldedCode2]
+Blocks=0
+[FoldedCode6]
+Blocks=0
+[FoldedCode11]
+Blocks=0
+[FoldedCode10]
+Blocks=0
