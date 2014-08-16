@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.6                     *
+ *  version:        0.8.6.1                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -59,13 +59,15 @@
 
 typedef char int8;    //sirve para definir enteros consigno de 8
 
-#define NOMBRE_PANTALLA  "SITU"
-#define NUMERO_PANTALLA  "1697"
-#define DELAY_BUZZER_MS     100
-#define DELAY_BOTONES_MS    200
-#define INIT_DELAY_GLCD_MS   10
-#define DELAY_PANTALLA_INI 2000
-#define TOTAL_RUTAS          10  //Número total de rutas
+#define NOMBRE_PANTALLA       "SITU"
+#define NUMERO_PANTALLA       "1697"
+#define DELAY_BUZZER_MS          100
+#define DELAY_BOTONES_MS         200
+#define INIT_DELAY_GLCD_MS        10
+#define DELAY_PANTALLA_INI      2000
+#define TOTAL_RUTAS              100  //Número total de rutas
+#define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
+#define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
 
 #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
 char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
@@ -143,18 +145,18 @@ int unidades_ruta, decenas_ruta, centenas_ruta;
 static unsigned int time_count;   // Contador del timer para los segundos
 static unsigned int act;          // Variable que guarda si la pantalla es autorizada
 
-eeprom int seg   @0x10;
-eeprom int seg1  @0x12;    // segundos en unidades y decenas
-eeprom int minu  @0x14;   
-eeprom int min1  @0x16;    // minutos en unidades y decenas
-eeprom int hora  @0x18;  
-eeprom int hora1 @0x1A;   // hora en unidades y decenas
-eeprom int dia   @0x1C;   
-eeprom int dia1  @0x1E;    // dias en unidades y decenas
-eeprom int mes   @0x20;   
-eeprom int mes1  @0x22;    // mes en unidades y decenas
-eeprom int an    @0x24;
-eeprom int an1   @0x26;     // anos en unidades y decenas
+eeprom int seg   @0x80;
+eeprom int seg1  @0x82;    // segundos en unidades y decenas
+eeprom int minu  @0x84;   
+eeprom int min1  @0x86;    // minutos en unidades y decenas
+eeprom int hora  @0x88;  
+eeprom int hora1 @0x8A;   // hora en unidades y decenas
+eeprom int dia   @0x8C;   
+eeprom int dia1  @0x8E;    // dias en unidades y decenas
+eeprom int mes   @0x90;   
+eeprom int mes1  @0x92;    // mes en unidades y decenas
+eeprom int an    @0x94;
+eeprom int an1   @0x96;     // anos en unidades y decenas
 
 eeprom int8 num_ruta @0x28;        // Transforma la letra de la ruta a un número
 eeprom int laborando     @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
@@ -177,7 +179,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       time_count = 0;  //reiniciar contador
       
       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-         if(seg==1 && seg1==1 && ) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+         if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
          if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
       //Envio pra ver antenas, igualar hora y fecha...
          // Envio cada 20 segundos
@@ -267,8 +269,9 @@ void boton1()
       bandera1=1;
       buzz();
       aux = 1;  
+      laborando = 1;
       delay_ms( DELAY_BOTONES_MS );
-      if(btn1 > 1)  // No pasa al caso 2
+      if(btn1 > 1 && btn1!=5)  // No pasa al caso 2
          btn1 = 0;
 
    } 
@@ -315,6 +318,13 @@ void boton1()
          break;
       
       case 2:
+         if(aux==5){
+          //Muestra el chofer
+            bmp_disp(chofer,0,5,35,7); 
+
+            // Muestra la ruta
+            glcd_puts("MENSAJE ENVIADO",35,7,0,1,-1);
+         }
       break;
    };  
 }
@@ -437,13 +447,14 @@ void boton4()
    
 
    // Primera presiónn del boton 4. Acepta la carrera. 
-   if ( BT4 == 0 && bandera4 == 0 && aceptar==0  )
+   if ( BT4 == 0 && bandera4 == 0 && aceptar==0 && laborando == 1  )
    { 
       bandera4++;
       ruta = ruta_aux;
       aceptar = 1;
       buzz();
       delay_ms(200);
+      aux=5;
 
       // AQUI SE DEBE ENVIAR LA TRAMA CON LA RUTA
       // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
@@ -463,15 +474,15 @@ void boton4()
    }
 
    
-   //  ?? Porq
+   //  
    // si esque ya se ha presionado el BOTON 3 y se levanta el BOTON 4
-   else if(BT4 == 1 && bandera3==1)
+   else if(BT4 == 1 && bandera4==1)
    {
       bandera4++;
    }
    
    // La segunda vez que se presiona el boton dos
-   if ( BT4==0 && aceptar == 1)
+   if ( BT4==0 && aceptar == 1 && bandera4 == 2)
    {
       btn2=15;
       bandera4++;
@@ -496,7 +507,7 @@ void boton4()
    }
    
    // si se ha presionado el boton cuatro por tercera vez
-   else if(BT4==1 && bandera4==1)
+   else if(BT4==1 && bandera4==3)
    {
       bandera4=0;
    }
@@ -536,11 +547,14 @@ void dibujar_senal(void)
 
 
 
-/////////////////////////////////// FUNCIÃ“N PARA OBTENER LA TRAMA DEL GPS SKYPATROLL+ //////////////////////////////////
+/////////////////////////////////// FUNCION PARA OBTENER LA TRAMA DEL GPS SKYPATROLL+ //////////////////////////////////
 void obt(void)
 {
 
-   int i,j,n=0,n1,n2,n3,n4,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
+   int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
+   int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
+
+   char digito_hora_temp; //Variable temporal para la
    
    for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
    {     
@@ -590,34 +604,36 @@ void obt(void)
       { 
         // Datos de punto de control, en cada posiciÃ³n del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
                                  //010A
-        punto[0] = rx_b0[i+16]-48;  //   1 
-        punto[1] = rx_b0[i+17]-48;  //   F
-        punto[2] = rx_b0[i+18]-48;  //   0
-        punto[3] = rx_b0[i+19]-48;  //   A
+         punto[0] = rx_b0[i+16]-48;  //   1 
+         punto[1] = rx_b0[i+17]-48;  //   F
+         punto[2] = rx_b0[i+18]-48;  //   0
+         punto[3] = rx_b0[i+19]-48;  //   A
        
-        if(punto[3]==17){
-          punto[3]=10;
-        }
+         if(punto[3]==17){
+            punto[3]=10;
+         } 
         
-        if(punto[0]>=17){
-         punto[0]=punto[0]-7;
-        }
-        if(punto[1]>=17){
-         punto[1]=punto[1]-7;
-        }
+         if(punto[0]>=17){
+            punto[0]=punto[0]-7;
+         }
+
+         if(punto[1]>=17){
+            punto[1]=punto[1]-7;
+         }
              
-      //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
-        if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
-        pt = 1;
-        
-        unidades_ruta= (punto[2]*10) + punto[3];
-        decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10; 
-        centenas_ruta=     unidades_ruta  +decenas_ruta;
-        
-        sprintf(no_pt,"P%d", centenas_ruta);     
-        }
-        
-     }
+         //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
+         if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
+            
+            pt = 1;
+           
+            unidades_ruta= (punto[2]*10) + punto[3];
+            decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10; 
+            centenas_ruta=     unidades_ruta  +decenas_ruta;
+           
+            sprintf(no_pt,"P%d", centenas_ruta);     
+         }
+           
+      }
 
      
       //NETIP
@@ -726,20 +742,38 @@ void obt(void)
 
          
          // Comprueba que las comas no esten seguidas
-         // en caso de no haber seÃ±al gps.
+         // en caso de no haber senial gps.
          if( (rx_b0[ pos1+1 ]-48)>= 0 && 
              (rx_b0[ pos1+1 ]-48)< 10 &&
               pos2 != (pos1 +1)
            )
          {
      
-            seg  =rx_b0[pos1 + 6 ]-48;
-            seg1 =rx_b0[pos1 + 5 ]-48;
-            minu =rx_b0[pos1 + 4 ]-48;
-            min1 =rx_b0[pos1 + 3 ]-48;
-            n2   =rx_b0[pos1 + 2 ]-48;
-            n1   =rx_b0[pos1 + 1 ]-48;
-      
+            digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               seg = digito_hora_temp;
+
+            digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               seg1 = digito_hora_temp;
+
+            digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               minu = digito_hora_temp;
+
+            digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               min1  = digito_hora_temp;
+
+            digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               n2 = digito_hora_temp;
+
+            digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
+            if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+               n1  = digito_hora_temp;
+             
+                  
             n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
             n4 = n3 - 5;  // Zona horaria
 
@@ -755,10 +789,11 @@ void obt(void)
          
          }
     
+         // Comprueva la conexión de GPS
          gps = rx_b0 [ pos2 + 1 ]; 
-         printf( "%c", gps);
+         printf( "%c", gps);  //Herramienta de DEBUG
      
-         //Obtener Hora y dÃ­a
+         //Obtener Hora y dia
          if( (rx_b0[pos3+1]-48) >= 0 && 
              (rx_b0[pos3+1]-48) < 10 )
          {
@@ -775,13 +810,7 @@ void obt(void)
             
          }else{
 
-            // ??
-            an1  = an1;
-            an   = an;
-            mes1 = mes1;
-            mes  = mes;
-            dia1 = dia1;
-            dia  = dia; 
+          // No actualizar la hora, continuar con la anterior
          }
       }
    }
@@ -979,84 +1008,107 @@ void main(void)
          
          else if(pt==1)
          {     //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5); 
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5); 
+            
+            delay_ms(1);
+            
+            glcd_puts(no_pt,48,3,0,2,1);
+            //glcd_puts(nombre_pt,10,2,0,1,-2);
+             
+            buzz();
+            buzz();
+            
+            delay_ms(MOSTRAR_NUM_RUTA_MS);                  
+            
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);    
                
-               delay_ms(1);
-               
-               glcd_puts(no_pt,48,3,0,2,1);
-               //glcd_puts(nombre_pt,10,2,0,1,-2);
-                
-               buzz();
-               buzz();
-               
-               delay_ms(2000);                  
-               
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);    
-               
-               pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-          }
-          else if (pt==2){
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5); 
-               
-               delay_ms(1);
-               
-               glcd_puts("MENSAJE",30,2,0,1,1);
-               glcd_puts("ENVIADO ",30,4,0,1,1);
-                
-               buzz();  buzz();
-               
-               delay_ms(1000);                  
-               
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);    
-               
-               pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-          }
+            pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+         }
+         else if (pt==2){
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5); 
+            
+            delay_ms(1);
+            
+            glcd_puts("MENSAJE",30,2,0,1,1);
+            glcd_puts("ENVIADO ",30,4,0,1,1);
+             
+            buzz();  
+            buzz();
+            
+            delay_ms(MOSTRAR_MSN_ENV_MS);                  
+            
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);    
+            
+            pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+         }
           
-          else if (pt==3){
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);  
-               delay_ms(1);
-               glcd_puts("FIN RUTA",28,3,0,1,1);
-               buzz();  buzz();
-               delay_ms(1000);                  
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);    
-               pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-          }
-          else if (pt==4){
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);
-               delay_ms(1);
-               glcd_puts("INICIO RUTA",20,3,0,1,1);
-               buzz();  buzz();
-               delay_ms(1000);                  
-               glcd_clrln(2); glcd_clrln(3); glcd_clrln(4); glcd_clrln(5);     
-               pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-          }
+         else if (pt==3){
+               
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);  
+            delay_ms(1);
+
+            glcd_puts("FIN RUTA",28,3,0,1,1);
+
+            buzz();  
+            buzz();
+            
+            delay_ms(1000);                  
+            
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);    
+            pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+         }
+         else if (pt==4){
+               
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);
+            delay_ms(1);
+
+            glcd_puts("INICIO RUTA",20,3,0,1,1);
+            buzz();  
+            buzz();
+            delay_ms(MOSTRAR_MSN_ENV_MS);
+
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);     
+            pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+         }
 
          // Con señal GPS
          if( gps == 'A' )
          {     
             bmp_disp(GPS1,95,0,127,1);   
 
-            // En caso de que no haya recibido tramas del sky
-            if (hora1 == 0xff )
-            {
-               hora1 = 0; min1 = 0; seg1 = 0;
-                 hora = 0; minu = 0;  seg = 0;
-            }
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
             glcd_puts(fecha,34,5,0,1,-1); 
          
          }
          // Sin seÃ±al GPS
-         else if (gps == 'V' || gps == '9'  )
+         else if (gps == 'V' || gps == '9' )
          {
             bmp_disp(GPS2,95,0,127,1);
             
-            // En caso de que no haya recibido tramas del sky
-            if (hora1 == 0xff )
-            {
-               hora1 = 0; min1 = 0; seg1 = 0;
-                 hora = 0; minu = 0;  seg = 0;
-            }
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
             glcd_puts(fecha,34,5,0,1,-1); 
             
