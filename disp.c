@@ -145,21 +145,37 @@ int unidades_ruta, decenas_ruta, centenas_ruta;
 static unsigned int time_count;   // Contador del timer para los segundos
 static unsigned int act;          // Variable que guarda si la pantalla es autorizada
 
-eeprom int seg   @0x80;
-eeprom int seg1  @0x82;    // segundos en unidades y decenas
-eeprom int minu  @0x84;   
-eeprom int min1  @0x86;    // minutos en unidades y decenas
-eeprom int hora  @0x88;  
-eeprom int hora1 @0x8A;   // hora en unidades y decenas
-eeprom int dia   @0x8C;   
-eeprom int dia1  @0x8E;    // dias en unidades y decenas
-eeprom int mes   @0x90;   
-eeprom int mes1  @0x92;    // mes en unidades y decenas
-eeprom int an    @0x94;
-eeprom int an1   @0x96;     // anos en unidades y decenas
+eeprom int8 seg   @0x80;
+eeprom int8 seg1  @0x82;    // segundos en unidades y decenas
+eeprom int8 minu  @0x84;   
+eeprom int8 min1  @0x86;    // minutos en unidades y decenas
+eeprom int8 hora  @0x88;  
+eeprom int8 hora1 @0x8A;    // hora en unidades y decenas
+eeprom int8 dia   @0x8C;   
+eeprom int8 dia1  @0x8E;    // dias en unidades y decenas
+eeprom int8 mes   @0x90;   
+eeprom int8 mes1  @0x92;    // mes en unidades y decenas
+eeprom int8 an    @0x94;
+eeprom int8 an1   @0x96;     // anos en unidades y decenas
 
-eeprom int8 num_ruta @0x28;        // Transforma la letra de la ruta a un número
-eeprom int laborando     @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
+eeprom int8 num_ruta   @0x28;        // Transforma la letra de la ruta a un número
+eeprom int8 laborando  @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
+
+//-------------------------------------------------------------------------------------------------------------------------------------------//
+// Variables guardadas en la flash
+int8 _seg  = 0;
+int8 _seg1 = 0;    // segundos en unidades y decenas
+int8 _minu = 0;   
+int8 _min1 = 0;    // minutos en unidades y decenas
+int8 _hora = 0;  
+int8 _hora1= 0;    // hora en unidades y decenas
+int8 _dia  = 0;   
+int8 _dia1 = 0;    // dias en unidades y decenas
+int8 _mes  = 0;   
+int8 _mes1 = 0;    // mes en unidades y decenas
+int8 _an   = 0;
+int8 _an1  = 0;     // anos en unidades y decenas
+
 
 int gsm, gps, ind_sen; //indicadores de señal
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
@@ -462,12 +478,12 @@ void boton4()
       pt=4;
       printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
                                  NUM_DISP, 
-                                      dia1,dia,
-                                      mes1,mes,
-                                      an1,an,
-                                          hora1,hora,
-                                          min1,min,
-                                          seg1,seg,
+                                      _dia1,_dia,
+                                      _mes1,_mes,
+                                      _an1,_an,
+                                          _hora1,hora,
+                                          _min1 ,minu,
+                                          _seg1 ,seg, 
                                              num_ruta,aceptar  );
       
 
@@ -486,8 +502,7 @@ void boton4()
    {
       btn2=15;
       bandera4++;
-      ruta=' ';
-      aceptar=0;
+      aceptar = 0;
       buzz();
       delay_ms( DELAY_BOTONES_MS );
       
@@ -495,14 +510,16 @@ void boton4()
       num_ruta = calcuar_ruta( ruta );
       pt=3;
       printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
-                              NUM_DISP, 
-                                   dia1,dia,
-                                   mes1,mes,
-                                   an1,an,
-                                       hora1,hora,
-                                       min1,min,
-                                       seg1,seg,
-                                          num_ruta,aceptar  );
+                                 NUM_DISP, 
+                                      _dia1,_dia,
+                                      _mes1,_mes,
+                                      _an1,_an,
+                                          _hora1,hora,
+                                          _min1 ,minu,
+                                          _seg1 ,seg, 
+                                             num_ruta,aceptar  );
+      
+      ruta=' ';
 
    }
    
@@ -927,21 +944,22 @@ void main(void)
 
    // En caso de que no haya recibido tramas del sky
    // previene que muestre valores de -1 en la hora y fecha
-   if (hora1 < 0 )
+   if (hora1 == 0xff )
    {
       hora1 = 0; min1 = 0; seg1 = 0;
         hora = 0; minu = 0;  seg = 0;
    }
 
    // En caso de que no haya fecha
-   if (mes < 0 && dia < 0 && an < 0)
+   if (mes == 0xff && dia == 0xff && an == 0xff)
    {
       dia = 0; dia1 = 0; 
        mes = 0; mes1 = 0;
         an = 0;  an1 = 0; 
    }
 
-   if (num_ruta < 0) num_ruta = 0;
+   if (num_ruta  == 0xff) num_ruta  = 0;
+   if (laborando == 0xff) laborando = 0;
 
    ////////////////////////////////////////////////////////////////////
    
@@ -1003,6 +1021,22 @@ void main(void)
          if(pt==0) 
          {
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
+            //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
+            
+            // pasa de la eeprom a la flash del micro
+            _seg  = seg  ;
+            _seg1 = seg1 ;    // segundos en unidades y decenas
+            _minu = minu ;   
+            _min1 = min1 ;    // minutos en unidades y decenas
+            _hora = hora ;  
+            _hora1= hora1;    // hora en unidades y decenas
+            _dia  = dia  ;   
+            _dia1 = dia1 ;    // dias en unidades y decenas
+            _mes  = mes  ;   
+            _mes1 = mes1 ;    // mes en unidades y decenas
+            _an   = an   ;
+            _an1  = an1  ;     // anos en unidades y decenas
+
             glcd_puts(reloj,7,2,0,2,-1);     
          } 
          
@@ -1095,7 +1129,7 @@ void main(void)
             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
          }
 
-         // Con señal GPS
+         // Con senal GPS
          if( gps == 'A' )
          {     
             bmp_disp(GPS1,95,0,127,1);   
@@ -1104,7 +1138,7 @@ void main(void)
             glcd_puts(fecha,34,5,0,1,-1); 
          
          }
-         // Sin seÃ±al GPS
+         // Sin senal GPS
          else if (gps == 'V' || gps == '9' )
          {
             bmp_disp(GPS2,95,0,127,1);
