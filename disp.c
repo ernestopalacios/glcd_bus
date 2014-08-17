@@ -136,7 +136,13 @@ char bandera3 = 0;                                       // variable auxiliar pa
 char bandera4 = 0;                                       // variable auxiliar para evitar el rebote al oprimir el botÃ³n 4
 char aceptar  = 0;                                        // variable que permite enviar ruta de trabajo al servidor
 
-unsigned int btn1=0, btn2=0, btn3=0, btn4=0, btn5=0;  // variables botones
+// Contadores de las presiones de botones
+char btn1=0;          //  Cuenta entre 1 y 2 = 1 Inicia Sesion, 2 Cierra sesion 
+char btn2=0;         // Cuentra entre 1 y 12 =  Ruta seleccionada. Boton 2 aumenta el contador
+char btn3=0;        // No se usa, Boton 3 disminuye el contador btn2
+char btn4=0;       // Cuenta entre 1 y 2 = 1 Acepta Ruta, 2 Cancela Carrera
+char btn5=0;      // Cuenta entre 1 y 5 = Cambia los estados mecanicos del bus.
+
 char aux;
 char punto[4], pt=0, no_pt[4], nombre_pt[20];        // variables para reconocer geocercas
 int unidades_ruta, decenas_ruta, centenas_ruta;
@@ -180,6 +186,8 @@ int8 _mes1 = 0;    // mes en unidades y decenas
 int8 _an   = 0;
 int8 _an1  = 0;     // anos en unidades y decenas
 
+int8 _num_ruta = 0;
+int8 _laborando = 0;
 
 int gsm, gps, ind_sen; //indicadores de señal
 char reloj[8], fecha[8];  //vectores para imprmir GLCD
@@ -267,12 +275,11 @@ void buzz()
  */
 int8 calcuar_ruta( char ruta )
 {
-   int8 num_ruta = ruta - 0x40;
+   int8 numero_ruta = ruta - 0x40;
 
    // Verificar que la letra corresponde a un número de ruta
-   // se puede crecer hasta 5 rutas mas de las definidas
-   if ( num_ruta > 0 && num_ruta <= TOTAL_RUTAS + 5 )
-      return num_ruta;
+   if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
+      return numero_ruta;
    else
       return 0; // El caracter no corresponde a una ruta.
 
@@ -288,7 +295,7 @@ int8 calcuar_ruta( char ruta )
  */
 void enviar_estado_ruta(){
    
-   num_ruta = calcuar_ruta( ruta );
+   _num_ruta = calcuar_ruta( ruta );
    printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
                                     NUM_DISP, 
                                          _dia1,_dia,
@@ -297,7 +304,7 @@ void enviar_estado_ruta(){
                                              _hora1,hora,
                                              _min1 ,minu,
                                              _seg1 ,seg, 
-                                                num_ruta,aceptar  );
+                                                _num_ruta,aceptar  );
 }
 
 
@@ -318,44 +325,53 @@ void envia_estado_login(){
                                           _min1 ,minu,
                                           _seg1 ,seg, 
                                             // id_conductor, 1234 temporalmente
-                                               laborando  );
+                                               _laborando  );
 }
 
 ///////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) //////////////////////////
 void boton1()
 {  
+   // Primera presion del botòn
    if( BT1 == 0 && bandera1==0)
    {
       pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
       btn1++;                          // Aumenta el contador del boton
       bandera1=1;                     // Evita que vuelva a entrar al mismo boton
       
-      aux = 1;  
-      laborando = 1;                  // INICIA SESION  ***
-      
       buzz();
       delay_ms( DELAY_BOTONES_MS );
-      if(btn1 > 1 && btn1!=5)  // No pasa al caso 2
-         btn1 = 0;
 
-   } 
-   else if(BT1==1 && bandera1==1){
-      bandera1=0;
-   }
+      switch (btn1) 
+      {
+         // PRIMERA PRESION DEL BOTON
+         case 1:
+            
+            // Envia Inicio de sesion al servidor
+            _laborando = 1;                  // INICIA SESION  ***
+            envia_estado_login();
+            // DEBE HABILITAR EL BOTON 4
 
-   switch (btn1) {
-      
-      //solamente quita la ruta de la pantalla
-      //no cierra sesion de la ruta actual
-      case 0:
-         if(aux == 1) // El aux 1 es para que se ejecute este codigo solo una vez?
-         {
+            // Muestra la RUTA A: primero y por defecto
+            btn2 = 1;
+            
+            //Muestra el chofer
+            bmp_disp(chofer,0,5,35,7); 
+
+            // Muestra la ruta
+            glcd_puts("RUTA:",44,7,0,1,-1);
+         
+         break;
+         
+         // SEGUNDA PRESION DEL BOTON
+         //solamente quita la ruta de la pantalla
+         //no cierra sesion de la ruta actual
+         case 2:
             bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
             btn2 = 15;                       // Carrera Vacia
             aux = 0;                         // Hace una vez mientras se presione 
                                              // el boton
             
-            laborando = 0;     // No se encuentra en laborando.
+            _laborando = 0;     // No se encuentra en laborando.
             pt=5;             // Muestra mensaje de FIN JORNADA  ***
             envia_estado_login();
 
@@ -370,30 +386,20 @@ void boton1()
             glcd_putchar(' ',79,7,0,1); 
             // Borra una trama de caracteres RUTA:
             glcd_puts("      ",44,7,0,1,-1); 
-         }      
-      break; 
-      
 
-      case 1:
-         if(aux==1)
-         {
-            aux=0; 
+            // Reiniciliza el contador, siguiente presion btn = 1;
+            btn1 = 0;
+                  
+         break; 
 
-            // Envia Inicio de sesion al servidor
-            envia_estado_login();
+      }  
+   } 
 
-            // Muestra la RUTA A: primero y por defecto
-            btn2 = 1;
-            
-            //Muestra el chofer
-            bmp_disp(chofer,0,5,35,7); 
-
-            // Muestra la ruta
-            glcd_puts("RUTA:",44,7,0,1,-1);
-         } 
-      break;
-
-   }  
+   // Cuando se levanta el boton del dedo levant la bandera
+   else if( BT1 == 1 && bandera1 == 1 )
+   {
+      bandera1=0;
+   }
 }
 //------------------------------------------------------------------------------------------//
 
@@ -407,17 +413,19 @@ void boton2(){
    
    // Si se presiona el boton dos, luego de haber presionado el boton
    // uno, una vez. Y aún no se ha aceptado carrera
-   if( BT2==0 && btn1==1 && bandera2==0 && aceptar == 0 && laborando == 1 )
+   if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
    {
       btn2++; 
       buzz();
       bandera2 = 1;  
+
       if( btn2 > 12 && btn2 != 15) 
          btn2 = 1;
-      delay_ms(DELAY_BOTONES_MS);
       
+      delay_ms(DELAY_BOTONES_MS);
    }  
    
+
    // Luego de presionar el boton, puede volver a presionarlo.
    else if(BT2==1 && bandera2==1)
    {
@@ -490,7 +498,7 @@ void boton2(){
 /////////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) /////////////////////////////////
 void boton3()
 {     //Boton 3
-   if(BT3 == 0 && btn1==1 && bandera3==0 && aceptar==0 && laborando == 1)
+   if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
    {
       btn2--; 
       buzz();
@@ -513,7 +521,7 @@ void boton4()
    
 
    // Primera presiónn del boton 4. Acepta la carrera. 
-   if ( BT4 == 0 && bandera4 == 0 && laborando == 1  )
+   if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
    { 
       bandera4++;
       ruta = ruta_aux;
@@ -990,8 +998,22 @@ void main(void)
         an = 0;  an1 = 0; 
    }
 
-   if (num_ruta  == 0xff) num_ruta  = 0;
-   if (laborando == 0xff) laborando = 0;
+   // Iniciala la eeprom.
+   if (num_ruta  == 0xff) 
+   {
+      num_ruta  = 0;
+      _num_ruta = 0;
+   }   
+   else
+      _num_ruta = num_ruta;
+
+   if (laborando == 0xff) 
+   {
+      laborando = 0;
+      _laborando= 0;
+   }
+   else
+      _laborando = laborando;
 
    ////////////////////////////////////////////////////////////////////
    
@@ -1068,6 +1090,9 @@ void main(void)
             _mes1 = mes1 ;    // mes en unidades y decenas
             _an   = an   ;
             _an1  = an1  ;     // anos en unidades y decenas
+
+            num_ruta  = _num_ruta;
+            laborando = _laborando;
 
             glcd_puts(reloj,7,2,0,2,-1);     
          } 
