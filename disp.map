@@ -8,8 +8,8 @@ prevY                                                             035Bh        1
 rx_b0                                                             035Ch      200
 NOMBRE_DISP                                                       0424h        5
 NUM_DISP                                                          0429h        5
-btn5                                                              042Eh        1
-aux                                                               042Fh        1
+btn4                                                              042Eh        1
+btn5                                                              042Fh        1
 punto                                                             0430h        4
 pt                                                                0434h        1
 no_pt                                                             0435h        4

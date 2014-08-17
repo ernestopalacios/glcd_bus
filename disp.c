@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.6.1                   *
+ *  version:        0.8.9.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -143,7 +143,7 @@ char btn3=0;        // No se usa, Boton 3 disminuye el contador btn2
 char btn4=0;       // Cuenta entre 1 y 2 = 1 Acepta Ruta, 2 Cancela Carrera
 char btn5=0;      // Cuenta entre 1 y 5 = Cambia los estados mecanicos del bus.
 
-char aux;
+
 char punto[4], pt=0, no_pt[4], nombre_pt[20];        // variables para reconocer geocercas
 int unidades_ruta, decenas_ruta, centenas_ruta;
 //--------------------------------------------------------------------------------------------------------------------------------------------//
@@ -368,8 +368,6 @@ void boton1()
          case 2:
             bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
             btn2 = 15;                       // Carrera Vacia
-            aux = 0;                         // Hace una vez mientras se presione 
-                                             // el boton
             
             _laborando = 0;     // No se encuentra en laborando.
             pt=5;             // Muestra mensaje de FIN JORNADA  ***
@@ -519,54 +517,42 @@ void boton3()
 void boton4()
 {     //Boton 4
    
-
    // Primera presiÛnn del boton 4. Acepta la carrera. 
    if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
    { 
-      bandera4++;
-      ruta = ruta_aux;
-      aceptar = 1;
+      bandera4++;           // Evita reentrada
+      btn4++;              // Incrementa conteo de presiones del boton
+      ruta = ruta_aux;    // Actualiza la ruta
+      
       buzz();
       delay_ms(200);
-      aux=5;
-      pt=4;
 
-      // AQUI SE DEBE ENVIAR LA TRAMA CON LA RUTA
-      // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
-      enviar_estado_ruta();
-      
+      switch(btn4){
+
+         case 1:
+            aceptar = 1;        //Ha aceptado la carrera
+            pt=4;              // Muestra RUTA ACPETADA
+            enviar_estado_ruta();
+            
+         break;
+
+         case 2:
+            btn2    = 15;     // Borra el caracter de ruta
+            aceptar = 0;     // Fin de la ruta
+            pt=3;           // Muestra FIN RUTA 
+            ruta=' ';      // Cambia la ruta a Vacia
+            enviar_estado_ruta();
+            
+            btn4 = 0;     // Reinicializa el cntador
+         break;
+      }
    }
 
-   
-   //  
-   // si esque ya se ha presionado el BOTON 4 y se levanta el BOTON 4
-   else if(BT4 == 1 && bandera4==1)
-   {
-      bandera4++;
-   }
-   
-   // La segunda vez que se presiona el boton dos
-   if ( BT4==0 && aceptar == 1 && bandera4 == 2)
-   {
-      btn2=15;         // Borra el caracter de ruta
-      bandera4++;
-      aceptar = 0;   // Fin de la ruta
-      buzz();
-      delay_ms( DELAY_BOTONES_MS );
-      pt=3;
-      
-      // AQUÕç SE DEBE ENVIAR LA TRAMA CON LA RUTA VACIA (FIN DE RUTA)
-      enviar_estado_ruta();
-      
-      // hace que el valor de ruta sea = 0;
-      ruta=' ';   
-
-   }
    
    // si se ha presionado el boton cuatro por tercera vez
-   else if(BT4==1 && bandera4==3)
+   else if(BT4 == 1 && bandera4 == 1)
    {
-      bandera4=0;
+      bandera4 = 0;
    }
 }
 //----------------------------------------------------------------------------------------//
