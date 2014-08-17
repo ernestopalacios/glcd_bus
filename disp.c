@@ -158,8 +158,12 @@ eeprom int8 mes1  @0x92;    // mes en unidades y decenas
 eeprom int8 an    @0x94;
 eeprom int8 an1   @0x96;     // anos en unidades y decenas
 
-eeprom int8 num_ruta   @0x28;        // Transforma la letra de la ruta a un n˙mero
-eeprom int8 laborando  @0x2A;        // Sabe si el chofer ha iniciado sesion o no.
+eeprom int8 num_ruta   @0x28;      // Transforma la letra de la ruta a un n˙mero
+                                   // Si su valor es de CERO no tiene ruta asignada
+                                   // No este en recorrido
+
+eeprom int8 laborando  @0x2A;      // Sabe si el chofer ha iniciado sesion o no.
+                                   // Para poder escoger la ruta debe iniciar sesion
 
 //-------------------------------------------------------------------------------------------------------------------------------------------//
 // Variables guardadas en la flash
@@ -275,17 +279,61 @@ int8 calcuar_ruta( char ruta )
 }
 
 
+////////////////// FUNCION PARA ENVIAR RUTA AL SERVIDOR //////////////////
+/** \brief Envia inicio o fin de ruta para el calulo del recorrido
+ *
+ * Para el inicio de trama envia un numero que representa la ruta y luego
+ * envia el estado de esa ruta: ej R2,2,0. Fin de Ruta dos
+ * 
+ */
+void enviar_estado_ruta(){
+   
+   num_ruta = calcuar_ruta( ruta );
+   printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+                                    NUM_DISP, 
+                                         _dia1,_dia,
+                                         _mes1,_mes,
+                                         _an1,_an,
+                                             _hora1,hora,
+                                             _min1 ,minu,
+                                             _seg1 ,seg, 
+                                                num_ruta,aceptar  );
+}
+
+
+////////////////// FUNCION PARA ENVIAR LOGIN AL SERVIDOR //////////////////
+/** \brief Envia inicio o fin de LOGIN del chofer para el calulo del recorrido
+ *
+ * Para el inicio de trama envia un numero que representa el ID del chofer
+ * luego el estado. LOGIN/LOGOUT
+ * 
+ */
+void envia_estado_login(){
+   printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n", 
+                                 NUM_DISP, 
+                                      _dia1,_dia,
+                                      _mes1,_mes,
+                                      _an1,_an,
+                                          _hora1,hora,
+                                          _min1 ,minu,
+                                          _seg1 ,seg, 
+                                            // id_conductor, 1234 temporalmente
+                                               laborando  );
+}
+
 ///////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) //////////////////////////
 void boton1()
 {  
    if( BT1 == 0 && bandera1==0)
    {
-      pt=2;
-      btn1++;
-      bandera1=1;
-      buzz();
+      pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
+      btn1++;                          // Aumenta el contador del boton
+      bandera1=1;                     // Evita que vuelva a entrar al mismo boton
+      
       aux = 1;  
-      laborando = 1;
+      laborando = 1;                  // INICIA SESION  ***
+      
+      buzz();
       delay_ms( DELAY_BOTONES_MS );
       if(btn1 > 1 && btn1!=5)  // No pasa al caso 2
          btn1 = 0;
@@ -307,7 +355,16 @@ void boton1()
             aux = 0;                         // Hace una vez mientras se presione 
                                              // el boton
             
-            laborando = 0;  // No se encuentra en laborando.
+            laborando = 0;     // No se encuentra en laborando.
+            pt=5;             // Muestra mensaje de FIN JORNADA  ***
+            envia_estado_login();
+
+            btn2 = 15;         // Borra el caracter de ruta
+            aceptar = 0;      // Finalizar la Ruta
+            
+            if( ruta != ' ' ) 
+               enviar_estado_ruta();
+            ruta = ' ';      // Fin de la ruta
 
             // Borra el caracter de la carrera
             glcd_putchar(' ',79,7,0,1); 
@@ -322,6 +379,9 @@ void boton1()
          {
             aux=0; 
 
+            // Envia Inicio de sesion al servidor
+            envia_estado_login();
+
             // Muestra la RUTA A: primero y por defecto
             btn2 = 1;
             
@@ -331,18 +391,9 @@ void boton1()
             // Muestra la ruta
             glcd_puts("RUTA:",44,7,0,1,-1);
          } 
-         break;
-      
-      case 2:
-         if(aux==5){
-          //Muestra el chofer
-            bmp_disp(chofer,0,5,35,7); 
-
-            // Muestra la ruta
-            glcd_puts("MENSAJE ENVIADO",35,7,0,1,-1);
-         }
       break;
-   };  
+
+   }  
 }
 //------------------------------------------------------------------------------------------//
 
@@ -356,7 +407,7 @@ void boton2(){
    
    // Si se presiona el boton dos, luego de haber presionado el boton
    // uno, una vez. Y a˙n no se ha aceptado carrera
-   if(BT2==0 && btn1==1 && bandera2==0 && aceptar == 0)
+   if( BT2==0 && btn1==1 && bandera2==0 && aceptar == 0 && laborando == 1 )
    {
       btn2++; 
       buzz();
@@ -396,7 +447,6 @@ void boton2(){
       break; 
       case 5:  
         ruta_aux='E';
-    
       break; 
       case 6:    
         ruta_aux='F';
@@ -440,7 +490,7 @@ void boton2(){
 /////////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) /////////////////////////////////
 void boton3()
 {     //Boton 3
-   if(BT3 == 0 && btn1==1 && bandera3==0 && aceptar==0)
+   if(BT3 == 0 && btn1==1 && bandera3==0 && aceptar==0 && laborando == 1)
    {
       btn2--; 
       buzz();
@@ -463,7 +513,7 @@ void boton4()
    
 
    // Primera presiÛnn del boton 4. Acepta la carrera. 
-   if ( BT4 == 0 && bandera4 == 0 && aceptar==0 && laborando == 1  )
+   if ( BT4 == 0 && bandera4 == 0 && laborando == 1  )
    { 
       bandera4++;
       ruta = ruta_aux;
@@ -471,27 +521,17 @@ void boton4()
       buzz();
       delay_ms(200);
       aux=5;
+      pt=4;
 
       // AQUI SE DEBE ENVIAR LA TRAMA CON LA RUTA
       // NO SE PUEDE ENVIAR SI NO SE HA ESCOGIDO UNA RUTA
-      num_ruta = calcuar_ruta( ruta );
-      pt=4;
-      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
-                                 NUM_DISP, 
-                                      _dia1,_dia,
-                                      _mes1,_mes,
-                                      _an1,_an,
-                                          _hora1,hora,
-                                          _min1 ,minu,
-                                          _seg1 ,seg, 
-                                             num_ruta,aceptar  );
+      enviar_estado_ruta();
       
-
    }
 
    
    //  
-   // si esque ya se ha presionado el BOTON 3 y se levanta el BOTON 4
+   // si esque ya se ha presionado el BOTON 4 y se levanta el BOTON 4
    else if(BT4 == 1 && bandera4==1)
    {
       bandera4++;
@@ -500,26 +540,18 @@ void boton4()
    // La segunda vez que se presiona el boton dos
    if ( BT4==0 && aceptar == 1 && bandera4 == 2)
    {
-      btn2=15;
+      btn2=15;         // Borra el caracter de ruta
       bandera4++;
-      aceptar = 0;
+      aceptar = 0;   // Fin de la ruta
       buzz();
       delay_ms( DELAY_BOTONES_MS );
+      pt=3;
       
       // AQUÕç SE DEBE ENVIAR LA TRAMA CON LA RUTA VACIA (FIN DE RUTA)
-      num_ruta = calcuar_ruta( ruta );
-      pt=3;
-      printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
-                                 NUM_DISP, 
-                                      _dia1,_dia,
-                                      _mes1,_mes,
-                                      _an1,_an,
-                                          _hora1,hora,
-                                          _min1 ,minu,
-                                          _seg1 ,seg, 
-                                             num_ruta,aceptar  );
+      enviar_estado_ruta();
       
-      ruta=' ';
+      // hace que el valor de ruta sea = 0;
+      ruta=' ';   
 
    }
    
@@ -1072,8 +1104,31 @@ void main(void)
             
             delay_ms(1);
             
-            glcd_puts("MENSAJE",30,2,0,1,1);
-            glcd_puts("ENVIADO ",30,4,0,1,1);
+            //glcd_puts("MENSAJE ENVIADO",10,6,0,1,-2);
+            glcd_puts("  BIENVENIDO ",20,4,0,1,-2);
+             
+            buzz();  
+            buzz();
+            
+            delay_ms(MOSTRAR_MSN_ENV_MS);                  
+            
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5);    
+            
+            pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+         }
+
+         else if (pt==5){
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5); 
+            
+            delay_ms(1);
+            
+            glcd_puts("FIN JORNADA",25,2,0,1,-1);
              
             buzz();  
             buzz();
@@ -1096,7 +1151,7 @@ void main(void)
             glcd_clrln(5);  
             delay_ms(1);
 
-            glcd_puts("FIN RUTA",28,3,0,1,1);
+            glcd_puts("FIN RUTA",28,3,0,1,-1);
 
             buzz();  
             buzz();
@@ -1117,7 +1172,7 @@ void main(void)
             glcd_clrln(5);
             delay_ms(1);
 
-            glcd_puts("INICIO RUTA",20,3,0,1,1);
+            glcd_puts("INICIO RUTA",20,3,0,1,-1);
             buzz();  
             buzz();
             delay_ms(MOSTRAR_MSN_ENV_MS);
