@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Mon Aug 18 12:15:06 2014
+AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Mon Aug 18 16:38:50 2014
 
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1053): warning: Register r4 already defined by the .DEF directive
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1054): warning: Register r3 already defined by the .DEF directive
@@ -9322,11 +9322,11 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  ; 0000 021E                   pt=3;           // Muestra FIN RUTA
 001d1f e0e3      	LDI  R30,LOW(3)
 001d20 93e0 0479 	STS  _pt,R30
-                 ; 0000 021F                   ruta=' ';      // Cambia la ruta a Vacia
-001d22 e2e0      	LDI  R30,LOW(32)
-001d23 2e8e      	MOV  R8,R30
-                 ; 0000 0220                   enviar_estado_ruta();
-001d24 de87      	RCALL _enviar_estado_ruta
+                 ; 0000 021F                   enviar_estado_ruta();
+001d22 de89      	RCALL _enviar_estado_ruta
+                 ; 0000 0220                   ruta=' ';      // Cambia la ruta a Vacia
+001d23 e2e0      	LDI  R30,LOW(32)
+001d24 2e8e      	MOV  R8,R30
                  ; 0000 0221 
                  ; 0000 0222                   btn4 = 0;     // Reinicializa el cntador
 001d25 e0e0      	LDI  R30,LOW(0)

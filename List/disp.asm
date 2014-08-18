@@ -4743,11 +4743,11 @@ _0x12B:
 ; 0000 021E                   pt=3;           // Muestra FIN RUTA
 	LDI  R30,LOW(3)
 	STS  _pt,R30
-; 0000 021F                   ruta=' ';      // Cambia la ruta a Vacia
+; 0000 021F                   enviar_estado_ruta();
+	RCALL _enviar_estado_ruta
+; 0000 0220                   ruta=' ';      // Cambia la ruta a Vacia
 	LDI  R30,LOW(32)
 	MOV  R8,R30
-; 0000 0220                   enviar_estado_ruta();
-	RCALL _enviar_estado_ruta
 ; 0000 0221 
 ; 0000 0222                   btn4 = 0;     // Reinicializa el cntador
 	LDI  R30,LOW(0)

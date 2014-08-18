@@ -540,8 +540,8 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   btn2    = 15;     // Borra el caracter de ruta
                   aceptar = 0;     // Fin de la ruta
                   pt=3;           // Muestra FIN RUTA 
-                  ruta=' ';      // Cambia la ruta a Vacia
                   enviar_estado_ruta();
+                  ruta=' ';      // Cambia la ruta a Vacia
                   
                   btn4 = 0;     // Reinicializa el cntador
                break;
