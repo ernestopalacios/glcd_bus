@@ -109,6 +109,7 @@
    char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
    char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
    char bandera4 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
+   char bandera5 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
    char aceptar  = 0;                          // variable que permite enviar ruta de trabajo al servidor
 
    // Contadores de las presiones de botones
@@ -301,7 +302,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       void enviar_estado_ruta(){
          
          _num_ruta = calcuar_ruta( ruta );
-         printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
                                           NUM_DISP, 
                                                _dia1,_dia,
                                                _mes1,_mes,
@@ -322,7 +323,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
        * 
        */
       void envia_estado_login(){
-         printf("AT$MSGSND=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n", 
+         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n", 
                                        NUM_DISP, 
                                             _dia1,_dia,
                                             _mes1,_mes,
@@ -559,8 +560,62 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
 
    ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
-      void boton5(){     //Boton 5
-        btn5++;
+      void boton5(){     
+
+         btn5++;
+         bandera5++;
+         
+         buzz();
+         delay_ms( DELAY_BOTONES_MS );
+
+         switch( btn5 ){
+
+            case 1:
+               //envia estado mecanico 1:
+            break;
+
+            case 2:
+               //envia estado mecanico 1:
+            break;
+
+            case 3:
+               //envia estado mecanico 1:
+            break;
+
+            case 4:
+               //envia estado mecanico 1:
+            break;
+
+            case 5:
+               //envia estado mecanico 1:
+            break;
+
+            case 6:
+               //envia estado mecanico 1:
+            break;
+
+            case 7:
+               //envia estado mecanico 1:
+            break;
+
+            case 8:
+               //envia estado mecanico 1:
+            break;
+
+            case 9:
+               //envia estado mecanico 1:
+            break;
+
+            case 10:
+               //envia estado mecanico 1:
+            break;
+
+            case 11:
+               //envia estado mecanico 1:
+               btn5 = 0;
+            break;
+         }
+
       }
    //---------------------------------------------------------------------------//
 
