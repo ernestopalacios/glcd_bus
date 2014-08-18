@@ -1116,9 +1116,18 @@ void main(void)
             
             delay_ms(1);
             
-            //glcd_puts("MENSAJE ENVIADO",10,6,0,1,-2);
-            glcd_puts("  BIENVENIDO ",20,4,0,1,-2);
-             
+            // Simulacion de un inicio de sesion
+            glcd_puts("INICIO DE SESION",5,2,0,1,-1);
+            delay_ms( 500 );
+            glcd_puts("*",45,4,0,1,-1);
+            delay_ms( 300 );
+            glcd_puts("*",53,4,0,1,-1);
+            delay_ms( 300 );
+            glcd_puts("*",61,4,0,1,-1);
+            delay_ms( 300 );
+            glcd_puts("*",69,4,0,1,-1);
+            delay_ms( 500 );
+                         
             buzz();  
             buzz();
             
@@ -1183,7 +1192,8 @@ void main(void)
             
             delay_ms(1);
             
-            glcd_puts("HA SALIDO DEL    SISTEMA",20,2,0,1,-1);
+            glcd_puts(" HA SALIDO",20,2,0,1,-1);
+            glcd_puts("DEL SISTEMA",20,4,0,1,-1);
              
             buzz();  
             buzz();
