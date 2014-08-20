@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.9.0                   *
+ *  version:        0.8.9.5                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -103,8 +103,8 @@
 
    char NOMBRE_DISP[] = NOMBRE_PANTALLA;       // variable 
    char NUM_DISP[] = NUMERO_PANTALLA;          // variable
-   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
    char ruta= ' ';                             // variable donde se almacena la ruta que se enviarA al servidor
+   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
    char bandera1 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 1
    char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
    char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
@@ -128,21 +128,21 @@
 
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
-   static unsigned int time_count;   // Contador del timer para los segundos
-   static unsigned int act;          // Variable que guarda si la pantalla es autorizada
+   static unsigned int time_count;    // Contador del timer para los segundos
+   static unsigned int act;           // Variable que guarda si la pantalla es autorizada
 
    eeprom int8 seg   @0x80;
-   eeprom int8 seg1  @0x82;         // segundos en unidades y decenas
-   eeprom int8 minu  @0x84;        
-   eeprom int8 min1  @0x86;         // minutos en unidades y decenas
-   eeprom int8 hora  @0x88;       
-   eeprom int8 hora1 @0x8A;         // hora en unidades y decenas
-   eeprom int8 dia   @0x8C;        
-   eeprom int8 dia1  @0x8E;         // dias en unidades y decenas
-   eeprom int8 mes   @0x90;        
-   eeprom int8 mes1  @0x92;         // mes en unidades y decenas
-   eeprom int8 an    @0x94;     
-   eeprom int8 an1   @0x96;         // anos en unidades y decenas
+   eeprom int8 seg1  @0x82;           // segundos en unidades y decenas
+   eeprom int8 minu  @0x84;          
+   eeprom int8 min1  @0x86;           // minutos en unidades y decenas
+   eeprom int8 hora  @0x88;         
+   eeprom int8 hora1 @0x8A;           // hora en unidades y decenas
+   eeprom int8 dia   @0x8C;          
+   eeprom int8 dia1  @0x8E;           // dias en unidades y decenas
+   eeprom int8 mes   @0x90;          
+   eeprom int8 mes1  @0x92;           // mes en unidades y decenas
+   eeprom int8 an    @0x94;       
+   eeprom int8 an1   @0x96;           // anos en unidades y decenas
      
    eeprom int8 num_ruta   @0x28;      // Transforma la letra de la ruta a un número
                                       // Si su valor es de CERO no tiene ruta asignada
@@ -649,7 +649,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
          int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
 
-         char digito_hora_temp; //Variable temporal para la
+         char digito_hora_temp; //Variable temporal para la hora y fecha
          
          for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
          {     
@@ -697,7 +697,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   rx_b0[i+1]== 'U' &&     
                    rx_b0[i+2]== 'S')    
             { 
-              // Datos de punto de control, en cada posiciÃ³n del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
+              // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
                                        //010A
                punto[0] = rx_b0[i+16]-48;  //   1 
                punto[1] = rx_b0[i+17]-48;  //   F

@@ -1053,8 +1053,8 @@ __DELAY_USW_LOOP:
 	.DEF _rx_wr_index0=R4
 	.DEF _rx_rd_index0=R3
 	.DEF _rx_counter0=R6
-	.DEF _ruta_aux=R5
-	.DEF _ruta=R8
+	.DEF _ruta=R5
+	.DEF _ruta_aux=R8
 	.DEF _bandera1=R7
 	.DEF _bandera2=R10
 	.DEF _bandera3=R9
@@ -2787,7 +2787,7 @@ __GLOBAL_INI_END:
 ; *  Programadores:  Vicente Q &&              *
 ; *                  Ernesto P &&              *
 ; *                  David Novillo             *
-; *  version:        0.8.9.0                   *
+; *  version:        0.8.9.5                   *
 ; *  Fecha:          11/08/2014                *
 ; *                                            *
 ; **********************************************
@@ -3685,8 +3685,8 @@ _0xC3:
 
 	.DSEG
 ;   char NUM_DISP[] = NUMERO_PANTALLA;          // variable
-;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
 ;   char ruta= ' ';                             // variable donde se almacena la ruta que se enviarA al servidor
+;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
 ;   char bandera1 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 1
 ;   char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
 ;   char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
@@ -4136,7 +4136,7 @@ _0x20A0002:
 _enviar_estado_ruta:
 ; 0000 012F 
 ; 0000 0130          _num_ruta = calcuar_ruta( ruta );
-	ST   -Y,R8
+	ST   -Y,R5
 	RCALL _calcuar_ruta
 	STS  __num_ruta,R30
 ; 0000 0131          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
@@ -4324,14 +4324,14 @@ _0xF9:
 ; 0000 0183 
 ; 0000 0184                   if( ruta != ' ' )
 	LDI  R30,LOW(32)
-	CP   R30,R8
+	CP   R30,R5
 	BREQ _0xFC
 ; 0000 0185                      enviar_estado_ruta();
 	RCALL _enviar_estado_ruta
 ; 0000 0186                   ruta = ' ';      // Fin de la ruta
 _0xFC:
 	LDI  R30,LOW(32)
-	MOV  R8,R30
+	MOV  R5,R30
 ; 0000 0187 
 ; 0000 0188                   // Borra el caracter de la carrera
 ; 0000 0189                   glcd_putchar(' ',79,7,0,1);
@@ -4603,7 +4603,7 @@ _0x119:
 ; 0000 01EB               ruta_aux=' ';  // Carrera vacia
 	LDI  R30,LOW(32)
 _0x1D6:
-	MOV  R5,R30
+	MOV  R8,R30
 ; 0000 01EC             break;
 ; 0000 01ED          }
 _0x10D:
@@ -4709,7 +4709,7 @@ _0x127:
 	SUBI R30,-LOW(1)
 	STS  _btn4,R30
 ; 0000 020E             ruta = ruta_aux;    // Actualiza la ruta
-	MOV  R8,R5
+	MOV  R5,R8
 ; 0000 020F 
 ; 0000 0210             buzz();
 	CALL SUBOPT_0x29
@@ -4751,7 +4751,7 @@ _0x12B:
 	RCALL _enviar_estado_ruta
 ; 0000 0221                   ruta=' ';      // Cambia la ruta a Vacia
 	LDI  R30,LOW(32)
-	MOV  R8,R30
+	MOV  R5,R30
 ; 0000 0222 
 ; 0000 0223                   btn4 = 0;     // Reinicializa el cntador
 	LDI  R30,LOW(0)
@@ -6243,7 +6243,7 @@ _0x1B2:
 ; 0000 0440       // GRAFICA LA RUTA ACTUAL.
 ; 0000 0441       glcd_putchar(ruta_aux,79,7,0,1);
 _0x1B5:
-	ST   -Y,R5
+	ST   -Y,R8
 	LDI  R30,LOW(79)
 	LDI  R31,HIGH(79)
 	CALL SUBOPT_0x2D

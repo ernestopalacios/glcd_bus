@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Mon Aug 18 16:56:55 2014
+AVRASM ver. 2.1.30  C:\Users\DELL\GIT\glcd_bus\List\disp.asm Wed Aug 20 10:56:18 2014
 
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1053): warning: Register r4 already defined by the .DEF directive
 C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1054): warning: Register r3 already defined by the .DEF directive
@@ -1069,8 +1069,8 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(1064): warning: Register r13 already de
                  	.DEF _rx_wr_index0=R4
                  	.DEF _rx_rd_index0=R3
                  	.DEF _rx_counter0=R6
-                 	.DEF _ruta_aux=R5
-                 	.DEF _ruta=R8
+                 	.DEF _ruta=R5
+                 	.DEF _ruta_aux=R8
                  	.DEF _bandera1=R7
                  	.DEF _bandera2=R10
                  	.DEF _bandera3=R9
@@ -7251,7 +7251,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  ; *  Programadores:  Vicente Q &&              *
                  ; *                  Ernesto P &&              *
                  ; *                  David Novillo             *
-                 ; *  version:        0.8.9.0                   *
+                 ; *  version:        0.8.9.5                   *
                  ; *  Fecha:          11/08/2014                *
                  ; *                                            *
                  ; **********************************************
@@ -8244,8 +8244,8 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  
                  	.DSEG
                  ;   char NUM_DISP[] = NUMERO_PANTALLA;          // variable
-                 ;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
                  ;   char ruta= ' ';                             // variable donde se almacena la ruta que se enviarA al servidor
+                 ;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
                  ;   char bandera1 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 1
                  ;   char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
                  ;   char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
@@ -8704,7 +8704,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  _enviar_estado_ruta:
                  ; 0000 012F 
                  ; 0000 0130          _num_ruta = calcuar_ruta( ruta );
-001bad 928a      	ST   -Y,R8
+001bad 925a      	ST   -Y,R5
 001bae dfed      	RCALL _calcuar_ruta
 001baf 93e0 0495 	STS  __num_ruta,R30
                  ; 0000 0131          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
@@ -8901,14 +8901,14 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  ; 0000 0183 
                  ; 0000 0184                   if( ruta != ' ' )
 001c3f e2e0      	LDI  R30,LOW(32)
-001c40 15e8      	CP   R30,R8
+001c40 15e5      	CP   R30,R5
 001c41 f009      	BREQ _0xFC
                  ; 0000 0185                      enviar_estado_ruta();
 001c42 df6a      	RCALL _enviar_estado_ruta
                  ; 0000 0186                   ruta = ' ';      // Fin de la ruta
                  _0xFC:
 001c43 e2e0      	LDI  R30,LOW(32)
-001c44 2e8e      	MOV  R8,R30
+001c44 2e5e      	MOV  R5,R30
                  ; 0000 0187 
                  ; 0000 0188                   // Borra el caracter de la carrera
                  ; 0000 0189                   glcd_putchar(' ',79,7,0,1);
@@ -9183,7 +9183,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  ; 0000 01EB               ruta_aux=' ';  // Carrera vacia
 001cd7 e2e0      	LDI  R30,LOW(32)
                  _0x1D6:
-001cd8 2e5e      	MOV  R5,R30
+001cd8 2e8e      	MOV  R8,R30
                  ; 0000 01EC             break;
                  ; 0000 01ED          }
                  _0x10D:
@@ -9289,7 +9289,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
 001d16 5fef      	SUBI R30,-LOW(1)
 001d17 93e0 045e 	STS  _btn4,R30
                  ; 0000 020E             ruta = ruta_aux;    // Actualiza la ruta
-001d19 2c85      	MOV  R8,R5
+001d19 2c58      	MOV  R5,R8
                  ; 0000 020F 
                  ; 0000 0210             buzz();
 001d1a 940e 2665 	CALL SUBOPT_0x29
@@ -9331,7 +9331,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
 001d33 de79      	RCALL _enviar_estado_ruta
                  ; 0000 0221                   ruta=' ';      // Cambia la ruta a Vacia
 001d34 e2e0      	LDI  R30,LOW(32)
-001d35 2e8e      	MOV  R8,R30
+001d35 2e5e      	MOV  R5,R30
                  ; 0000 0222 
                  ; 0000 0223                   btn4 = 0;     // Reinicializa el cntador
 001d36 e0e0      	LDI  R30,LOW(0)
@@ -10973,7 +10973,7 @@ C:\Users\DELL\GIT\glcd_bus\List\disp.asm(2612): warning: .cseg .db misalignment 
                  ; 0000 0440       // GRAFICA LA RUTA ACTUAL.
                  ; 0000 0441       glcd_putchar(ruta_aux,79,7,0,1);
                  _0x1B5:
-002169 925a      	ST   -Y,R5
+002169 928a      	ST   -Y,R8
 00216a e4ef      	LDI  R30,LOW(79)
 00216b e0f0      	LDI  R31,HIGH(79)
 00216c 940e 267a 	CALL SUBOPT_0x2D
@@ -13472,8 +13472,8 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 ATmega324P register use summary:
-r0 :  38 r1 :  12 r2 :   0 r3 :   0 r4 :   5 r5 :   3 r6 :   4 r7 :   5 
-r8 :   5 r9 :   5 r10:   5 r11:   0 r12:   4 r13:   3 r14:   6 r15:   9 
+r0 :  38 r1 :  12 r2 :   0 r3 :   0 r4 :   5 r5 :   5 r6 :   4 r7 :   5 
+r8 :   3 r9 :   5 r10:   5 r11:   0 r12:   4 r13:   3 r14:   6 r15:   9 
 r16:  92 r17:  84 r18:  42 r19:  23 r20:  24 r21:  30 r22:  26 r23:  14 
 r24:  31 r25:  11 r26: 437 r27: 172 r28:  50 r29:   1 r30: 983 r31: 456 
 x  :  33 y  : 582 z  :  52 

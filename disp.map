@@ -66,8 +66,8 @@ rx_rd_index0                                                      R3           1
 rx_counter0                                                       R6           1
 rx_buffer_overflow0                                               GPIOR0.0  1bit
 BIT_UART                                                          GPIOR0.1  1bit
-ruta_aux                                                          R5           1
-ruta                                                              R8           1
+ruta                                                              R5           1
+ruta_aux                                                          R8           1
 bandera1                                                          R7           1
 bandera2                                                          R10          1
 bandera3                                                          R9           1

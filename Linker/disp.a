@@ -5,7 +5,7 @@
 ; *  Programadores:  Vicente Q &&              *
 ; *                  Ernesto P &&              *
 ; *                  David Novillo             *
-; *  version:        0.8.9.0                   *
+; *  version:        0.8.9.5                   *
 ; *  Fecha:          11/08/2014                *
 ; *                                            *
 ; **********************************************
@@ -2452,8 +2452,8 @@
 
 	.DSEG
 ;   char NUM_DISP[] = NUMERO_PANTALLA;          // variable
-;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
 ;   char ruta= ' ';                             // variable donde se almacena la ruta que se enviarA al servidor
+;   char ruta_aux = ' ';                        // variable auxiliar para almacenar la ruta a seleccionar
 ;   char bandera1 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 1
 ;   char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
 ;   char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
