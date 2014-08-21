@@ -67,6 +67,7 @@
    #define DELAY_BOTONES_MS         200
    #define INIT_DELAY_GLCD_MS        10
    #define DELAY_PANTALLA_INI      2000
+   #define DELAY_TXT_SERVIDOR      3000
    #define TOTAL_RUTAS              100  //Número total de rutas
    #define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
    #define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
@@ -125,7 +126,10 @@
    char punto[4], pt=0, no_pt[4], nombre_pt[20];        // variables para reconocer geocercas
    int unidades_ruta, decenas_ruta, centenas_ruta;
    
-
+   char txt_glcd_b0[102];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
+   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
+   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+   
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
    static unsigned int time_count;    // Contador del timer para los segundos
@@ -654,6 +658,42 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
          for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
          {     
            
+            // $$Txt,   Mensaje para mostrar en la GLCD.
+            if ( rx_b0[i+0]== '$' &&    
+                  rx_b0[i+1]== '$' &&     
+                   rx_b0[i+2]== 'T' &&    
+                    rx_b0[i+3]== 'x' &&  
+                     rx_b0[i+4]== 't' &&
+                      rx_b0[i+5]== ',')    
+            {
+               // Guarda lo que hay entre las comillas en el 
+               // buffer txt_glcd
+               i_txt_glcd = 0;
+               do
+               {
+                  if (i_txt_glcd <= 100)
+                  {
+
+                     txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ]; 
+                     i_txt_glcd++;
+                     
+                  }
+                  else{  // Mas de 100 caracteres recibidos. Romper el while
+
+                     i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
+
+                     //Obliga a salir del while:
+                     rx_b0[ i+7 + i_txt_glcd ] = '"';
+                     //break;  // Se sale del while?
+                  }
+
+               }
+               while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+
+               txt_glcd_b0[ i_txt_glcd ] = '\0';  // Que el ultimo caracter sea NULL.
+               pt = 7;          // Muestra en mensaje en main()
+            }
+
             //+CSQ: 
             if ( rx_b0[i+0]== '+' &&    //43d
                   rx_b0[i+1]== 'C' &&     //67d
@@ -1098,6 +1138,7 @@ void main(void)
 
       dibujar_senal();
       
+      
       // act = autoirzado
       if(act==1)
       {
@@ -1266,7 +1307,7 @@ void main(void)
             //pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
          }
 
-         // Debe iniciar sesion
+         // Debe iniciar sesion // Aun no implementada
          else if (pt==6){
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -1290,7 +1331,27 @@ void main(void)
             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
          }
           
+         // Mostrar el texto que llego desde el servidor
+         else if ( pt == 7)
+         {
+            
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5); 
 
+            // Falta para hacer mensajes grandes
+            glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
+            delay_ms( DELAY_TXT_SERVIDOR );
+
+            glcd_clrln(2); 
+            glcd_clrln(3); 
+            glcd_clrln(4); 
+            glcd_clrln(5); 
+
+            pt = 0; // Mostrar el reloj
+            
+         }
 
          // Con senal GPS
          if( gps == 'A' )
