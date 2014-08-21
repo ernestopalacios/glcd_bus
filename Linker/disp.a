@@ -5,11 +5,8 @@
 ; *  Programadores:  Vicente Q &&              *
 ; *                  Ernesto P &&              *
 ; *                  David Novillo             *
-;<<<<<<< HEAD
-; *  version:        0.8.9.6                   *
-;=======
 ; *                  Jeferson C                *
-;>>>>>>> aba62cc9367f103b2541dc19f923f885fec1a025
+; *  version:        0.9.0.0                   *
 ; *  Fecha:          11/08/2014                *
 ; *                                            *
 ; **********************************************
@@ -2412,6 +2409,7 @@
 ;
 ;   typedef char int8;    //sirve para definir enteros consigno de 8
 ;
+;   #define VERSION               "VER_0.9.0"
 ;   #define NOMBRE_PANTALLA       "SITU"
 ;   #define NUMERO_PANTALLA       "8888"
 ;   #define DELAY_BUZZER_MS          100
@@ -2538,23 +2536,23 @@
 ; * Captura datos desde el puerto serial UART0
 ; */
 ;   interrupt [USART0_RXC] void usart0_rx_isr(void)
-; 0000 00C0    {
+; 0000 00BE    {
 
 	.CSEG
 ;PCODE: $0000088C VOL: 0
 ;PCODE: $0000088D VOL: 0
-; 0000 00C1       char status,data;
-; 0000 00C2       status = UCSR0A;
+; 0000 00BF       char status,data;
+; 0000 00C0       status = UCSR0A;
 ;PCODE: $0000088E VOL: 0
 ;PCODE: $0000088F VOL: 0
 ;	status -> R17
 ;	data -> R16
 ;PCODE: $00000890 VOL: 0
 ;PCODE: $00000891 VOL: 0
-; 0000 00C3       data   = UDR0;
+; 0000 00C1       data   = UDR0;
 ;PCODE: $00000892 VOL: 0
 ;PCODE: $00000893 VOL: 0
-; 0000 00C4       BIT_UART = UCSR0A & 0b10000000;
+; 0000 00C2       BIT_UART = UCSR0A & 0b10000000;
 ;PCODE: $00000894 VOL: 0
 ;PCODE: $00000895 VOL: 0
 ;PCODE: $00000896 VOL: 0
@@ -2565,45 +2563,45 @@
 ;PCODE: $0000089B VOL: 0
 ;PCODE: $0000089C VOL: 0
 ;PCODE: $0000089D VOL: 0
-; 0000 00C5 
-; 0000 00C6       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN)) == 0)
+; 0000 00C3 
+; 0000 00C4       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN)) == 0)
 ;PCODE: $0000089E VOL: 0
 ;PCODE: $0000089F VOL: 0
 ;PCODE: $000008A0 VOL: 0
-; 0000 00C7       {
-; 0000 00C8          rx_b0 [rx_wr_index0++] = data;
+; 0000 00C5       {
+; 0000 00C6          rx_b0 [rx_wr_index0++] = data;
 ;PCODE: $000008A1 VOL: 0
 ;PCODE: $000008A2 VOL: 0
 ;PCODE: $000008A3 VOL: 0
 ;PCODE: $000008A4 VOL: 0
 ;PCODE: $000008A5 VOL: 0
-; 0000 00C9          #if RX_BUFFER_SIZE0 == 256
-; 0000 00CA             // special case for receiver buffer size=256
-; 0000 00CB             if (++rx_counter0 == 0) rx_buffer_overflow0=1;
-; 0000 00CC 
-; 0000 00CD          #else
-; 0000 00CE             if (rx_wr_index0 == RX_BUFFER_SIZE0) rx_wr_index0=0;
+; 0000 00C7          #if RX_BUFFER_SIZE0 == 256
+; 0000 00C8             // special case for receiver buffer size=256
+; 0000 00C9             if (++rx_counter0 == 0) rx_buffer_overflow0=1;
+; 0000 00CA 
+; 0000 00CB          #else
+; 0000 00CC             if (rx_wr_index0 == RX_BUFFER_SIZE0) rx_wr_index0=0;
 ;PCODE: $000008A6 VOL: 0
 ;PCODE: $000008A7 VOL: 0
 ;PCODE: $000008A8 VOL: 0
 ;PCODE: $000008A9 VOL: 0
-; 0000 00CF             if (++rx_counter0 == RX_BUFFER_SIZE0)
+; 0000 00CD             if (++rx_counter0 == RX_BUFFER_SIZE0)
 ;PCODE: $000008AA VOL: 0
 ;PCODE: $000008AB VOL: 0
 ;PCODE: $000008AC VOL: 0
 ;PCODE: $000008AD VOL: 0
 ;PCODE: $000008AE VOL: 0
-; 0000 00D0             {
-; 0000 00D1                rx_counter0=0;
+; 0000 00CE             {
+; 0000 00CF                rx_counter0=0;
 ;PCODE: $000008AF VOL: 0
-; 0000 00D2                rx_buffer_overflow0=1;
+; 0000 00D0                rx_buffer_overflow0=1;
 ;PCODE: $000008B0 VOL: 0
 ;PCODE: $000008B1 VOL: 0
-; 0000 00D3             }
-; 0000 00D4          #endif
-; 0000 00D5       }
+; 0000 00D1             }
+; 0000 00D2          #endif
+; 0000 00D3       }
 ;PCODE: $000008B2 VOL: 0
-; 0000 00D6    }
+; 0000 00D4    }
 ;PCODE: $000008B3 VOL: 0
 ;PCODE: $000008B4 VOL: 0
 ;PCODE: $000008B5 VOL: 0
@@ -2614,35 +2612,35 @@
 ;
 ;/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
 ;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
-; 0000 00DC {
+; 0000 00DA {
 ;PCODE: $000008B8 VOL: 0
 ;PCODE: $000008B9 VOL: 0
-; 0000 00DD    TCNT0 = 6;
+; 0000 00DB    TCNT0 = 6;
 ;PCODE: $000008BA VOL: 0
 ;PCODE: $000008BB VOL: 0
-; 0000 00DE    ++time_count;
+; 0000 00DC    ++time_count;
 ;PCODE: $000008BC VOL: 0
 ;PCODE: $000008BD VOL: 0
 ;PCODE: $000008BE VOL: 0
 ;PCODE: $000008BF VOL: 0
-; 0000 00DF 
-; 0000 00E0    if ( time_count == 43 )
+; 0000 00DD 
+; 0000 00DE    if ( time_count == 43 )
 ;PCODE: $000008C0 VOL: 0
 ;PCODE: $000008C1 VOL: 0
 ;PCODE: $000008C2 VOL: 0
-; 0000 00E1    {
-; 0000 00E2       seg++;
+; 0000 00DF    {
+; 0000 00E0       seg++;
 ;PCODE: $000008C3 VOL: 0
 ;PCODE: $000008C4 VOL: 0
 ;PCODE: $000008C5 VOL: 0
 ;PCODE: $000008C6 VOL: 0
 ;PCODE: $000008C7 VOL: 0
-; 0000 00E3       time_count = 0;  //reiniciar contador
+; 0000 00E1       time_count = 0;  //reiniciar contador
 ;PCODE: $000008C8 VOL: 0
 ;PCODE: $000008C9 VOL: 0
-; 0000 00E4 
-; 0000 00E5       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-; 0000 00E6          if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+; 0000 00E2 
+; 0000 00E3       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
+; 0000 00E4          if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
 ;PCODE: $000008CA VOL: 0
 ;PCODE: $000008CB VOL: 0
 ;PCODE: $000008CC VOL: 0
@@ -2662,7 +2660,7 @@
 ;PCODE: $000008DA VOL: 0
 ;PCODE: $000008DB VOL: 0
 ;PCODE: $000008DC VOL: 0
-; 0000 00E7          if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
+; 0000 00E5          if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
 ;PCODE: $000008DD VOL: 0
 ;PCODE: $000008DE VOL: 0
 ;PCODE: $000008DF VOL: 0
@@ -2683,9 +2681,9 @@
 ;PCODE: $000008EE VOL: 0
 ;PCODE: $000008EF VOL: 0
 ;PCODE: $000008F0 VOL: 0
-; 0000 00E8       //Envio pra ver antenas, igualar hora y fecha...
-; 0000 00E9          // Envio cada 20 segundos
-; 0000 00EA          if (seg==1 && seg1==3) printf("AT$TTNETIP?\n\r");
+; 0000 00E6       //Envio pra ver antenas, igualar hora y fecha...
+; 0000 00E7          // Envio cada 20 segundos
+; 0000 00E8          if (seg==1 && seg1==3) printf("AT$TTNETIP?\n\r");
 ;PCODE: $000008F1 VOL: 0
 ;PCODE: $000008F2 VOL: 0
 ;PCODE: $000008F3 VOL: 0
@@ -2706,7 +2704,7 @@
 ;PCODE: $00000902 VOL: 0
 ;PCODE: $00000903 VOL: 0
 ;PCODE: $00000904 VOL: 0
-; 0000 00EB          if (seg==1 && seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
+; 0000 00E9          if (seg==1 && seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
 ;PCODE: $00000905 VOL: 0
 ;PCODE: $00000906 VOL: 0
 ;PCODE: $00000907 VOL: 0
@@ -2727,16 +2725,16 @@
 ;PCODE: $00000916 VOL: 0
 ;PCODE: $00000917 VOL: 0
 ;PCODE: $00000918 VOL: 0
-; 0000 00EC 
-; 0000 00ED 
-; 0000 00EE       if (seg>9)
+; 0000 00EA 
+; 0000 00EB 
+; 0000 00EC       if (seg>9)
 ;PCODE: $00000919 VOL: 0
 ;PCODE: $0000091A VOL: 0
 ;PCODE: $0000091B VOL: 0
 ;PCODE: $0000091C VOL: 0
 ;PCODE: $0000091D VOL: 0
-; 0000 00EF       {
-; 0000 00F0          seg=0; seg1++;
+; 0000 00ED       {
+; 0000 00EE          seg=0; seg1++;
 ;PCODE: $0000091E VOL: 0
 ;PCODE: $0000091F VOL: 0
 ;PCODE: $00000920 VOL: 0
@@ -2745,14 +2743,14 @@
 ;PCODE: $00000923 VOL: 0
 ;PCODE: $00000924 VOL: 0
 ;PCODE: $00000925 VOL: 0
-; 0000 00F1 
-; 0000 00F2          if(seg1>5)  // Cambio de minuto
+; 0000 00EF 
+; 0000 00F0          if(seg1>5)  // Cambio de minuto
 ;PCODE: $00000926 VOL: 0
 ;PCODE: $00000927 VOL: 0
 ;PCODE: $00000928 VOL: 0
 ;PCODE: $00000929 VOL: 0
-; 0000 00F3          {
-; 0000 00F4             seg1=0; minu++;
+; 0000 00F1          {
+; 0000 00F2             seg1=0; minu++;
 ;PCODE: $0000092A VOL: 0
 ;PCODE: $0000092B VOL: 0
 ;PCODE: $0000092C VOL: 0
@@ -2761,13 +2759,13 @@
 ;PCODE: $0000092F VOL: 0
 ;PCODE: $00000930 VOL: 0
 ;PCODE: $00000931 VOL: 0
-; 0000 00F5             if(minu>9)
+; 0000 00F3             if(minu>9)
 ;PCODE: $00000932 VOL: 0
 ;PCODE: $00000933 VOL: 0
 ;PCODE: $00000934 VOL: 0
 ;PCODE: $00000935 VOL: 0
-; 0000 00F6             {
-; 0000 00F7                minu=0; min1++;
+; 0000 00F4             {
+; 0000 00F5                minu=0; min1++;
 ;PCODE: $00000936 VOL: 0
 ;PCODE: $00000937 VOL: 0
 ;PCODE: $00000938 VOL: 0
@@ -2776,13 +2774,13 @@
 ;PCODE: $0000093B VOL: 0
 ;PCODE: $0000093C VOL: 0
 ;PCODE: $0000093D VOL: 0
-; 0000 00F8                if(min1>5)
+; 0000 00F6                if(min1>5)
 ;PCODE: $0000093E VOL: 0
 ;PCODE: $0000093F VOL: 0
 ;PCODE: $00000940 VOL: 0
 ;PCODE: $00000941 VOL: 0
-; 0000 00F9                {
-; 0000 00FA                   min1=0; hora++;
+; 0000 00F7                {
+; 0000 00F8                   min1=0; hora++;
 ;PCODE: $00000942 VOL: 0
 ;PCODE: $00000943 VOL: 0
 ;PCODE: $00000944 VOL: 0
@@ -2791,13 +2789,13 @@
 ;PCODE: $00000947 VOL: 0
 ;PCODE: $00000948 VOL: 0
 ;PCODE: $00000949 VOL: 0
-; 0000 00FB                   if(hora>9)
+; 0000 00F9                   if(hora>9)
 ;PCODE: $0000094A VOL: 0
 ;PCODE: $0000094B VOL: 0
 ;PCODE: $0000094C VOL: 0
 ;PCODE: $0000094D VOL: 0
-; 0000 00FC                   {
-; 0000 00FD                      hora=0; hora1++;
+; 0000 00FA                   {
+; 0000 00FB                      hora=0; hora1++;
 ;PCODE: $0000094E VOL: 0
 ;PCODE: $0000094F VOL: 0
 ;PCODE: $00000950 VOL: 0
@@ -2806,7 +2804,7 @@
 ;PCODE: $00000953 VOL: 0
 ;PCODE: $00000954 VOL: 0
 ;PCODE: $00000955 VOL: 0
-; 0000 00FE                      if((hora1==2 && hora==3)&&(min1==5 && minu==9)&&(seg1==5 && seg==9))
+; 0000 00FC                      if((hora1==2 && hora==3)&&(min1==5 && minu==9)&&(seg1==5 && seg==9))
 ;PCODE: $00000956 VOL: 0
 ;PCODE: $00000957 VOL: 0
 ;PCODE: $00000958 VOL: 0
@@ -2847,8 +2845,8 @@
 ;PCODE: $0000097B VOL: 0
 ;PCODE: $0000097C VOL: 0
 ;PCODE: $0000097D VOL: 0
-; 0000 00FF                      {
-; 0000 0100                         hora1=0; hora=0; min1=0; minu=0;seg1=0;seg=0;
+; 0000 00FD                      {
+; 0000 00FE                         hora1=0; hora=0; min1=0; minu=0;seg1=0;seg=0;
 ;PCODE: $0000097E VOL: 0
 ;PCODE: $0000097F VOL: 0
 ;PCODE: $00000980 VOL: 0
@@ -2867,20 +2865,20 @@
 ;PCODE: $0000098D VOL: 0
 ;PCODE: $0000098E VOL: 0
 ;PCODE: $0000098F VOL: 0
-; 0000 0101                      }
-; 0000 0102                   }
+; 0000 00FF                      }
+; 0000 0100                   }
 ;PCODE: $00000990 VOL: 0
-; 0000 0103                }
+; 0000 0101                }
 ;PCODE: $00000991 VOL: 0
-; 0000 0104             }
+; 0000 0102             }
 ;PCODE: $00000992 VOL: 0
-; 0000 0105          }
+; 0000 0103          }
 ;PCODE: $00000993 VOL: 0
-; 0000 0106       }
+; 0000 0104       }
 ;PCODE: $00000994 VOL: 0
-; 0000 0107    }
+; 0000 0105    }
 ;PCODE: $00000995 VOL: 0
-; 0000 0108 }
+; 0000 0106 }
 ;PCODE: $00000996 VOL: 0
 ;PCODE: $00000997 VOL: 0
 ;PCODE: $00000998 VOL: 0
@@ -2899,22 +2897,22 @@
 ;       * El tiempo que suena depende del Macro: DELAY BUZZER
 ;       */
 ;      void buzz()
-; 0000 0117       {       //Sonido de Buzzer
+; 0000 0115       {       //Sonido de Buzzer
 ;PCODE: $0000099A VOL: 0
 ;PCODE: $0000099B VOL: 0
-; 0000 0118          buzzer=1; delay_ms( DELAY_BUZZER_MS );
+; 0000 0116          buzzer=1; delay_ms( DELAY_BUZZER_MS );
 ;PCODE: $0000099C VOL: 0
 ;PCODE: $0000099D VOL: 0
 ;PCODE: $0000099E VOL: 0
 ;PCODE: $0000099F VOL: 0
 ;PCODE: $000009A0 VOL: 0
-; 0000 0119          buzzer=0; delay_ms( DELAY_BUZZER_MS );
+; 0000 0117          buzzer=0; delay_ms( DELAY_BUZZER_MS );
 ;PCODE: $000009A1 VOL: 0
 ;PCODE: $000009A2 VOL: 0
 ;PCODE: $000009A3 VOL: 0
 ;PCODE: $000009A4 VOL: 0
 ;PCODE: $000009A5 VOL: 0
-; 0000 011A       }
+; 0000 0118       }
 ;PCODE: $000009A6 VOL: 0
 ;PCODE: $000009A7 VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -2928,13 +2926,13 @@
 ;       * Solo soporta un carcater, máximo se puede tener 35 rutas.
 ;       */
 ;      int8 calcuar_ruta( char ruta )
-; 0000 0126       {
+; 0000 0124       {
 ;PCODE: $000009A8 VOL: 0
 ;PCODE: $000009A9 VOL: 0
-; 0000 0127          int8 numero_ruta = ruta - 0x40;
-; 0000 0128 
-; 0000 0129          // Verificar que la letra corresponde a un número de ruta
-; 0000 012A          if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
+; 0000 0125          int8 numero_ruta = ruta - 0x40;
+; 0000 0126 
+; 0000 0127          // Verificar que la letra corresponde a un número de ruta
+; 0000 0128          if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
 ;PCODE: $000009AA VOL: 0
 ;	ruta -> Y+1
 ;	numero_ruta -> R17
@@ -2952,22 +2950,22 @@
 ;PCODE: $000009B6 VOL: 0
 ;PCODE: $000009B7 VOL: 0
 ;PCODE: $000009B8 VOL: 0
-; 0000 012B             return numero_ruta;
+; 0000 0129             return numero_ruta;
 ;PCODE: $000009B9 VOL: 0
 ;PCODE: $000009BA VOL: 0
 ;PCODE: $000009BB VOL: 0
 ;PCODE: $000009BC VOL: 0
 ;PCODE: $000009BD VOL: 0
-; 0000 012C          else
+; 0000 012A          else
 ;PCODE: $000009BE VOL: 0
-; 0000 012D             return 0; // El caracter no corresponde a una ruta.
+; 0000 012B             return 0; // El caracter no corresponde a una ruta.
 ;PCODE: $000009BF VOL: 0
 ;PCODE: $000009C0 VOL: 0
 ;PCODE: $000009C1 VOL: 0
 ;PCODE: $000009C2 VOL: 0
 ;PCODE: $000009C3 VOL: 0
-; 0000 012E 
-; 0000 012F       }
+; 0000 012C 
+; 0000 012D       }
 ;PCODE: $000009C4 VOL: 0
 ;PCODE: $000009C5 VOL: 0
 ;PCODE: $000009C6 VOL: 0
@@ -2984,23 +2982,23 @@
 ;       *
 ;       */
 ;      void enviar_estado_ruta(){
-; 0000 0139 void enviar_estado_ruta(){
+; 0000 0137 void enviar_estado_ruta(){
 ;PCODE: $000009CA VOL: 0
 ;PCODE: $000009CB VOL: 0
-; 0000 013A 
-; 0000 013B          _num_ruta = calcuar_ruta( ruta );
+; 0000 0138 
+; 0000 0139          _num_ruta = calcuar_ruta( ruta );
 ;PCODE: $000009CC VOL: 0
 ;PCODE: $000009CD VOL: 0
 ;PCODE: $000009CE VOL: 0
-; 0000 013C          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
-; 0000 013D                                           NUM_DISP,
-; 0000 013E                                                _dia1,_dia,
-; 0000 013F                                                _mes1,_mes,
-; 0000 0140                                                _an1,_an,
-; 0000 0141                                                    _hora1,hora,
-; 0000 0142                                                    _min1 ,minu,
-; 0000 0143                                                    _seg1 ,seg,
-; 0000 0144                                                       _num_ruta,aceptar  );
+; 0000 013A          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
+; 0000 013B                                           NUM_DISP,
+; 0000 013C                                                _dia1,_dia,
+; 0000 013D                                                _mes1,_mes,
+; 0000 013E                                                _an1,_an,
+; 0000 013F                                                    _hora1,hora,
+; 0000 0140                                                    _min1 ,minu,
+; 0000 0141                                                    _seg1 ,seg,
+; 0000 0142                                                       _num_ruta,aceptar  );
 ;PCODE: $000009CF VOL: 0
 ;PCODE: $000009D0 VOL: 0
 ;PCODE: $000009D1 VOL: 0
@@ -3056,7 +3054,7 @@
 ;PCODE: $00000A03 VOL: 0
 ;PCODE: $00000A04 VOL: 0
 ;PCODE: $00000A05 VOL: 0
-; 0000 0145       }
+; 0000 0143       }
 ;PCODE: $00000A06 VOL: 0
 ;PCODE: $00000A07 VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -3070,19 +3068,19 @@
 ;       *
 ;       */
 ;      void envia_estado_login(){
-; 0000 0150 void envia_estado_login(){
+; 0000 014E void envia_estado_login(){
 ;PCODE: $00000A08 VOL: 0
 ;PCODE: $00000A09 VOL: 0
-; 0000 0151          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n",
-; 0000 0152                                        NUM_DISP,
-; 0000 0153                                             _dia1,_dia,
-; 0000 0154                                             _mes1,_mes,
-; 0000 0155                                             _an1,_an,
-; 0000 0156                                                 _hora1,hora,
-; 0000 0157                                                 _min1 ,minu,
-; 0000 0158                                                 _seg1 ,seg,
-; 0000 0159                                                   // id_conductor, 1234 temporalmente
-; 0000 015A                                                      _laborando  );
+; 0000 014F          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n",
+; 0000 0150                                        NUM_DISP,
+; 0000 0151                                             _dia1,_dia,
+; 0000 0152                                             _mes1,_mes,
+; 0000 0153                                             _an1,_an,
+; 0000 0154                                                 _hora1,hora,
+; 0000 0155                                                 _min1 ,minu,
+; 0000 0156                                                 _seg1 ,seg,
+; 0000 0157                                                   // id_conductor, 1234 temporalmente
+; 0000 0158                                                      _laborando  );
 ;PCODE: $00000A0A VOL: 0
 ;PCODE: $00000A0B VOL: 0
 ;PCODE: $00000A0C VOL: 0
@@ -3135,7 +3133,7 @@
 ;PCODE: $00000A3B VOL: 0
 ;PCODE: $00000A3C VOL: 0
 ;PCODE: $00000A3D VOL: 0
-; 0000 015B       }
+; 0000 0159       }
 ;PCODE: $00000A3E VOL: 0
 ;PCODE: $00000A3F VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -3143,11 +3141,11 @@
 ;
 ;   ////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) ///////////
 ;      void boton1()
-; 0000 0161       {
+; 0000 015F       {
 ;PCODE: $00000A40 VOL: 0
 ;PCODE: $00000A41 VOL: 0
-; 0000 0162          // Primera presion del botòn
-; 0000 0163          if( BT1 == 0 && bandera1==0)
+; 0000 0160          // Primera presion del botòn
+; 0000 0161          if( BT1 == 0 && bandera1==0)
 ;PCODE: $00000A42 VOL: 0
 ;PCODE: $00000A43 VOL: 0
 ;PCODE: $00000A44 VOL: 0
@@ -3159,49 +3157,49 @@
 ;PCODE: $00000A4A VOL: 0
 ;PCODE: $00000A4B VOL: 0
 ;PCODE: $00000A4C VOL: 0
-; 0000 0164          {
-; 0000 0165             pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
+; 0000 0162          {
+; 0000 0163             pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
 ;PCODE: $00000A4D VOL: 0
 ;PCODE: $00000A4E VOL: 0
-; 0000 0166             btn1++;                          // Aumenta el contador del boton
+; 0000 0164             btn1++;                          // Aumenta el contador del boton
 ;PCODE: $00000A4F VOL: 0
 ;PCODE: $00000A50 VOL: 0
 ;PCODE: $00000A51 VOL: 0
-; 0000 0167             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
+; 0000 0165             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
 ;PCODE: $00000A52 VOL: 0
 ;PCODE: $00000A53 VOL: 0
-; 0000 0168 
-; 0000 0169             buzz();
+; 0000 0166 
+; 0000 0167             buzz();
 ;PCODE: $00000A54 VOL: 0
-; 0000 016A             delay_ms( DELAY_BOTONES_MS );
+; 0000 0168             delay_ms( DELAY_BOTONES_MS );
 ;PCODE: $00000A55 VOL: 0
 ;PCODE: $00000A56 VOL: 0
 ;PCODE: $00000A57 VOL: 0
-; 0000 016B 
-; 0000 016C             switch (btn1)
+; 0000 0169 
+; 0000 016A             switch (btn1)
 ;PCODE: $00000A58 VOL: 0
 ;PCODE: $00000A59 VOL: 0
-; 0000 016D             {
-; 0000 016E                // PRIMERA PRESION DEL BOTON
-; 0000 016F                case 1:
+; 0000 016B             {
+; 0000 016C                // PRIMERA PRESION DEL BOTON
+; 0000 016D                case 1:
 ;PCODE: $00000A5A VOL: 0
 ;PCODE: $00000A5B VOL: 0
-; 0000 0170 
-; 0000 0171                   // Envia Inicio de sesion al servidor
-; 0000 0172                   _laborando = 1;                  // INICIA SESION  ***
+; 0000 016E 
+; 0000 016F                   // Envia Inicio de sesion al servidor
+; 0000 0170                   _laborando = 1;                  // INICIA SESION  ***
 ;PCODE: $00000A5C VOL: 0
 ;PCODE: $00000A5D VOL: 0
-; 0000 0173                   envia_estado_login();
+; 0000 0171                   envia_estado_login();
 ;PCODE: $00000A5E VOL: 0
-; 0000 0174                   // DEBE HABILITAR EL BOTON 4
-; 0000 0175 
-; 0000 0176                   // Muestra la RUTA A: primero y por defecto
-; 0000 0177                   btn2 = 1;
+; 0000 0172                   // DEBE HABILITAR EL BOTON 4
+; 0000 0173 
+; 0000 0174                   // Muestra la RUTA A: primero y por defecto
+; 0000 0175                   btn2 = 1;
 ;PCODE: $00000A5F VOL: 0
 ;PCODE: $00000A60 VOL: 0
-; 0000 0178 
-; 0000 0179                   //Muestra el chofer
-; 0000 017A                   bmp_disp(chofer,0,5,35,7);
+; 0000 0176 
+; 0000 0177                   //Muestra el chofer
+; 0000 0178                   bmp_disp(chofer,0,5,35,7);
 ;PCODE: $00000A61 VOL: 0
 ;PCODE: $00000A62 VOL: 0
 ;PCODE: $00000A63 VOL: 0
@@ -3213,9 +3211,9 @@
 ;PCODE: $00000A69 VOL: 0
 ;PCODE: $00000A6A VOL: 0
 ;PCODE: $00000A6B VOL: 0
-; 0000 017B 
-; 0000 017C                   // Muestra la ruta
-; 0000 017D                   glcd_puts("RUTA:",44,7,0,1,-1);
+; 0000 0179 
+; 0000 017A                   // Muestra la ruta
+; 0000 017B                   glcd_puts("RUTA:",44,7,0,1,-1);
 ;PCODE: $00000A6C VOL: 0
 ;PCODE: $00000A6D VOL: 0
 ;PCODE: $00000A6E VOL: 0
@@ -3230,18 +3228,18 @@
 ;PCODE: $00000A77 VOL: 0
 ;PCODE: $00000A78 VOL: 0
 ;PCODE: $00000A79 VOL: 0
-; 0000 017E 
-; 0000 017F                break;
+; 0000 017C 
+; 0000 017D                break;
 ;PCODE: $00000A7A VOL: 0
-; 0000 0180 
-; 0000 0181                // SEGUNDA PRESION DEL BOTON
-; 0000 0182                //solamente quita la ruta de la pantalla
-; 0000 0183                //no cierra sesion de la ruta actual
-; 0000 0184                case 2:
+; 0000 017E 
+; 0000 017F                // SEGUNDA PRESION DEL BOTON
+; 0000 0180                //solamente quita la ruta de la pantalla
+; 0000 0181                //no cierra sesion de la ruta actual
+; 0000 0182                case 2:
 ;PCODE: $00000A7B VOL: 0
 ;PCODE: $00000A7C VOL: 0
 ;PCODE: $00000A7D VOL: 0
-; 0000 0185                   bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+; 0000 0183                   bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
 ;PCODE: $00000A7E VOL: 0
 ;PCODE: $00000A7F VOL: 0
 ;PCODE: $00000A80 VOL: 0
@@ -3253,39 +3251,39 @@
 ;PCODE: $00000A86 VOL: 0
 ;PCODE: $00000A87 VOL: 0
 ;PCODE: $00000A88 VOL: 0
-; 0000 0186                   btn2 = 15;                       // Carrera Vacia
+; 0000 0184                   btn2 = 15;                       // Carrera Vacia
 ;PCODE: $00000A89 VOL: 0
 ;PCODE: $00000A8A VOL: 0
-; 0000 0187 
-; 0000 0188                   _laborando = 0;     // No se encuentra en laborando.
+; 0000 0185 
+; 0000 0186                   _laborando = 0;     // No se encuentra en laborando.
 ;PCODE: $00000A8B VOL: 0
 ;PCODE: $00000A8C VOL: 0
-; 0000 0189                   pt=5;             // Muestra mensaje de FIN JORNADA  ***
+; 0000 0187                   pt=5;             // Muestra mensaje de FIN JORNADA  ***
 ;PCODE: $00000A8D VOL: 0
 ;PCODE: $00000A8E VOL: 0
-; 0000 018A                   envia_estado_login();
+; 0000 0188                   envia_estado_login();
 ;PCODE: $00000A8F VOL: 0
-; 0000 018B 
-; 0000 018C                   btn2 = 15;         // Borra el caracter de ruta
+; 0000 0189 
+; 0000 018A                   btn2 = 15;         // Borra el caracter de ruta
 ;PCODE: $00000A90 VOL: 0
 ;PCODE: $00000A91 VOL: 0
-; 0000 018D                   aceptar = 0;      // Finalizar la Ruta
+; 0000 018B                   aceptar = 0;      // Finalizar la Ruta
 ;PCODE: $00000A92 VOL: 0
 ;PCODE: $00000A93 VOL: 0
-; 0000 018E 
-; 0000 018F                   if( ruta != ' ' )
+; 0000 018C 
+; 0000 018D                   if( ruta != ' ' )
 ;PCODE: $00000A94 VOL: 0
 ;PCODE: $00000A95 VOL: 0
 ;PCODE: $00000A96 VOL: 0
-; 0000 0190                      enviar_estado_ruta();
+; 0000 018E                      enviar_estado_ruta();
 ;PCODE: $00000A97 VOL: 0
-; 0000 0191                   ruta = ' ';      // Fin de la ruta
+; 0000 018F                   ruta = ' ';      // Fin de la ruta
 ;PCODE: $00000A98 VOL: 0
 ;PCODE: $00000A99 VOL: 0
 ;PCODE: $00000A9A VOL: 0
-; 0000 0192 
-; 0000 0193                   // Borra el caracter de la carrera
-; 0000 0194                   glcd_putchar(' ',79,7,0,1);
+; 0000 0190 
+; 0000 0191                   // Borra el caracter de la carrera
+; 0000 0192                   glcd_putchar(' ',79,7,0,1);
 ;PCODE: $00000A9B VOL: 0
 ;PCODE: $00000A9C VOL: 0
 ;PCODE: $00000A9D VOL: 0
@@ -3297,8 +3295,8 @@
 ;PCODE: $00000AA3 VOL: 0
 ;PCODE: $00000AA4 VOL: 0
 ;PCODE: $00000AA5 VOL: 0
-; 0000 0195                   // Borra una trama de caracteres RUTA:
-; 0000 0196                   glcd_puts("      ",44,7,0,1,-1);
+; 0000 0193                   // Borra una trama de caracteres RUTA:
+; 0000 0194                   glcd_puts("      ",44,7,0,1,-1);
 ;PCODE: $00000AA6 VOL: 0
 ;PCODE: $00000AA7 VOL: 0
 ;PCODE: $00000AA8 VOL: 0
@@ -3313,21 +3311,21 @@
 ;PCODE: $00000AB1 VOL: 0
 ;PCODE: $00000AB2 VOL: 0
 ;PCODE: $00000AB3 VOL: 0
-; 0000 0197 
-; 0000 0198                   // Reiniciliza el contador, siguiente presion btn = 1;
-; 0000 0199                   btn1 = 0;
+; 0000 0195 
+; 0000 0196                   // Reiniciliza el contador, siguiente presion btn = 1;
+; 0000 0197                   btn1 = 0;
 ;PCODE: $00000AB4 VOL: 0
 ;PCODE: $00000AB5 VOL: 0
-; 0000 019A 
-; 0000 019B                break;
+; 0000 0198 
+; 0000 0199                break;
 ;PCODE: $00000AB6 VOL: 0
-; 0000 019C 
-; 0000 019D             }
+; 0000 019A 
+; 0000 019B             }
 ;PCODE: $00000AB7 VOL: 0
-; 0000 019E          }
-; 0000 019F 
-; 0000 01A0          // Cuando se levanta el boton del dedo levant la bandera
-; 0000 01A1          else if( BT1 == 1 && bandera1 == 1 )
+; 0000 019C          }
+; 0000 019D 
+; 0000 019E          // Cuando se levanta el boton del dedo levant la bandera
+; 0000 019F          else if( BT1 == 1 && bandera1 == 1 )
 ;PCODE: $00000AB8 VOL: 0
 ;PCODE: $00000AB9 VOL: 0
 ;PCODE: $00000ABA VOL: 0
@@ -3340,11 +3338,11 @@
 ;PCODE: $00000AC1 VOL: 0
 ;PCODE: $00000AC2 VOL: 0
 ;PCODE: $00000AC3 VOL: 0
-; 0000 01A2          {
-; 0000 01A3             bandera1=0;
+; 0000 01A0          {
+; 0000 01A1             bandera1=0;
 ;PCODE: $00000AC4 VOL: 0
-; 0000 01A4          }
-; 0000 01A5       }
+; 0000 01A2          }
+; 0000 01A3       }
 ;PCODE: $00000AC5 VOL: 0
 ;PCODE: $00000AC6 VOL: 0
 ;PCODE: $00000AC7 VOL: 0
@@ -3358,15 +3356,15 @@ _0xFA:
 ;
 ;   ////////////////// FUNCION DEL BOTON 2 (ESCOGER RUTA AUMENTAR LETRA) /////
 ;      void boton2(){
-; 0000 01AA void boton2(){
+; 0000 01A8 void boton2(){
 
 	.CSEG
 ;PCODE: $00000AC9 VOL: 0
 ;PCODE: $00000ACA VOL: 0
-; 0000 01AB 
-; 0000 01AC          // Si se presiona el boton dos, luego de haber presionado el boton
-; 0000 01AD          // uno, una vez. Y aún no se ha aceptado carrera
-; 0000 01AE          if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
+; 0000 01A9 
+; 0000 01AA          // Si se presiona el boton dos, luego de haber presionado el boton
+; 0000 01AB          // uno, una vez. Y aún no se ha aceptado carrera
+; 0000 01AC          if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
 ;PCODE: $00000ACB VOL: 0
 ;PCODE: $00000ACC VOL: 0
 ;PCODE: $00000ACD VOL: 0
@@ -3384,18 +3382,18 @@ _0xFA:
 ;PCODE: $00000AD9 VOL: 0
 ;PCODE: $00000ADA VOL: 0
 ;PCODE: $00000ADB VOL: 0
-; 0000 01AF          {
-; 0000 01B0             btn2++;
+; 0000 01AD          {
+; 0000 01AE             btn2++;
 ;PCODE: $00000ADC VOL: 0
 ;PCODE: $00000ADD VOL: 0
 ;PCODE: $00000ADE VOL: 0
-; 0000 01B1             buzz();
+; 0000 01AF             buzz();
 ;PCODE: $00000ADF VOL: 0
-; 0000 01B2             bandera2 = 1;
+; 0000 01B0             bandera2 = 1;
 ;PCODE: $00000AE0 VOL: 0
 ;PCODE: $00000AE1 VOL: 0
-; 0000 01B3 
-; 0000 01B4             if( btn2 > 12 && btn2 != 15)
+; 0000 01B1 
+; 0000 01B2             if( btn2 > 12 && btn2 != 15)
 ;PCODE: $00000AE2 VOL: 0
 ;PCODE: $00000AE3 VOL: 0
 ;PCODE: $00000AE4 VOL: 0
@@ -3406,20 +3404,20 @@ _0xFA:
 ;PCODE: $00000AE9 VOL: 0
 ;PCODE: $00000AEA VOL: 0
 ;PCODE: $00000AEB VOL: 0
-; 0000 01B5                btn2 = 1;
+; 0000 01B3                btn2 = 1;
 ;PCODE: $00000AEC VOL: 0
 ;PCODE: $00000AED VOL: 0
-; 0000 01B6 
-; 0000 01B7             delay_ms(DELAY_BOTONES_MS);
+; 0000 01B4 
+; 0000 01B5             delay_ms(DELAY_BOTONES_MS);
 ;PCODE: $00000AEE VOL: 0
 ;PCODE: $00000AEF VOL: 0
 ;PCODE: $00000AF0 VOL: 0
 ;PCODE: $00000AF1 VOL: 0
-; 0000 01B8          }
-; 0000 01B9 
-; 0000 01BA 
-; 0000 01BB          // Luego de presionar el boton, puede volver a presionarlo.
-; 0000 01BC          else if(BT2==1 && bandera2==1)
+; 0000 01B6          }
+; 0000 01B7 
+; 0000 01B8 
+; 0000 01B9          // Luego de presionar el boton, puede volver a presionarlo.
+; 0000 01BA          else if(BT2==1 && bandera2==1)
 ;PCODE: $00000AF2 VOL: 0
 ;PCODE: $00000AF3 VOL: 0
 ;PCODE: $00000AF4 VOL: 0
@@ -3432,150 +3430,150 @@ _0xFA:
 ;PCODE: $00000AFB VOL: 0
 ;PCODE: $00000AFC VOL: 0
 ;PCODE: $00000AFD VOL: 0
-; 0000 01BD          {
-; 0000 01BE             bandera2=0;
+; 0000 01BB          {
+; 0000 01BC             bandera2=0;
 ;PCODE: $00000AFE VOL: 0
-; 0000 01BF          }
-; 0000 01C0 
-; 0000 01C1 
-; 0000 01C2          // El switch lo hace constantemente, ya que esta en el main y
-; 0000 01C3          // no depende de ningun IF
-; 0000 01C4 
-; 0000 01C5          switch (btn2){
+; 0000 01BD          }
+; 0000 01BE 
+; 0000 01BF 
+; 0000 01C0          // El switch lo hace constantemente, ya que esta en el main y
+; 0000 01C1          // no depende de ningun IF
+; 0000 01C2 
+; 0000 01C3          switch (btn2){
 ;PCODE: $00000AFF VOL: 0
 ;PCODE: $00000B00 VOL: 0
 ;PCODE: $00000B01 VOL: 0
 ;PCODE: $00000B02 VOL: 0
-; 0000 01C6             case 1:
+; 0000 01C4             case 1:
 ;PCODE: $00000B03 VOL: 0
 ;PCODE: $00000B04 VOL: 0
-; 0000 01C7               ruta_aux='A';
+; 0000 01C5               ruta_aux='A';
 ;PCODE: $00000B05 VOL: 0
 ;PCODE: $00000B06 VOL: 0
-; 0000 01C8 
-; 0000 01C9               break;
+; 0000 01C6 
+; 0000 01C7               break;
 ;PCODE: $00000B07 VOL: 0
-; 0000 01CA             case 2:
+; 0000 01C8             case 2:
 ;PCODE: $00000B08 VOL: 0
 ;PCODE: $00000B09 VOL: 0
 ;PCODE: $00000B0A VOL: 0
-; 0000 01CB               ruta_aux='B';
+; 0000 01C9               ruta_aux='B';
 ;PCODE: $00000B0B VOL: 0
 ;PCODE: $00000B0C VOL: 0
-; 0000 01CC 
-; 0000 01CD             break;
+; 0000 01CA 
+; 0000 01CB             break;
 ;PCODE: $00000B0D VOL: 0
-; 0000 01CE             case 3:
+; 0000 01CC             case 3:
 ;PCODE: $00000B0E VOL: 0
 ;PCODE: $00000B0F VOL: 0
 ;PCODE: $00000B10 VOL: 0
-; 0000 01CF               ruta_aux='C';
+; 0000 01CD               ruta_aux='C';
 ;PCODE: $00000B11 VOL: 0
 ;PCODE: $00000B12 VOL: 0
-; 0000 01D0 
-; 0000 01D1             break;
+; 0000 01CE 
+; 0000 01CF             break;
 ;PCODE: $00000B13 VOL: 0
-; 0000 01D2             case 4:
+; 0000 01D0             case 4:
 ;PCODE: $00000B14 VOL: 0
 ;PCODE: $00000B15 VOL: 0
 ;PCODE: $00000B16 VOL: 0
-; 0000 01D3               ruta_aux='D';
+; 0000 01D1               ruta_aux='D';
 ;PCODE: $00000B17 VOL: 0
 ;PCODE: $00000B18 VOL: 0
-; 0000 01D4 
-; 0000 01D5             break;
+; 0000 01D2 
+; 0000 01D3             break;
 ;PCODE: $00000B19 VOL: 0
-; 0000 01D6             case 5:
+; 0000 01D4             case 5:
 ;PCODE: $00000B1A VOL: 0
 ;PCODE: $00000B1B VOL: 0
 ;PCODE: $00000B1C VOL: 0
-; 0000 01D7               ruta_aux='E';
+; 0000 01D5               ruta_aux='E';
 ;PCODE: $00000B1D VOL: 0
 ;PCODE: $00000B1E VOL: 0
-; 0000 01D8             break;
+; 0000 01D6             break;
 ;PCODE: $00000B1F VOL: 0
-; 0000 01D9             case 6:
+; 0000 01D7             case 6:
 ;PCODE: $00000B20 VOL: 0
 ;PCODE: $00000B21 VOL: 0
 ;PCODE: $00000B22 VOL: 0
-; 0000 01DA               ruta_aux='F';
+; 0000 01D8               ruta_aux='F';
 ;PCODE: $00000B23 VOL: 0
 ;PCODE: $00000B24 VOL: 0
-; 0000 01DB 
-; 0000 01DC             break;
+; 0000 01D9 
+; 0000 01DA             break;
 ;PCODE: $00000B25 VOL: 0
-; 0000 01DD             case 7:
+; 0000 01DB             case 7:
 ;PCODE: $00000B26 VOL: 0
 ;PCODE: $00000B27 VOL: 0
 ;PCODE: $00000B28 VOL: 0
-; 0000 01DE               ruta_aux='G';
+; 0000 01DC               ruta_aux='G';
 ;PCODE: $00000B29 VOL: 0
 ;PCODE: $00000B2A VOL: 0
-; 0000 01DF 
-; 0000 01E0             break;
+; 0000 01DD 
+; 0000 01DE             break;
 ;PCODE: $00000B2B VOL: 0
-; 0000 01E1             case 8:
+; 0000 01DF             case 8:
 ;PCODE: $00000B2C VOL: 0
 ;PCODE: $00000B2D VOL: 0
 ;PCODE: $00000B2E VOL: 0
-; 0000 01E2               ruta_aux='H';
+; 0000 01E0               ruta_aux='H';
 ;PCODE: $00000B2F VOL: 0
 ;PCODE: $00000B30 VOL: 0
-; 0000 01E3 
-; 0000 01E4             break;
+; 0000 01E1 
+; 0000 01E2             break;
 ;PCODE: $00000B31 VOL: 0
-; 0000 01E5             case 9:
+; 0000 01E3             case 9:
 ;PCODE: $00000B32 VOL: 0
 ;PCODE: $00000B33 VOL: 0
 ;PCODE: $00000B34 VOL: 0
-; 0000 01E6               ruta_aux='I';
+; 0000 01E4               ruta_aux='I';
 ;PCODE: $00000B35 VOL: 0
 ;PCODE: $00000B36 VOL: 0
-; 0000 01E7 
-; 0000 01E8             break;
+; 0000 01E5 
+; 0000 01E6             break;
 ;PCODE: $00000B37 VOL: 0
-; 0000 01E9             case 10:
+; 0000 01E7             case 10:
 ;PCODE: $00000B38 VOL: 0
 ;PCODE: $00000B39 VOL: 0
 ;PCODE: $00000B3A VOL: 0
-; 0000 01EA               ruta_aux='J';
+; 0000 01E8               ruta_aux='J';
 ;PCODE: $00000B3B VOL: 0
 ;PCODE: $00000B3C VOL: 0
-; 0000 01EB 
-; 0000 01EC             break;
+; 0000 01E9 
+; 0000 01EA             break;
 ;PCODE: $00000B3D VOL: 0
-; 0000 01ED             case 11:
+; 0000 01EB             case 11:
 ;PCODE: $00000B3E VOL: 0
 ;PCODE: $00000B3F VOL: 0
 ;PCODE: $00000B40 VOL: 0
-; 0000 01EE               ruta_aux='K';
+; 0000 01EC               ruta_aux='K';
 ;PCODE: $00000B41 VOL: 0
 ;PCODE: $00000B42 VOL: 0
-; 0000 01EF 
-; 0000 01F0             break;
+; 0000 01ED 
+; 0000 01EE             break;
 ;PCODE: $00000B43 VOL: 0
-; 0000 01F1             case 12:
+; 0000 01EF             case 12:
 ;PCODE: $00000B44 VOL: 0
 ;PCODE: $00000B45 VOL: 0
 ;PCODE: $00000B46 VOL: 0
-; 0000 01F2               ruta_aux='L';
+; 0000 01F0               ruta_aux='L';
 ;PCODE: $00000B47 VOL: 0
 ;PCODE: $00000B48 VOL: 0
-; 0000 01F3 
-; 0000 01F4             break;
+; 0000 01F1 
+; 0000 01F2             break;
 ;PCODE: $00000B49 VOL: 0
-; 0000 01F5             case 15:
+; 0000 01F3             case 15:
 ;PCODE: $00000B4A VOL: 0
 ;PCODE: $00000B4B VOL: 0
 ;PCODE: $00000B4C VOL: 0
-; 0000 01F6               ruta_aux=' ';  // Carrera vacia
+; 0000 01F4               ruta_aux=' ';  // Carrera vacia
 ;PCODE: $00000B4D VOL: 0
 ;PCODE: $00000B4E VOL: 0
-; 0000 01F7             break;
+; 0000 01F5             break;
 ;PCODE: $00000B4F VOL: 0
-; 0000 01F8          }
+; 0000 01F6          }
 ;PCODE: $00000B50 VOL: 0
-; 0000 01F9       }
+; 0000 01F7       }
 ;PCODE: $00000B51 VOL: 0
 ;PCODE: $00000B52 VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -3583,10 +3581,10 @@ _0xFA:
 ;
 ;   ////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) //
 ;      void boton3()
-; 0000 01FF       {     //Boton 3
+; 0000 01FD       {     //Boton 3
 ;PCODE: $00000B53 VOL: 0
 ;PCODE: $00000B54 VOL: 0
-; 0000 0200          if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
+; 0000 01FE          if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
 ;PCODE: $00000B55 VOL: 0
 ;PCODE: $00000B56 VOL: 0
 ;PCODE: $00000B57 VOL: 0
@@ -3604,17 +3602,17 @@ _0xFA:
 ;PCODE: $00000B63 VOL: 0
 ;PCODE: $00000B64 VOL: 0
 ;PCODE: $00000B65 VOL: 0
-; 0000 0201          {
-; 0000 0202             btn2--;
+; 0000 01FF          {
+; 0000 0200             btn2--;
 ;PCODE: $00000B66 VOL: 0
 ;PCODE: $00000B67 VOL: 0
 ;PCODE: $00000B68 VOL: 0
-; 0000 0203             buzz();
+; 0000 0201             buzz();
 ;PCODE: $00000B69 VOL: 0
-; 0000 0204             bandera3=1;
+; 0000 0202             bandera3=1;
 ;PCODE: $00000B6A VOL: 0
 ;PCODE: $00000B6B VOL: 0
-; 0000 0205             if(btn2<=0 && btn2!=15)
+; 0000 0203             if(btn2<=0 && btn2!=15)
 ;PCODE: $00000B6C VOL: 0
 ;PCODE: $00000B6D VOL: 0
 ;PCODE: $00000B6E VOL: 0
@@ -3625,16 +3623,16 @@ _0xFA:
 ;PCODE: $00000B73 VOL: 0
 ;PCODE: $00000B74 VOL: 0
 ;PCODE: $00000B75 VOL: 0
-; 0000 0206                btn2=12;
+; 0000 0204                btn2=12;
 ;PCODE: $00000B76 VOL: 0
 ;PCODE: $00000B77 VOL: 0
-; 0000 0207             delay_ms(200);
+; 0000 0205             delay_ms(200);
 ;PCODE: $00000B78 VOL: 0
 ;PCODE: $00000B79 VOL: 0
 ;PCODE: $00000B7A VOL: 0
 ;PCODE: $00000B7B VOL: 0
-; 0000 0208          }
-; 0000 0209          else if(BT3==1 && bandera3==1){
+; 0000 0206          }
+; 0000 0207          else if(BT3==1 && bandera3==1){
 ;PCODE: $00000B7C VOL: 0
 ;PCODE: $00000B7D VOL: 0
 ;PCODE: $00000B7E VOL: 0
@@ -3647,10 +3645,10 @@ _0xFA:
 ;PCODE: $00000B85 VOL: 0
 ;PCODE: $00000B86 VOL: 0
 ;PCODE: $00000B87 VOL: 0
-; 0000 020A             bandera3=0;
+; 0000 0208             bandera3=0;
 ;PCODE: $00000B88 VOL: 0
-; 0000 020B          }
-; 0000 020C       }
+; 0000 0209          }
+; 0000 020A       }
 ;PCODE: $00000B89 VOL: 0
 ;PCODE: $00000B8A VOL: 0
 ;PCODE: $00000B8B VOL: 0
@@ -3660,12 +3658,12 @@ _0xFA:
 ;
 ;   ////////////////// FUNCION DEL BOTON 4 (INICIO/FIN DE RUTA) //////////////
 ;      void boton4()
-; 0000 0212       {     //Boton 4
+; 0000 0210       {     //Boton 4
 ;PCODE: $00000B8D VOL: 0
 ;PCODE: $00000B8E VOL: 0
-; 0000 0213 
-; 0000 0214          // Primera presiónn del boton 4. Acepta la carrera.
-; 0000 0215          if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
+; 0000 0211 
+; 0000 0212          // Primera presiónn del boton 4. Acepta la carrera.
+; 0000 0213          if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
 ;PCODE: $00000B8F VOL: 0
 ;PCODE: $00000B90 VOL: 0
 ;PCODE: $00000B91 VOL: 0
@@ -3680,74 +3678,74 @@ _0xFA:
 ;PCODE: $00000B9A VOL: 0
 ;PCODE: $00000B9B VOL: 0
 ;PCODE: $00000B9C VOL: 0
-; 0000 0216          {
-; 0000 0217             bandera4++;           // Evita reentrada
+; 0000 0214          {
+; 0000 0215             bandera4++;           // Evita reentrada
 ;PCODE: $00000B9D VOL: 0
-; 0000 0218             btn4++;              // Incrementa conteo de presiones del boton
+; 0000 0216             btn4++;              // Incrementa conteo de presiones del boton
 ;PCODE: $00000B9E VOL: 0
 ;PCODE: $00000B9F VOL: 0
 ;PCODE: $00000BA0 VOL: 0
-; 0000 0219             ruta = ruta_aux;    // Actualiza la ruta
+; 0000 0217             ruta = ruta_aux;    // Actualiza la ruta
 ;PCODE: $00000BA1 VOL: 0
 ;PCODE: $00000BA2 VOL: 0
-; 0000 021A 
-; 0000 021B             buzz();
+; 0000 0218 
+; 0000 0219             buzz();
 ;PCODE: $00000BA3 VOL: 0
-; 0000 021C             delay_ms(200);
+; 0000 021A             delay_ms(200);
 ;PCODE: $00000BA4 VOL: 0
 ;PCODE: $00000BA5 VOL: 0
 ;PCODE: $00000BA6 VOL: 0
-; 0000 021D 
-; 0000 021E             switch(btn4){
+; 0000 021B 
+; 0000 021C             switch(btn4){
 ;PCODE: $00000BA7 VOL: 0
 ;PCODE: $00000BA8 VOL: 0
-; 0000 021F 
-; 0000 0220                case 1:
+; 0000 021D 
+; 0000 021E                case 1:
 ;PCODE: $00000BA9 VOL: 0
 ;PCODE: $00000BAA VOL: 0
-; 0000 0221                   aceptar = 1;        //Ha aceptado la carrera
+; 0000 021F                   aceptar = 1;        //Ha aceptado la carrera
 ;PCODE: $00000BAB VOL: 0
 ;PCODE: $00000BAC VOL: 0
-; 0000 0222                   pt=4;              // Muestra RUTA ACPETADA
+; 0000 0220                   pt=4;              // Muestra RUTA ACPETADA
 ;PCODE: $00000BAD VOL: 0
 ;PCODE: $00000BAE VOL: 0
-; 0000 0223                   enviar_estado_ruta();
+; 0000 0221                   enviar_estado_ruta();
 ;PCODE: $00000BAF VOL: 0
-; 0000 0224 
-; 0000 0225                break;
+; 0000 0222 
+; 0000 0223                break;
 ;PCODE: $00000BB0 VOL: 0
-; 0000 0226 
-; 0000 0227                case 2:
+; 0000 0224 
+; 0000 0225                case 2:
 ;PCODE: $00000BB1 VOL: 0
 ;PCODE: $00000BB2 VOL: 0
 ;PCODE: $00000BB3 VOL: 0
-; 0000 0228                   btn2    = 15;     // Borra el caracter de ruta
+; 0000 0226                   btn2    = 15;     // Borra el caracter de ruta
 ;PCODE: $00000BB4 VOL: 0
 ;PCODE: $00000BB5 VOL: 0
-; 0000 0229                   aceptar = 0;     // Fin de la ruta
+; 0000 0227                   aceptar = 0;     // Fin de la ruta
 ;PCODE: $00000BB6 VOL: 0
 ;PCODE: $00000BB7 VOL: 0
-; 0000 022A                   pt=3;           // Muestra FIN RUTA
+; 0000 0228                   pt=3;           // Muestra FIN RUTA
 ;PCODE: $00000BB8 VOL: 0
 ;PCODE: $00000BB9 VOL: 0
-; 0000 022B                   enviar_estado_ruta();
+; 0000 0229                   enviar_estado_ruta();
 ;PCODE: $00000BBA VOL: 0
-; 0000 022C                   ruta=' ';      // Cambia la ruta a Vacia
+; 0000 022A                   ruta=' ';      // Cambia la ruta a Vacia
 ;PCODE: $00000BBB VOL: 0
 ;PCODE: $00000BBC VOL: 0
-; 0000 022D 
-; 0000 022E                   btn4 = 0;     // Reinicializa el cntador
+; 0000 022B 
+; 0000 022C                   btn4 = 0;     // Reinicializa el cntador
 ;PCODE: $00000BBD VOL: 0
 ;PCODE: $00000BBE VOL: 0
-; 0000 022F                break;
+; 0000 022D                break;
 ;PCODE: $00000BBF VOL: 0
-; 0000 0230             }
+; 0000 022E             }
 ;PCODE: $00000BC0 VOL: 0
-; 0000 0231          }
-; 0000 0232 
-; 0000 0233 
-; 0000 0234          // si se ha presionado el boton cuatro por tercera vez
-; 0000 0235          else if(BT4 == 1 && bandera4 == 1)
+; 0000 022F          }
+; 0000 0230 
+; 0000 0231 
+; 0000 0232          // si se ha presionado el boton cuatro por tercera vez
+; 0000 0233          else if(BT4 == 1 && bandera4 == 1)
 ;PCODE: $00000BC1 VOL: 0
 ;PCODE: $00000BC2 VOL: 0
 ;PCODE: $00000BC3 VOL: 0
@@ -3760,11 +3758,11 @@ _0xFA:
 ;PCODE: $00000BCA VOL: 0
 ;PCODE: $00000BCB VOL: 0
 ;PCODE: $00000BCC VOL: 0
-; 0000 0236          {
-; 0000 0237             bandera4 = 0;
+; 0000 0234          {
+; 0000 0235             bandera4 = 0;
 ;PCODE: $00000BCD VOL: 0
-; 0000 0238          }
-; 0000 0239       }
+; 0000 0236          }
+; 0000 0237       }
 ;PCODE: $00000BCE VOL: 0
 ;PCODE: $00000BCF VOL: 0
 ;PCODE: $00000BD0 VOL: 0
@@ -3774,121 +3772,121 @@ _0xFA:
 ;
 ;   ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
 ;      void boton5(){
-; 0000 023E void boton5(){
+; 0000 023C void boton5(){
 ;PCODE: $00000BD2 VOL: 0
 ;PCODE: $00000BD3 VOL: 0
-; 0000 023F 
-; 0000 0240          btn5++;
+; 0000 023D 
+; 0000 023E          btn5++;
 ;PCODE: $00000BD4 VOL: 0
 ;PCODE: $00000BD5 VOL: 0
 ;PCODE: $00000BD6 VOL: 0
-; 0000 0241          bandera5++;
+; 0000 023F          bandera5++;
 ;PCODE: $00000BD7 VOL: 0
-; 0000 0242 
-; 0000 0243          buzz();
+; 0000 0240 
+; 0000 0241          buzz();
 ;PCODE: $00000BD8 VOL: 0
-; 0000 0244          delay_ms( DELAY_BOTONES_MS );
+; 0000 0242          delay_ms( DELAY_BOTONES_MS );
 ;PCODE: $00000BD9 VOL: 0
 ;PCODE: $00000BDA VOL: 0
 ;PCODE: $00000BDB VOL: 0
-; 0000 0245 
-; 0000 0246          switch( btn5 ){
+; 0000 0243 
+; 0000 0244          switch( btn5 ){
 ;PCODE: $00000BDC VOL: 0
 ;PCODE: $00000BDD VOL: 0
-; 0000 0247 
-; 0000 0248             case 1:
+; 0000 0245 
+; 0000 0246             case 1:
 ;PCODE: $00000BDE VOL: 0
 ;PCODE: $00000BDF VOL: 0
-; 0000 0249                //envia estado mecanico 1:
-; 0000 024A             break;
+; 0000 0247                //envia estado mecanico 1:
+; 0000 0248             break;
 ;PCODE: $00000BE0 VOL: 0
-; 0000 024B 
-; 0000 024C             case 2:
+; 0000 0249 
+; 0000 024A             case 2:
 ;PCODE: $00000BE1 VOL: 0
 ;PCODE: $00000BE2 VOL: 0
 ;PCODE: $00000BE3 VOL: 0
-; 0000 024D                //envia estado mecanico 1:
-; 0000 024E             break;
+; 0000 024B                //envia estado mecanico 1:
+; 0000 024C             break;
 ;PCODE: $00000BE4 VOL: 0
-; 0000 024F 
-; 0000 0250             case 3:
+; 0000 024D 
+; 0000 024E             case 3:
 ;PCODE: $00000BE5 VOL: 0
 ;PCODE: $00000BE6 VOL: 0
 ;PCODE: $00000BE7 VOL: 0
-; 0000 0251                //envia estado mecanico 1:
-; 0000 0252             break;
+; 0000 024F                //envia estado mecanico 1:
+; 0000 0250             break;
 ;PCODE: $00000BE8 VOL: 0
-; 0000 0253 
-; 0000 0254             case 4:
+; 0000 0251 
+; 0000 0252             case 4:
 ;PCODE: $00000BE9 VOL: 0
 ;PCODE: $00000BEA VOL: 0
 ;PCODE: $00000BEB VOL: 0
-; 0000 0255                //envia estado mecanico 1:
-; 0000 0256             break;
+; 0000 0253                //envia estado mecanico 1:
+; 0000 0254             break;
 ;PCODE: $00000BEC VOL: 0
-; 0000 0257 
-; 0000 0258             case 5:
+; 0000 0255 
+; 0000 0256             case 5:
 ;PCODE: $00000BED VOL: 0
 ;PCODE: $00000BEE VOL: 0
 ;PCODE: $00000BEF VOL: 0
-; 0000 0259                //envia estado mecanico 1:
-; 0000 025A             break;
+; 0000 0257                //envia estado mecanico 1:
+; 0000 0258             break;
 ;PCODE: $00000BF0 VOL: 0
-; 0000 025B 
-; 0000 025C             case 6:
+; 0000 0259 
+; 0000 025A             case 6:
 ;PCODE: $00000BF1 VOL: 0
 ;PCODE: $00000BF2 VOL: 0
 ;PCODE: $00000BF3 VOL: 0
-; 0000 025D                //envia estado mecanico 1:
-; 0000 025E             break;
+; 0000 025B                //envia estado mecanico 1:
+; 0000 025C             break;
 ;PCODE: $00000BF4 VOL: 0
-; 0000 025F 
-; 0000 0260             case 7:
+; 0000 025D 
+; 0000 025E             case 7:
 ;PCODE: $00000BF5 VOL: 0
 ;PCODE: $00000BF6 VOL: 0
 ;PCODE: $00000BF7 VOL: 0
-; 0000 0261                //envia estado mecanico 1:
-; 0000 0262             break;
+; 0000 025F                //envia estado mecanico 1:
+; 0000 0260             break;
 ;PCODE: $00000BF8 VOL: 0
-; 0000 0263 
-; 0000 0264             case 8:
+; 0000 0261 
+; 0000 0262             case 8:
 ;PCODE: $00000BF9 VOL: 0
 ;PCODE: $00000BFA VOL: 0
 ;PCODE: $00000BFB VOL: 0
-; 0000 0265                //envia estado mecanico 1:
-; 0000 0266             break;
+; 0000 0263                //envia estado mecanico 1:
+; 0000 0264             break;
 ;PCODE: $00000BFC VOL: 0
-; 0000 0267 
-; 0000 0268             case 9:
+; 0000 0265 
+; 0000 0266             case 9:
 ;PCODE: $00000BFD VOL: 0
 ;PCODE: $00000BFE VOL: 0
 ;PCODE: $00000BFF VOL: 0
-; 0000 0269                //envia estado mecanico 1:
-; 0000 026A             break;
+; 0000 0267                //envia estado mecanico 1:
+; 0000 0268             break;
 ;PCODE: $00000C00 VOL: 0
-; 0000 026B 
-; 0000 026C             case 10:
+; 0000 0269 
+; 0000 026A             case 10:
 ;PCODE: $00000C01 VOL: 0
 ;PCODE: $00000C02 VOL: 0
 ;PCODE: $00000C03 VOL: 0
-; 0000 026D                //envia estado mecanico 1:
-; 0000 026E             break;
+; 0000 026B                //envia estado mecanico 1:
+; 0000 026C             break;
 ;PCODE: $00000C04 VOL: 0
-; 0000 026F 
-; 0000 0270             case 11:
+; 0000 026D 
+; 0000 026E             case 11:
 ;PCODE: $00000C05 VOL: 0
 ;PCODE: $00000C06 VOL: 0
 ;PCODE: $00000C07 VOL: 0
-; 0000 0271                //envia estado mecanico 1:
-; 0000 0272                btn5 = 0;
+; 0000 026F                //envia estado mecanico 1:
+; 0000 0270                btn5 = 0;
 ;PCODE: $00000C08 VOL: 0
 ;PCODE: $00000C09 VOL: 0
-; 0000 0273             break;
+; 0000 0271             break;
 ;PCODE: $00000C0A VOL: 0
-; 0000 0274          }
+; 0000 0272          }
 ;PCODE: $00000C0B VOL: 0
-; 0000 0275 
-; 0000 0276       }
+; 0000 0273 
+; 0000 0274       }
 ;PCODE: $00000C0C VOL: 0
 ;PCODE: $00000C0D VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -3896,15 +3894,15 @@ _0xFA:
 ;
 ;   ////////////////// DIBUJAR BARRAS DE SENAL GPRS //////////////////////////
 ;      void dibujar_senal(void)
-; 0000 027C       {
+; 0000 027A       {
 ;PCODE: $00000C0E VOL: 0
 ;PCODE: $00000C0F VOL: 0
-; 0000 027D           switch (ind_sen){
+; 0000 027B           switch (ind_sen){
 ;PCODE: $00000C10 VOL: 0
-; 0000 027E           case 1:
+; 0000 027C           case 1:
 ;PCODE: $00000C11 VOL: 0
 ;PCODE: $00000C12 VOL: 0
-; 0000 027F           bmp_disp(GSM3,0,0,20,1);
+; 0000 027D           bmp_disp(GSM3,0,0,20,1);
 ;PCODE: $00000C13 VOL: 0
 ;PCODE: $00000C14 VOL: 0
 ;PCODE: $00000C15 VOL: 0
@@ -3916,13 +3914,13 @@ _0xFA:
 ;PCODE: $00000C1B VOL: 0
 ;PCODE: $00000C1C VOL: 0
 ;PCODE: $00000C1D VOL: 0
-; 0000 0280           break;
+; 0000 027E           break;
 ;PCODE: $00000C1E VOL: 0
-; 0000 0281           case 2:
+; 0000 027F           case 2:
 ;PCODE: $00000C1F VOL: 0
 ;PCODE: $00000C20 VOL: 0
 ;PCODE: $00000C21 VOL: 0
-; 0000 0282           bmp_disp(GSM2,0,0,20,1);
+; 0000 0280           bmp_disp(GSM2,0,0,20,1);
 ;PCODE: $00000C22 VOL: 0
 ;PCODE: $00000C23 VOL: 0
 ;PCODE: $00000C24 VOL: 0
@@ -3934,13 +3932,13 @@ _0xFA:
 ;PCODE: $00000C2A VOL: 0
 ;PCODE: $00000C2B VOL: 0
 ;PCODE: $00000C2C VOL: 0
-; 0000 0283           break;
+; 0000 0281           break;
 ;PCODE: $00000C2D VOL: 0
-; 0000 0284           case 3:
+; 0000 0282           case 3:
 ;PCODE: $00000C2E VOL: 0
 ;PCODE: $00000C2F VOL: 0
 ;PCODE: $00000C30 VOL: 0
-; 0000 0285           bmp_disp(GSM1,0,0,20,1);
+; 0000 0283           bmp_disp(GSM1,0,0,20,1);
 ;PCODE: $00000C31 VOL: 0
 ;PCODE: $00000C32 VOL: 0
 ;PCODE: $00000C33 VOL: 0
@@ -3952,13 +3950,13 @@ _0xFA:
 ;PCODE: $00000C39 VOL: 0
 ;PCODE: $00000C3A VOL: 0
 ;PCODE: $00000C3B VOL: 0
-; 0000 0286           break;
+; 0000 0284           break;
 ;PCODE: $00000C3C VOL: 0
-; 0000 0287           case 4:
+; 0000 0285           case 4:
 ;PCODE: $00000C3D VOL: 0
 ;PCODE: $00000C3E VOL: 0
 ;PCODE: $00000C3F VOL: 0
-; 0000 0288           bmp_disp(GSM4,0,0,20,1);
+; 0000 0286           bmp_disp(GSM4,0,0,20,1);
 ;PCODE: $00000C40 VOL: 0
 ;PCODE: $00000C41 VOL: 0
 ;PCODE: $00000C42 VOL: 0
@@ -3970,12 +3968,12 @@ _0xFA:
 ;PCODE: $00000C48 VOL: 0
 ;PCODE: $00000C49 VOL: 0
 ;PCODE: $00000C4A VOL: 0
-; 0000 0289           break;
+; 0000 0287           break;
 ;PCODE: $00000C4B VOL: 0
-; 0000 028A           };
+; 0000 0288           };
 ;PCODE: $00000C4C VOL: 0
-; 0000 028B 
-; 0000 028C       }
+; 0000 0289 
+; 0000 028A       }
 ;PCODE: $00000C4D VOL: 0
 ;PCODE: $00000C4E VOL: 0
 ;   //---------------------------------------------------------------------------//
@@ -3983,16 +3981,24 @@ _0xFA:
 ;
 ;   //////////////// FUNCION PARA OBTENER LA TRAMA DEL GPS SKYPATROL+ ///////////////////////////
 ;      void obt(void)
-; 0000 0292       {
+; 0000 0290       {
 ;PCODE: $00000C4F VOL: 0
 ;PCODE: $00000C50 VOL: 0
-; 0000 0293 
-; 0000 0294          int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
-; 0000 0295          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
-; 0000 0296 
-; 0000 0297          char digito_hora_temp; //Variable temporal para la hora y fecha
-; 0000 0298 
-; 0000 0299          for (i=0; i<RX_BUFFER_SIZE0 ;i++)
+; 0000 0291 
+; 0000 0292          int i;                        // Contador de lazo FOR() buffer serial
+; 0000 0293          int j;                       // Contador de ??
+; 0000 0294          int n=0;                    //
+; 0000 0295          int ini;
+; 0000 0296          int coma=0;
+; 0000 0297          int pos1=0;
+; 0000 0298          int pos2=0;
+; 0000 0299          int pos3=0;
+; 0000 029A          int barras;
+; 0000 029B          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
+; 0000 029C 
+; 0000 029D          char digito_hora_temp; //Variable temporal para la hora y fecha
+; 0000 029E 
+; 0000 029F          for (i=0; i<RX_BUFFER_SIZE0 ;i++)
 ;PCODE: $00000C51 VOL: 0
 ;PCODE: $00000C52 VOL: 0
 ;PCODE: $00000C53 VOL: 0
@@ -4036,15 +4042,15 @@ _0xFA:
 ;PCODE: $00000C6B VOL: 0
 ;PCODE: $00000C6C VOL: 0
 ;PCODE: $00000C6D VOL: 0
-; 0000 029A          {
-; 0000 029B 
-; 0000 029C             // $$Txt,   Mensaje para mostrar en la GLCD.
-; 0000 029D             if ( rx_b0[i+0]== '$' &&
-; 0000 029E                   rx_b0[i+1]== '$' &&
-; 0000 029F                    rx_b0[i+2]== 'T' &&
-; 0000 02A0                     rx_b0[i+3]== 'x' &&
-; 0000 02A1                      rx_b0[i+4]== 't' &&
-; 0000 02A2                       rx_b0[i+5]== ',')
+; 0000 02A0          {
+; 0000 02A1 
+; 0000 02A2             // $$Txt,   Mensaje para mostrar en la GLCD.
+; 0000 02A3             if ( rx_b0[i+0]== '$' &&
+; 0000 02A4                   rx_b0[i+1]== '$' &&
+; 0000 02A5                    rx_b0[i+2]== 'T' &&
+; 0000 02A6                     rx_b0[i+3]== 'x' &&
+; 0000 02A7                      rx_b0[i+4]== 't' &&
+; 0000 02A8                       rx_b0[i+5]== ',')
 ;PCODE: $00000C6E VOL: 0
 ;PCODE: $00000C6F VOL: 0
 ;PCODE: $00000C70 VOL: 0
@@ -4085,22 +4091,22 @@ _0xFA:
 ;PCODE: $00000C93 VOL: 0
 ;PCODE: $00000C94 VOL: 0
 ;PCODE: $00000C95 VOL: 0
-; 0000 02A3             {
-; 0000 02A4                // Guarda lo que hay entre las comillas en el
-; 0000 02A5                // buffer txt_glcd
-; 0000 02A6                i_txt_glcd = 0;
+; 0000 02A9             {
+; 0000 02AA                // Guarda lo que hay entre las comillas en el
+; 0000 02AB                // buffer txt_glcd
+; 0000 02AC                i_txt_glcd = 0;
 ;PCODE: $00000C96 VOL: 0
-; 0000 02A7 
-; 0000 02A8                do
+; 0000 02AD 
+; 0000 02AE                do
 ;PCODE: $00000C97 VOL: 0
-; 0000 02A9                {
-; 0000 02AA                   if (i_txt_glcd <= 100)
+; 0000 02AF                {
+; 0000 02B0                   if (i_txt_glcd <= TXT_BUF_SZ )
 ;PCODE: $00000C98 VOL: 0
 ;PCODE: $00000C99 VOL: 0
 ;PCODE: $00000C9A VOL: 0
-; 0000 02AB                   {
-; 0000 02AC 
-; 0000 02AD                      txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ];
+; 0000 02B1                   {
+; 0000 02B2 
+; 0000 02B3                      txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+6 + i_txt_glcd ];
 ;PCODE: $00000C9B VOL: 0
 ;PCODE: $00000C9C VOL: 0
 ;PCODE: $00000C9D VOL: 0
@@ -4114,20 +4120,18 @@ _0xFA:
 ;PCODE: $00000CA5 VOL: 0
 ;PCODE: $00000CA6 VOL: 0
 ;PCODE: $00000CA7 VOL: 0
-; 0000 02AE                      i_txt_glcd++;
+; 0000 02B4                      i_txt_glcd++;
 ;PCODE: $00000CA8 VOL: 0
-; 0000 02AF 
-; 0000 02B0                   }
-; 0000 02B1                   else{  // Mas de 100 caracteres recibidos. Romper el while
+; 0000 02B5 
+; 0000 02B6                   }else{  // Mas de 100 caracteres recibidos. Romper el while
 ;PCODE: $00000CA9 VOL: 0
 ;PCODE: $00000CAA VOL: 0
-; 0000 02B2 
-; 0000 02B3                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
+; 0000 02B7 
+; 0000 02B8                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
 ;PCODE: $00000CAB VOL: 0
 ;PCODE: $00000CAC VOL: 0
-; 0000 02B4 
-; 0000 02B5                      //Obliga a salir del while:
-; 0000 02B6                      rx_b0[ i+7 + i_txt_glcd ] = '"';
+; 0000 02B9 
+; 0000 02BA                      rx_b0[ i+6 + i_txt_glcd ] = ',';//Obliga a salir del while:
 ;PCODE: $00000CAD VOL: 0
 ;PCODE: $00000CAE VOL: 0
 ;PCODE: $00000CAF VOL: 0
@@ -4136,11 +4140,10 @@ _0xFA:
 ;PCODE: $00000CB2 VOL: 0
 ;PCODE: $00000CB3 VOL: 0
 ;PCODE: $00000CB4 VOL: 0
-; 0000 02B7                      //break;  // Se sale del while?
-; 0000 02B8                   }
+; 0000 02BB                   }
 ;PCODE: $00000CB5 VOL: 0
-; 0000 02B9 
-; 0000 02BA                }while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+; 0000 02BC 
+; 0000 02BD                }while( rx_b0[ i+6 + i_txt_glcd ] != ',' ); // Mientras el caracter no sea com
 ;PCODE: $00000CB6 VOL: 0
 ;PCODE: $00000CB7 VOL: 0
 ;PCODE: $00000CB8 VOL: 0
@@ -4153,19 +4156,19 @@ _0xFA:
 ;PCODE: $00000CBF VOL: 0
 ;PCODE: $00000CC0 VOL: 0
 ;PCODE: $00000CC1 VOL: 0
-; 0000 02BB 
-; 0000 02BC                pt = 7;          // Muestra en mensaje en main()
+; 0000 02BE 
+; 0000 02BF                pt = 7;          // Muestra en mensaje en main()
 ;PCODE: $00000CC2 VOL: 0
 ;PCODE: $00000CC3 VOL: 0
-; 0000 02BD             }
-; 0000 02BE 
-; 0000 02BF             //+CSQ:
-; 0000 02C0             if ( rx_b0[i+0]== '+' &&    //43d
+; 0000 02C0             }
+; 0000 02C1 
+; 0000 02C2             //+CSQ:
+; 0000 02C3             if ( rx_b0[i+0]== '+' &&    //43d
 ;PCODE: $00000CC4 VOL: 0
-; 0000 02C1                   rx_b0[i+1]== 'C' &&     //67d
-; 0000 02C2                    rx_b0[i+2]== 'S' &&    //83d
-; 0000 02C3                     rx_b0[i+3]== 'Q' &&   //81d
-; 0000 02C4                      rx_b0[i+4]== ':')    //58d
+; 0000 02C4                   rx_b0[i+1]== 'C' &&     //67d
+; 0000 02C5                    rx_b0[i+2]== 'S' &&    //83d
+; 0000 02C6                     rx_b0[i+3]== 'Q' &&   //81d
+; 0000 02C7                      rx_b0[i+4]== ':')    //58d
 ;PCODE: $00000CC5 VOL: 0
 ;PCODE: $00000CC6 VOL: 0
 ;PCODE: $00000CC7 VOL: 0
@@ -4200,9 +4203,9 @@ _0xFA:
 ;PCODE: $00000CE4 VOL: 0
 ;PCODE: $00000CE5 VOL: 0
 ;PCODE: $00000CE6 VOL: 0
-; 0000 02C5             {
-; 0000 02C6               // Valor decimal de la intensidad de la seÃ±al
-; 0000 02C7               barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
+; 0000 02C8             {
+; 0000 02C9               // Valor decimal de la intensidad de la seÃ±al
+; 0000 02CA               barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 ;PCODE: $00000CE7 VOL: 0
 ;PCODE: $00000CE8 VOL: 0
 ;PCODE: $00000CE9 VOL: 0
@@ -4220,10 +4223,10 @@ _0xFA:
 ;PCODE: $00000CF5 VOL: 0
 ;PCODE: $00000CF6 VOL: 0
 ;PCODE: $00000CF7 VOL: 0
-; 0000 02C8 
-; 0000 02C9               // Dibuja las barras en la panalla de acuerdo a la intensidad
-; 0000 02CA               // de la seÃ±al
-; 0000 02CB               if( barras > 10 && barras < 15 ){
+; 0000 02CB 
+; 0000 02CC               // Dibuja las barras en la panalla de acuerdo a la intensidad
+; 0000 02CD               // de la seÃ±al
+; 0000 02CE               if( barras > 10 && barras < 15 ){
 ;PCODE: $00000CF8 VOL: 0
 ;PCODE: $00000CF9 VOL: 0
 ;PCODE: $00000CFA VOL: 0
@@ -4234,12 +4237,12 @@ _0xFA:
 ;PCODE: $00000CFF VOL: 0
 ;PCODE: $00000D00 VOL: 0
 ;PCODE: $00000D01 VOL: 0
-; 0000 02CC               ind_sen=1;
+; 0000 02CF               ind_sen=1;
 ;PCODE: $00000D02 VOL: 0
 ;PCODE: $00000D03 VOL: 0
-; 0000 02CD               }
-; 0000 02CE 
-; 0000 02CF               else if( barras >= 15 && barras < 18){
+; 0000 02D0               }
+; 0000 02D1 
+; 0000 02D2               else if( barras >= 15 && barras < 18){
 ;PCODE: $00000D04 VOL: 0
 ;PCODE: $00000D05 VOL: 0
 ;PCODE: $00000D06 VOL: 0
@@ -4252,12 +4255,12 @@ _0xFA:
 ;PCODE: $00000D0D VOL: 0
 ;PCODE: $00000D0E VOL: 0
 ;PCODE: $00000D0F VOL: 0
-; 0000 02D0               ind_sen=2;
+; 0000 02D3               ind_sen=2;
 ;PCODE: $00000D10 VOL: 0
 ;PCODE: $00000D11 VOL: 0
-; 0000 02D1               }
-; 0000 02D2 
-; 0000 02D3               else if( barras >= 18 && barras < 31){
+; 0000 02D4               }
+; 0000 02D5 
+; 0000 02D6               else if( barras >= 18 && barras < 31){
 ;PCODE: $00000D12 VOL: 0
 ;PCODE: $00000D13 VOL: 0
 ;PCODE: $00000D14 VOL: 0
@@ -4270,12 +4273,12 @@ _0xFA:
 ;PCODE: $00000D1B VOL: 0
 ;PCODE: $00000D1C VOL: 0
 ;PCODE: $00000D1D VOL: 0
-; 0000 02D4               ind_sen=3;
+; 0000 02D7               ind_sen=3;
 ;PCODE: $00000D1E VOL: 0
 ;PCODE: $00000D1F VOL: 0
-; 0000 02D5               }
-; 0000 02D6 
-; 0000 02D7               else if( barras > 31 && barras < 50){
+; 0000 02D8               }
+; 0000 02D9 
+; 0000 02DA               else if( barras > 31 && barras < 50){
 ;PCODE: $00000D20 VOL: 0
 ;PCODE: $00000D21 VOL: 0
 ;PCODE: $00000D22 VOL: 0
@@ -4288,32 +4291,32 @@ _0xFA:
 ;PCODE: $00000D29 VOL: 0
 ;PCODE: $00000D2A VOL: 0
 ;PCODE: $00000D2B VOL: 0
-; 0000 02D8               ind_sen=4;
+; 0000 02DB               ind_sen=4;
 ;PCODE: $00000D2C VOL: 0
 ;PCODE: $00000D2D VOL: 0
-; 0000 02D9               }
-; 0000 02DA 
-; 0000 02DB               // En caso de que el valor en barras
-; 0000 02DC               // no sea ninguno de los anteriores, es posible
-; 0000 02DD               // que la trama recibida no sea valida.
-; 0000 02DE               else{   }
+; 0000 02DC               }
+; 0000 02DD 
+; 0000 02DE               // En caso de que el valor en barras
+; 0000 02DF               // no sea ninguno de los anteriores, es posible
+; 0000 02E0               // que la trama recibida no sea valida.
+; 0000 02E1               else{   }
 ;PCODE: $00000D2E VOL: 0
 ;PCODE: $00000D2F VOL: 0
 ;PCODE: $00000D30 VOL: 0
 ;PCODE: $00000D31 VOL: 0
 ;PCODE: $00000D32 VOL: 0
 ;PCODE: $00000D33 VOL: 0
-; 0000 02DF 
-; 0000 02E0             }
-; 0000 02E1 
 ; 0000 02E2 
-; 0000 02E3                 //________________________
-; 0000 02E4            //PARA PUNTO DE CONTROL:
-; 0000 02E5             //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
-; 0000 02E6             if ( rx_b0[i+0]== 'B' &&
+; 0000 02E3             }
+; 0000 02E4 
+; 0000 02E5 
+; 0000 02E6                 //________________________
+; 0000 02E7            //PARA PUNTO DE CONTROL:
+; 0000 02E8             //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
+; 0000 02E9             if ( rx_b0[i+0]== 'B' &&
 ;PCODE: $00000D34 VOL: 0
-; 0000 02E7                   rx_b0[i+1]== 'U' &&
-; 0000 02E8                    rx_b0[i+2]== 'S')
+; 0000 02EA                   rx_b0[i+1]== 'U' &&
+; 0000 02EB                    rx_b0[i+2]== 'S')
 ;PCODE: $00000D35 VOL: 0
 ;PCODE: $00000D36 VOL: 0
 ;PCODE: $00000D37 VOL: 0
@@ -4336,10 +4339,10 @@ _0xFA:
 ;PCODE: $00000D48 VOL: 0
 ;PCODE: $00000D49 VOL: 0
 ;PCODE: $00000D4A VOL: 0
-; 0000 02E9             {
-; 0000 02EA               // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto.
-; 0000 02EB                                        //010A
-; 0000 02EC                punto[0] = rx_b0[i+16]-48;  //   1
+; 0000 02EC             {
+; 0000 02ED               // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto.
+; 0000 02EE                                        //010A
+; 0000 02EF                punto[0] = rx_b0[i+16]-48;  //   1
 ;PCODE: $00000D4B VOL: 0
 ;PCODE: $00000D4C VOL: 0
 ;PCODE: $00000D4D VOL: 0
@@ -4347,7 +4350,7 @@ _0xFA:
 ;PCODE: $00000D4F VOL: 0
 ;PCODE: $00000D50 VOL: 0
 ;PCODE: $00000D51 VOL: 0
-; 0000 02ED                punto[1] = rx_b0[i+17]-48;  //   F
+; 0000 02F0                punto[1] = rx_b0[i+17]-48;  //   F
 ;PCODE: $00000D52 VOL: 0
 ;PCODE: $00000D53 VOL: 0
 ;PCODE: $00000D54 VOL: 0
@@ -4356,7 +4359,7 @@ _0xFA:
 ;PCODE: $00000D57 VOL: 0
 ;PCODE: $00000D58 VOL: 0
 ;PCODE: $00000D59 VOL: 0
-; 0000 02EE                punto[2] = rx_b0[i+18]-48;  //   0
+; 0000 02F1                punto[2] = rx_b0[i+18]-48;  //   0
 ;PCODE: $00000D5A VOL: 0
 ;PCODE: $00000D5B VOL: 0
 ;PCODE: $00000D5C VOL: 0
@@ -4365,7 +4368,7 @@ _0xFA:
 ;PCODE: $00000D5F VOL: 0
 ;PCODE: $00000D60 VOL: 0
 ;PCODE: $00000D61 VOL: 0
-; 0000 02EF                punto[3] = rx_b0[i+19]-48;  //   A
+; 0000 02F2                punto[3] = rx_b0[i+19]-48;  //   A
 ;PCODE: $00000D62 VOL: 0
 ;PCODE: $00000D63 VOL: 0
 ;PCODE: $00000D64 VOL: 0
@@ -4374,47 +4377,47 @@ _0xFA:
 ;PCODE: $00000D67 VOL: 0
 ;PCODE: $00000D68 VOL: 0
 ;PCODE: $00000D69 VOL: 0
-; 0000 02F0 
-; 0000 02F1                if(punto[3]==17){
+; 0000 02F3 
+; 0000 02F4                if(punto[3]==17){
 ;PCODE: $00000D6A VOL: 0
 ;PCODE: $00000D6B VOL: 0
 ;PCODE: $00000D6C VOL: 0
 ;PCODE: $00000D6D VOL: 0
-; 0000 02F2                   punto[3]=10;
+; 0000 02F5                   punto[3]=10;
 ;PCODE: $00000D6E VOL: 0
 ;PCODE: $00000D6F VOL: 0
 ;PCODE: $00000D70 VOL: 0
-; 0000 02F3                }
-; 0000 02F4 
-; 0000 02F5                if(punto[0]>=17){
+; 0000 02F6                }
+; 0000 02F7 
+; 0000 02F8                if(punto[0]>=17){
 ;PCODE: $00000D71 VOL: 0
 ;PCODE: $00000D72 VOL: 0
 ;PCODE: $00000D73 VOL: 0
 ;PCODE: $00000D74 VOL: 0
-; 0000 02F6                   punto[0]=punto[0]-7;
+; 0000 02F9                   punto[0]=punto[0]-7;
 ;PCODE: $00000D75 VOL: 0
 ;PCODE: $00000D76 VOL: 0
 ;PCODE: $00000D77 VOL: 0
 ;PCODE: $00000D78 VOL: 0
-; 0000 02F7                }
-; 0000 02F8 
-; 0000 02F9                if(punto[1]>=17){
+; 0000 02FA                }
+; 0000 02FB 
+; 0000 02FC                if(punto[1]>=17){
 ;PCODE: $00000D79 VOL: 0
 ;PCODE: $00000D7A VOL: 0
 ;PCODE: $00000D7B VOL: 0
 ;PCODE: $00000D7C VOL: 0
 ;PCODE: $00000D7D VOL: 0
-; 0000 02FA                   punto[1]=punto[1]-7;
+; 0000 02FD                   punto[1]=punto[1]-7;
 ;PCODE: $00000D7E VOL: 0
 ;PCODE: $00000D7F VOL: 0
 ;PCODE: $00000D80 VOL: 0
 ;PCODE: $00000D81 VOL: 0
 ;PCODE: $00000D82 VOL: 0
 ;PCODE: $00000D83 VOL: 0
-; 0000 02FB                }
-; 0000 02FC 
-; 0000 02FD                //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
-; 0000 02FE                if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
+; 0000 02FE                }
+; 0000 02FF 
+; 0000 0300                //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
+; 0000 0301                if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
 ;PCODE: $00000D84 VOL: 0
 ;PCODE: $00000D85 VOL: 0
 ;PCODE: $00000D86 VOL: 0
@@ -4432,12 +4435,12 @@ _0xFA:
 ;PCODE: $00000D92 VOL: 0
 ;PCODE: $00000D93 VOL: 0
 ;PCODE: $00000D94 VOL: 0
-; 0000 02FF 
-; 0000 0300                   pt = 1;
+; 0000 0302 
+; 0000 0303                   pt = 1;
 ;PCODE: $00000D95 VOL: 0
 ;PCODE: $00000D96 VOL: 0
-; 0000 0301 
-; 0000 0302                   unidades_ruta= (punto[2]*10) + punto[3];
+; 0000 0304 
+; 0000 0305                   unidades_ruta= (punto[2]*10) + punto[3];
 ;PCODE: $00000D97 VOL: 0
 ;PCODE: $00000D98 VOL: 0
 ;PCODE: $00000D99 VOL: 0
@@ -4448,7 +4451,7 @@ _0xFA:
 ;PCODE: $00000D9E VOL: 0
 ;PCODE: $00000D9F VOL: 0
 ;PCODE: $00000DA0 VOL: 0
-; 0000 0303                   decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10;
+; 0000 0306                   decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10;
 ;PCODE: $00000DA1 VOL: 0
 ;PCODE: $00000DA2 VOL: 0
 ;PCODE: $00000DA3 VOL: 0
@@ -4461,13 +4464,13 @@ _0xFA:
 ;PCODE: $00000DAA VOL: 0
 ;PCODE: $00000DAB VOL: 0
 ;PCODE: $00000DAC VOL: 0
-; 0000 0304                   centenas_ruta=     unidades_ruta  +decenas_ruta;
+; 0000 0307                   centenas_ruta=     unidades_ruta  +decenas_ruta;
 ;PCODE: $00000DAD VOL: 0
 ;PCODE: $00000DAE VOL: 0
 ;PCODE: $00000DAF VOL: 0
 ;PCODE: $00000DB0 VOL: 0
-; 0000 0305 
-; 0000 0306                   sprintf(no_pt,"P%d", centenas_ruta);
+; 0000 0308 
+; 0000 0309                   sprintf(no_pt,"P%d", centenas_ruta);
 ;PCODE: $00000DB1 VOL: 0
 ;PCODE: $00000DB2 VOL: 0
 ;PCODE: $00000DB3 VOL: 0
@@ -4480,19 +4483,19 @@ _0xFA:
 ;PCODE: $00000DBA VOL: 0
 ;PCODE: $00000DBB VOL: 0
 ;PCODE: $00000DBC VOL: 0
-; 0000 0307                }
-; 0000 0308 
-; 0000 0309             }
-;PCODE: $00000DBD VOL: 0
-; 0000 030A 
+; 0000 030A                }
 ; 0000 030B 
-; 0000 030C             //NETIP
-; 0000 030D             if ( rx_b0[i+0]== 'N' &&
+; 0000 030C             }
+;PCODE: $00000DBD VOL: 0
+; 0000 030D 
+; 0000 030E 
+; 0000 030F             //NETIP
+; 0000 0310             if ( rx_b0[i+0]== 'N' &&
 ;PCODE: $00000DBE VOL: 0
-; 0000 030E                   rx_b0[i+1]== 'E' &&
-; 0000 030F                    rx_b0[i+2]== 'T' &&
-; 0000 0310                     rx_b0[i+3]== 'I' &&
-; 0000 0311                      rx_b0[i+4]== 'P')
+; 0000 0311                   rx_b0[i+1]== 'E' &&
+; 0000 0312                    rx_b0[i+2]== 'T' &&
+; 0000 0313                     rx_b0[i+3]== 'I' &&
+; 0000 0314                      rx_b0[i+4]== 'P')
 ;PCODE: $00000DBF VOL: 0
 ;PCODE: $00000DC0 VOL: 0
 ;PCODE: $00000DC1 VOL: 0
@@ -4527,13 +4530,13 @@ _0xFA:
 ;PCODE: $00000DDE VOL: 0
 ;PCODE: $00000DDF VOL: 0
 ;PCODE: $00000DE0 VOL: 0
-; 0000 0312             {
-; 0000 0313                ini = i + 4;
+; 0000 0315             {
+; 0000 0316                ini = i + 4;
 ;PCODE: $00000DE1 VOL: 0
 ;PCODE: $00000DE2 VOL: 0
 ;PCODE: $00000DE3 VOL: 0
-; 0000 0314 
-; 0000 0315                for (n=0; n<201; n++)
+; 0000 0317 
+; 0000 0318                for (n=0; n<201; n++)
 ;PCODE: $00000DE4 VOL: 0
 ;PCODE: $00000DE5 VOL: 0
 ;PCODE: $00000DE6 VOL: 0
@@ -4543,9 +4546,9 @@ _0xFA:
 ;PCODE: $00000DEA VOL: 0
 ;PCODE: $00000DEB VOL: 0
 ;PCODE: $00000DEC VOL: 0
-; 0000 0316                {
-; 0000 0317                   // Busca el caracter ':'
-; 0000 0318                   if(rx_b0[ ini + n + 1 ] == ':' )
+; 0000 0319                {
+; 0000 031A                   // Busca el caracter ':'
+; 0000 031B                   if(rx_b0[ ini + n + 1 ] == ':' )
 ;PCODE: $00000DED VOL: 0
 ;PCODE: $00000DEE VOL: 0
 ;PCODE: $00000DEF VOL: 0
@@ -4554,12 +4557,12 @@ _0xFA:
 ;PCODE: $00000DF2 VOL: 0
 ;PCODE: $00000DF3 VOL: 0
 ;PCODE: $00000DF4 VOL: 0
-; 0000 0319                   {
-; 0000 031A                      coma++;
+; 0000 031C                   {
+; 0000 031D                      coma++;
 ;PCODE: $00000DF5 VOL: 0
 ;PCODE: $00000DF6 VOL: 0
 ;PCODE: $00000DF7 VOL: 0
-; 0000 031B                      if(coma == 1) pos1 = n + ini + 1; // Guarda la posicion de la primera trama
+; 0000 031E                      if(coma == 1) pos1 = n + ini + 1; // Guarda la posicion de la primera trama
 ;PCODE: $00000DF8 VOL: 0
 ;PCODE: $00000DF9 VOL: 0
 ;PCODE: $00000DFA VOL: 0
@@ -4567,31 +4570,31 @@ _0xFA:
 ;PCODE: $00000DFC VOL: 0
 ;PCODE: $00000DFD VOL: 0
 ;PCODE: $00000DFE VOL: 0
-; 0000 031C                   }
+; 0000 031F                   }
 ;PCODE: $00000DFF VOL: 0
-; 0000 031D                }
+; 0000 0320                }
 ;PCODE: $00000E00 VOL: 0
 ;PCODE: $00000E01 VOL: 0
 ;PCODE: $00000E02 VOL: 0
 ;PCODE: $00000E03 VOL: 0
 ;PCODE: $00000E04 VOL: 0
 ;PCODE: $00000E05 VOL: 0
-; 0000 031E 
-; 0000 031F                // Verifica si despues del primer ':' Hay comillas
-; 0000 0320                if( rx_b0[ pos1 + 2] == 34 )
+; 0000 0321 
+; 0000 0322                // Verifica si despues del primer ':' Hay comillas
+; 0000 0323                if( rx_b0[ pos1 + 2] == 34 )
 ;PCODE: $00000E06 VOL: 0
 ;PCODE: $00000E07 VOL: 0
 ;PCODE: $00000E08 VOL: 0
 ;PCODE: $00000E09 VOL: 0
 ;PCODE: $00000E0A VOL: 0
 ;PCODE: $00000E0B VOL: 0
-; 0000 0321                {
-; 0000 0322                   if( (rx_b0[pos1+3] - 48) == 0 &&
-; 0000 0323                       (rx_b0[pos1+4] - 48) == 0 &&
-; 0000 0324                       (rx_b0[pos1+5] - 48) == 0 &&
-; 0000 0325                       (rx_b0[pos1+7] - 48) == 0 &&
-; 0000 0326                       (rx_b0[pos1+8] - 48) == 0 &&
-; 0000 0327                       (rx_b0[pos1+9] - 48) == 0)
+; 0000 0324                {
+; 0000 0325                   if( (rx_b0[pos1+3] - 48) == 0 &&
+; 0000 0326                       (rx_b0[pos1+4] - 48) == 0 &&
+; 0000 0327                       (rx_b0[pos1+5] - 48) == 0 &&
+; 0000 0328                       (rx_b0[pos1+7] - 48) == 0 &&
+; 0000 0329                       (rx_b0[pos1+8] - 48) == 0 &&
+; 0000 032A                       (rx_b0[pos1+9] - 48) == 0)
 ;PCODE: $00000E0C VOL: 0
 ;PCODE: $00000E0D VOL: 0
 ;PCODE: $00000E0E VOL: 0
@@ -4638,29 +4641,29 @@ _0xFA:
 ;PCODE: $00000E37 VOL: 0
 ;PCODE: $00000E38 VOL: 0
 ;PCODE: $00000E39 VOL: 0
-; 0000 0328                   {
-; 0000 0329                      gsm=0;   // Sin seÃ±al GSM
+; 0000 032B                   {
+; 0000 032C                      gsm=0;   // Sin seÃ±al GSM
 ;PCODE: $00000E3A VOL: 0
 ;PCODE: $00000E3B VOL: 0
-; 0000 032A 
-; 0000 032B                   }else
+; 0000 032D 
+; 0000 032E                   }else
 ;PCODE: $00000E3C VOL: 0
 ;PCODE: $00000E3D VOL: 0
-; 0000 032C                      gsm=1;
+; 0000 032F                      gsm=1;
 ;PCODE: $00000E3E VOL: 0
 ;PCODE: $00000E3F VOL: 0
-; 0000 032D                }
+; 0000 0330                }
 ;PCODE: $00000E40 VOL: 0
-; 0000 032E             }
+; 0000 0331             }
 ;PCODE: $00000E41 VOL: 0
-; 0000 032F 
-; 0000 0330             //DEVID
-; 0000 0331             if ( rx_b0[i+0] == 'D' &&
+; 0000 0332 
+; 0000 0333             //DEVID
+; 0000 0334             if ( rx_b0[i+0] == 'D' &&
 ;PCODE: $00000E42 VOL: 0
-; 0000 0332                   rx_b0[i+1] == 'E' &&
-; 0000 0333                    rx_b0[i+2] == 'V' &&
-; 0000 0334                     rx_b0[i+3] == 'I' &&
-; 0000 0335                      rx_b0[i+4] == 'D')
+; 0000 0335                   rx_b0[i+1] == 'E' &&
+; 0000 0336                    rx_b0[i+2] == 'V' &&
+; 0000 0337                     rx_b0[i+3] == 'I' &&
+; 0000 0338                      rx_b0[i+4] == 'D')
 ;PCODE: $00000E43 VOL: 0
 ;PCODE: $00000E44 VOL: 0
 ;PCODE: $00000E45 VOL: 0
@@ -4695,31 +4698,31 @@ _0xFA:
 ;PCODE: $00000E62 VOL: 0
 ;PCODE: $00000E63 VOL: 0
 ;PCODE: $00000E64 VOL: 0
-; 0000 0336             {
-; 0000 0337                ini = i+4;
+; 0000 0339             {
+; 0000 033A                ini = i+4;
 ;PCODE: $00000E65 VOL: 0
 ;PCODE: $00000E66 VOL: 0
 ;PCODE: $00000E67 VOL: 0
-; 0000 0338 
-; 0000 0339                // Limpia las lineas 2,3,4,5
-; 0000 033A                glcd_clrln(2);
+; 0000 033B 
+; 0000 033C                // Limpia las lineas 2,3,4,5
+; 0000 033D                glcd_clrln(2);
 ;PCODE: $00000E68 VOL: 0
 ;PCODE: $00000E69 VOL: 0
 ;PCODE: $00000E6A VOL: 0
-; 0000 033B                glcd_clrln(3);
+; 0000 033E                glcd_clrln(3);
 ;PCODE: $00000E6B VOL: 0
 ;PCODE: $00000E6C VOL: 0
 ;PCODE: $00000E6D VOL: 0
-; 0000 033C                glcd_clrln(4);
+; 0000 033F                glcd_clrln(4);
 ;PCODE: $00000E6E VOL: 0
 ;PCODE: $00000E6F VOL: 0
 ;PCODE: $00000E70 VOL: 0
-; 0000 033D                glcd_clrln(5);
+; 0000 0340                glcd_clrln(5);
 ;PCODE: $00000E71 VOL: 0
 ;PCODE: $00000E72 VOL: 0
 ;PCODE: $00000E73 VOL: 0
-; 0000 033E 
-; 0000 033F                for (n=0;n<201;n++)
+; 0000 0341 
+; 0000 0342                for (n=0;n<201;n++)
 ;PCODE: $00000E74 VOL: 0
 ;PCODE: $00000E75 VOL: 0
 ;PCODE: $00000E76 VOL: 0
@@ -4729,8 +4732,8 @@ _0xFA:
 ;PCODE: $00000E7A VOL: 0
 ;PCODE: $00000E7B VOL: 0
 ;PCODE: $00000E7C VOL: 0
-; 0000 0340                {
-; 0000 0341                   if( rx_b0[ini+n+1] == ':')
+; 0000 0343                {
+; 0000 0344                   if( rx_b0[ini+n+1] == ':')
 ;PCODE: $00000E7D VOL: 0
 ;PCODE: $00000E7E VOL: 0
 ;PCODE: $00000E7F VOL: 0
@@ -4739,12 +4742,12 @@ _0xFA:
 ;PCODE: $00000E82 VOL: 0
 ;PCODE: $00000E83 VOL: 0
 ;PCODE: $00000E84 VOL: 0
-; 0000 0342                   {
-; 0000 0343                      coma++;
+; 0000 0345                   {
+; 0000 0346                      coma++;
 ;PCODE: $00000E85 VOL: 0
 ;PCODE: $00000E86 VOL: 0
 ;PCODE: $00000E87 VOL: 0
-; 0000 0344                      if(coma==1) pos1 = n+ini+1;
+; 0000 0347                      if(coma==1) pos1 = n+ini+1;
 ;PCODE: $00000E88 VOL: 0
 ;PCODE: $00000E89 VOL: 0
 ;PCODE: $00000E8A VOL: 0
@@ -4752,29 +4755,29 @@ _0xFA:
 ;PCODE: $00000E8C VOL: 0
 ;PCODE: $00000E8D VOL: 0
 ;PCODE: $00000E8E VOL: 0
-; 0000 0345                   }
+; 0000 0348                   }
 ;PCODE: $00000E8F VOL: 0
-; 0000 0346                }
+; 0000 0349                }
 ;PCODE: $00000E90 VOL: 0
 ;PCODE: $00000E91 VOL: 0
 ;PCODE: $00000E92 VOL: 0
 ;PCODE: $00000E93 VOL: 0
 ;PCODE: $00000E94 VOL: 0
 ;PCODE: $00000E95 VOL: 0
-; 0000 0347 
-; 0000 0348                //Comprobar nombre
-; 0000 0349                if(rx_b0[pos1+1]==34)
+; 0000 034A 
+; 0000 034B                //Comprobar nombre
+; 0000 034C                if(rx_b0[pos1+1]==34)
 ;PCODE: $00000E96 VOL: 0
 ;PCODE: $00000E97 VOL: 0
 ;PCODE: $00000E98 VOL: 0
 ;PCODE: $00000E99 VOL: 0
 ;PCODE: $00000E9A VOL: 0
 ;PCODE: $00000E9B VOL: 0
-; 0000 034A                {
-; 0000 034B                   if( rx_b0[pos1+2] == NUM_DISP[0] &&
-; 0000 034C                       rx_b0[pos1+3] == NUM_DISP[1] &&
-; 0000 034D                       rx_b0[pos1+4] == NUM_DISP[2] &&
-; 0000 034E                       rx_b0[pos1+5] == NUM_DISP[3] )
+; 0000 034D                {
+; 0000 034E                   if( rx_b0[pos1+2] == NUM_DISP[0] &&
+; 0000 034F                       rx_b0[pos1+3] == NUM_DISP[1] &&
+; 0000 0350                       rx_b0[pos1+4] == NUM_DISP[2] &&
+; 0000 0351                       rx_b0[pos1+5] == NUM_DISP[3] )
 ;PCODE: $00000E9C VOL: 0
 ;PCODE: $00000E9D VOL: 0
 ;PCODE: $00000E9E VOL: 0
@@ -4810,34 +4813,34 @@ _0xFA:
 ;PCODE: $00000EBC VOL: 0
 ;PCODE: $00000EBD VOL: 0
 ;PCODE: $00000EBE VOL: 0
-; 0000 034F                   {
-; 0000 0350 
-; 0000 0351                   act=1;  // PANTALLA Y EQUIPO CORRECTA !!!
+; 0000 0352                   {
+; 0000 0353 
+; 0000 0354                   act=1;  // PANTALLA Y EQUIPO CORRECTA !!!
 ;PCODE: $00000EBF VOL: 0
 ;PCODE: $00000EC0 VOL: 0
-; 0000 0352 
-; 0000 0353                   }
-; 0000 0354                   else {
+; 0000 0355 
+; 0000 0356                   }
+; 0000 0357                   else {
 ;PCODE: $00000EC1 VOL: 0
 ;PCODE: $00000EC2 VOL: 0
-; 0000 0355 
-; 0000 0356                   act=0;  // PANTALLA INCORRECTA !!!
+; 0000 0358 
+; 0000 0359                   act=0;  // PANTALLA INCORRECTA !!!
 ;PCODE: $00000EC3 VOL: 0
 ;PCODE: $00000EC4 VOL: 0
-; 0000 0357                   }
+; 0000 035A                   }
 ;PCODE: $00000EC5 VOL: 0
-; 0000 0358 
-; 0000 0359                }
-; 0000 035A             }
-;PCODE: $00000EC6 VOL: 0
 ; 0000 035B 
-; 0000 035C             //Encabezado: GPRMC para igualar el reloj desde trama GPS
-; 0000 035D             if ( rx_b0[i+0] == 'G' &&
+; 0000 035C                }
+; 0000 035D             }
+;PCODE: $00000EC6 VOL: 0
+; 0000 035E 
+; 0000 035F             //Encabezado: GPRMC para igualar el reloj desde trama GPS
+; 0000 0360             if ( rx_b0[i+0] == 'G' &&
 ;PCODE: $00000EC7 VOL: 0
-; 0000 035E                   rx_b0[i+1] == 'P' &&
-; 0000 035F                    rx_b0[i+2] == 'R' &&
-; 0000 0360                     rx_b0[i+3] == 'M' &&
-; 0000 0361                      rx_b0[i+4] == 'C')
+; 0000 0361                   rx_b0[i+1] == 'P' &&
+; 0000 0362                    rx_b0[i+2] == 'R' &&
+; 0000 0363                     rx_b0[i+3] == 'M' &&
+; 0000 0364                      rx_b0[i+4] == 'C')
 ;PCODE: $00000EC8 VOL: 0
 ;PCODE: $00000EC9 VOL: 0
 ;PCODE: $00000ECA VOL: 0
@@ -4872,13 +4875,13 @@ _0xFA:
 ;PCODE: $00000EE7 VOL: 0
 ;PCODE: $00000EE8 VOL: 0
 ;PCODE: $00000EE9 VOL: 0
-; 0000 0362             {
-; 0000 0363 
-; 0000 0364                ini=i+4;
+; 0000 0365             {
+; 0000 0366 
+; 0000 0367                ini=i+4;
 ;PCODE: $00000EEA VOL: 0
 ;PCODE: $00000EEB VOL: 0
 ;PCODE: $00000EEC VOL: 0
-; 0000 0365                for (n=0;n<201;n++)
+; 0000 0368                for (n=0;n<201;n++)
 ;PCODE: $00000EED VOL: 0
 ;PCODE: $00000EEE VOL: 0
 ;PCODE: $00000EEF VOL: 0
@@ -4888,8 +4891,8 @@ _0xFA:
 ;PCODE: $00000EF3 VOL: 0
 ;PCODE: $00000EF4 VOL: 0
 ;PCODE: $00000EF5 VOL: 0
-; 0000 0366                {
-; 0000 0367                   if(rx_b0[ini+n+1]==44)
+; 0000 0369                {
+; 0000 036A                   if(rx_b0[ini+n+1]==44)
 ;PCODE: $00000EF6 VOL: 0
 ;PCODE: $00000EF7 VOL: 0
 ;PCODE: $00000EF8 VOL: 0
@@ -4898,12 +4901,12 @@ _0xFA:
 ;PCODE: $00000EFB VOL: 0
 ;PCODE: $00000EFC VOL: 0
 ;PCODE: $00000EFD VOL: 0
-; 0000 0368                   {
-; 0000 0369                      coma++;
+; 0000 036B                   {
+; 0000 036C                      coma++;
 ;PCODE: $00000EFE VOL: 0
 ;PCODE: $00000EFF VOL: 0
 ;PCODE: $00000F00 VOL: 0
-; 0000 036A                      if(coma==1) pos1=n+ini+1;
+; 0000 036D                      if(coma==1) pos1=n+ini+1;
 ;PCODE: $00000F01 VOL: 0
 ;PCODE: $00000F02 VOL: 0
 ;PCODE: $00000F03 VOL: 0
@@ -4911,7 +4914,7 @@ _0xFA:
 ;PCODE: $00000F05 VOL: 0
 ;PCODE: $00000F06 VOL: 0
 ;PCODE: $00000F07 VOL: 0
-; 0000 036B                      if(coma==2) pos2=n+ini+1;
+; 0000 036E                      if(coma==2) pos2=n+ini+1;
 ;PCODE: $00000F08 VOL: 0
 ;PCODE: $00000F09 VOL: 0
 ;PCODE: $00000F0A VOL: 0
@@ -4920,7 +4923,7 @@ _0xFA:
 ;PCODE: $00000F0D VOL: 0
 ;PCODE: $00000F0E VOL: 0
 ;PCODE: $00000F0F VOL: 0
-; 0000 036C                      if(coma==9) pos3=n+ini+1;
+; 0000 036F                      if(coma==9) pos3=n+ini+1;
 ;PCODE: $00000F10 VOL: 0
 ;PCODE: $00000F11 VOL: 0
 ;PCODE: $00000F12 VOL: 0
@@ -4929,36 +4932,36 @@ _0xFA:
 ;PCODE: $00000F15 VOL: 0
 ;PCODE: $00000F16 VOL: 0
 ;PCODE: $00000F17 VOL: 0
-; 0000 036D                   }
+; 0000 0370                   }
 ;PCODE: $00000F18 VOL: 0
-; 0000 036E                }
+; 0000 0371                }
 ;PCODE: $00000F19 VOL: 0
 ;PCODE: $00000F1A VOL: 0
 ;PCODE: $00000F1B VOL: 0
 ;PCODE: $00000F1C VOL: 0
 ;PCODE: $00000F1D VOL: 0
 ;PCODE: $00000F1E VOL: 0
-; 0000 036F 
-; 0000 0370                glcd_clrln(3);
+; 0000 0372 
+; 0000 0373                glcd_clrln(3);
 ;PCODE: $00000F1F VOL: 0
 ;PCODE: $00000F20 VOL: 0
 ;PCODE: $00000F21 VOL: 0
-; 0000 0371                glcd_clrln(4);
+; 0000 0374                glcd_clrln(4);
 ;PCODE: $00000F22 VOL: 0
 ;PCODE: $00000F23 VOL: 0
 ;PCODE: $00000F24 VOL: 0
-; 0000 0372                glcd_clrln(5);
+; 0000 0375                glcd_clrln(5);
 ;PCODE: $00000F25 VOL: 0
 ;PCODE: $00000F26 VOL: 0
 ;PCODE: $00000F27 VOL: 0
-; 0000 0373 
-; 0000 0374 
-; 0000 0375                // Comprueba que las comas no esten seguidas
-; 0000 0376                // en caso de no haber senial gps.
-; 0000 0377                if( (rx_b0[ pos1+1 ]-48)>= 0 &&
-; 0000 0378                    (rx_b0[ pos1+1 ]-48)< 10 &&
-; 0000 0379                     pos2 != (pos1 +1)
-; 0000 037A                  )
+; 0000 0376 
+; 0000 0377 
+; 0000 0378                // Comprueba que las comas no esten seguidas
+; 0000 0379                // en caso de no haber senial gps.
+; 0000 037A                if( (rx_b0[ pos1+1 ]-48)>= 0 &&
+; 0000 037B                    (rx_b0[ pos1+1 ]-48)< 10 &&
+; 0000 037C                     pos2 != (pos1 +1)
+; 0000 037D                  )
 ;PCODE: $00000F28 VOL: 0
 ;PCODE: $00000F29 VOL: 0
 ;PCODE: $00000F2A VOL: 0
@@ -4978,9 +4981,9 @@ _0xFA:
 ;PCODE: $00000F38 VOL: 0
 ;PCODE: $00000F39 VOL: 0
 ;PCODE: $00000F3A VOL: 0
-; 0000 037B                {
-; 0000 037C 
-; 0000 037D                   digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
+; 0000 037E                {
+; 0000 037F 
+; 0000 0380                   digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
 ;PCODE: $00000F3B VOL: 0
 ;PCODE: $00000F3C VOL: 0
 ;PCODE: $00000F3D VOL: 0
@@ -4988,7 +4991,7 @@ _0xFA:
 ;PCODE: $00000F3F VOL: 0
 ;PCODE: $00000F40 VOL: 0
 ;PCODE: $00000F41 VOL: 0
-; 0000 037E                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0381                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000F42 VOL: 0
 ;PCODE: $00000F43 VOL: 0
 ;PCODE: $00000F44 VOL: 0
@@ -4999,12 +5002,12 @@ _0xFA:
 ;PCODE: $00000F49 VOL: 0
 ;PCODE: $00000F4A VOL: 0
 ;PCODE: $00000F4B VOL: 0
-; 0000 037F                      seg = digito_hora_temp;
+; 0000 0382                      seg = digito_hora_temp;
 ;PCODE: $00000F4C VOL: 0
 ;PCODE: $00000F4D VOL: 0
 ;PCODE: $00000F4E VOL: 0
-; 0000 0380 
-; 0000 0381                   digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
+; 0000 0383 
+; 0000 0384                   digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
 ;PCODE: $00000F4F VOL: 0
 ;PCODE: $00000F50 VOL: 0
 ;PCODE: $00000F51 VOL: 0
@@ -5013,7 +5016,7 @@ _0xFA:
 ;PCODE: $00000F54 VOL: 0
 ;PCODE: $00000F55 VOL: 0
 ;PCODE: $00000F56 VOL: 0
-; 0000 0382                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0385                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000F57 VOL: 0
 ;PCODE: $00000F58 VOL: 0
 ;PCODE: $00000F59 VOL: 0
@@ -5024,12 +5027,12 @@ _0xFA:
 ;PCODE: $00000F5E VOL: 0
 ;PCODE: $00000F5F VOL: 0
 ;PCODE: $00000F60 VOL: 0
-; 0000 0383                      seg1 = digito_hora_temp;
+; 0000 0386                      seg1 = digito_hora_temp;
 ;PCODE: $00000F61 VOL: 0
 ;PCODE: $00000F62 VOL: 0
 ;PCODE: $00000F63 VOL: 0
-; 0000 0384 
-; 0000 0385                   digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
+; 0000 0387 
+; 0000 0388                   digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
 ;PCODE: $00000F64 VOL: 0
 ;PCODE: $00000F65 VOL: 0
 ;PCODE: $00000F66 VOL: 0
@@ -5038,7 +5041,7 @@ _0xFA:
 ;PCODE: $00000F69 VOL: 0
 ;PCODE: $00000F6A VOL: 0
 ;PCODE: $00000F6B VOL: 0
-; 0000 0386                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0389                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000F6C VOL: 0
 ;PCODE: $00000F6D VOL: 0
 ;PCODE: $00000F6E VOL: 0
@@ -5049,12 +5052,12 @@ _0xFA:
 ;PCODE: $00000F73 VOL: 0
 ;PCODE: $00000F74 VOL: 0
 ;PCODE: $00000F75 VOL: 0
-; 0000 0387                      minu = digito_hora_temp;
+; 0000 038A                      minu = digito_hora_temp;
 ;PCODE: $00000F76 VOL: 0
 ;PCODE: $00000F77 VOL: 0
 ;PCODE: $00000F78 VOL: 0
-; 0000 0388 
-; 0000 0389                   digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
+; 0000 038B 
+; 0000 038C                   digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
 ;PCODE: $00000F79 VOL: 0
 ;PCODE: $00000F7A VOL: 0
 ;PCODE: $00000F7B VOL: 0
@@ -5063,7 +5066,7 @@ _0xFA:
 ;PCODE: $00000F7E VOL: 0
 ;PCODE: $00000F7F VOL: 0
 ;PCODE: $00000F80 VOL: 0
-; 0000 038A                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 038D                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000F81 VOL: 0
 ;PCODE: $00000F82 VOL: 0
 ;PCODE: $00000F83 VOL: 0
@@ -5074,12 +5077,12 @@ _0xFA:
 ;PCODE: $00000F88 VOL: 0
 ;PCODE: $00000F89 VOL: 0
 ;PCODE: $00000F8A VOL: 0
-; 0000 038B                      min1  = digito_hora_temp;
+; 0000 038E                      min1  = digito_hora_temp;
 ;PCODE: $00000F8B VOL: 0
 ;PCODE: $00000F8C VOL: 0
 ;PCODE: $00000F8D VOL: 0
-; 0000 038C 
-; 0000 038D                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
+; 0000 038F 
+; 0000 0390                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
 ;PCODE: $00000F8E VOL: 0
 ;PCODE: $00000F8F VOL: 0
 ;PCODE: $00000F90 VOL: 0
@@ -5088,7 +5091,7 @@ _0xFA:
 ;PCODE: $00000F93 VOL: 0
 ;PCODE: $00000F94 VOL: 0
 ;PCODE: $00000F95 VOL: 0
-; 0000 038E                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0391                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000F96 VOL: 0
 ;PCODE: $00000F97 VOL: 0
 ;PCODE: $00000F98 VOL: 0
@@ -5099,12 +5102,12 @@ _0xFA:
 ;PCODE: $00000F9D VOL: 0
 ;PCODE: $00000F9E VOL: 0
 ;PCODE: $00000F9F VOL: 0
-; 0000 038F                      n2 = digito_hora_temp;
+; 0000 0392                      n2 = digito_hora_temp;
 ;PCODE: $00000FA0 VOL: 0
 ;PCODE: $00000FA1 VOL: 0
 ;PCODE: $00000FA2 VOL: 0
-; 0000 0390 
-; 0000 0391                   digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
+; 0000 0393 
+; 0000 0394                   digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
 ;PCODE: $00000FA3 VOL: 0
 ;PCODE: $00000FA4 VOL: 0
 ;PCODE: $00000FA5 VOL: 0
@@ -5113,7 +5116,7 @@ _0xFA:
 ;PCODE: $00000FA8 VOL: 0
 ;PCODE: $00000FA9 VOL: 0
 ;PCODE: $00000FAA VOL: 0
-; 0000 0392                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0395                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 ;PCODE: $00000FAB VOL: 0
 ;PCODE: $00000FAC VOL: 0
 ;PCODE: $00000FAD VOL: 0
@@ -5124,13 +5127,13 @@ _0xFA:
 ;PCODE: $00000FB2 VOL: 0
 ;PCODE: $00000FB3 VOL: 0
 ;PCODE: $00000FB4 VOL: 0
-; 0000 0393                      n1  = digito_hora_temp;
+; 0000 0396                      n1  = digito_hora_temp;
 ;PCODE: $00000FB5 VOL: 0
 ;PCODE: $00000FB6 VOL: 0
 ;PCODE: $00000FB7 VOL: 0
-; 0000 0394 
-; 0000 0395 
-; 0000 0396                   n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
+; 0000 0397 
+; 0000 0398 
+; 0000 0399                   n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
 ;PCODE: $00000FB8 VOL: 0
 ;PCODE: $00000FB9 VOL: 0
 ;PCODE: $00000FBA VOL: 0
@@ -5138,52 +5141,52 @@ _0xFA:
 ;PCODE: $00000FBC VOL: 0
 ;PCODE: $00000FBD VOL: 0
 ;PCODE: $00000FBE VOL: 0
-; 0000 0397                   n4 = n3 - 5;  // Zona horaria
+; 0000 039A                   n4 = n3 - 5;  // Zona horaria
 ;PCODE: $00000FBF VOL: 0
 ;PCODE: $00000FC0 VOL: 0
 ;PCODE: $00000FC1 VOL: 0
-; 0000 0398 
-; 0000 0399                   if( n4 < 0 )
+; 0000 039B 
+; 0000 039C                   if( n4 < 0 )
 ;PCODE: $00000FC2 VOL: 0
 ;PCODE: $00000FC3 VOL: 0
 ;PCODE: $00000FC4 VOL: 0
-; 0000 039A                   {
-; 0000 039B                      n4    = n4 + 24;
+; 0000 039D                   {
+; 0000 039E                      n4    = n4 + 24;
 ;PCODE: $00000FC5 VOL: 0
 ;PCODE: $00000FC6 VOL: 0
 ;PCODE: $00000FC7 VOL: 0
-; 0000 039C                      hora  = n4 % 10;
+; 0000 039F                      hora  = n4 % 10;
 ;PCODE: $00000FC8 VOL: 0
 ;PCODE: $00000FC9 VOL: 0
 ;PCODE: $00000FCA VOL: 0
 ;PCODE: $00000FCB VOL: 0
 ;PCODE: $00000FCC VOL: 0
-; 0000 039D                      hora1 = n4 / 10;
+; 0000 03A0                      hora1 = n4 / 10;
 ;PCODE: $00000FCD VOL: 0
 ;PCODE: $00000FCE VOL: 0
 ;PCODE: $00000FCF VOL: 0
 ;PCODE: $00000FD0 VOL: 0
 ;PCODE: $00000FD1 VOL: 0
-; 0000 039E                   }
-; 0000 039F 
-; 0000 03A0                   hora = n4 % 10;
+; 0000 03A1                   }
+; 0000 03A2 
+; 0000 03A3                   hora = n4 % 10;
 ;PCODE: $00000FD2 VOL: 0
 ;PCODE: $00000FD3 VOL: 0
 ;PCODE: $00000FD4 VOL: 0
 ;PCODE: $00000FD5 VOL: 0
 ;PCODE: $00000FD6 VOL: 0
 ;PCODE: $00000FD7 VOL: 0
-; 0000 03A1                   hora1= n4 / 10;
+; 0000 03A4                   hora1= n4 / 10;
 ;PCODE: $00000FD8 VOL: 0
 ;PCODE: $00000FD9 VOL: 0
 ;PCODE: $00000FDA VOL: 0
 ;PCODE: $00000FDB VOL: 0
 ;PCODE: $00000FDC VOL: 0
-; 0000 03A2 
-; 0000 03A3                }
-; 0000 03A4 
-; 0000 03A5                // Comprueva la conexión de GPS
-; 0000 03A6                gps = rx_b0 [ pos2 + 1 ];
+; 0000 03A5 
+; 0000 03A6                }
+; 0000 03A7 
+; 0000 03A8                // Comprueva la conexión de GPS
+; 0000 03A9                gps = rx_b0 [ pos2 + 1 ];
 ;PCODE: $00000FDD VOL: 0
 ;PCODE: $00000FDE VOL: 0
 ;PCODE: $00000FDF VOL: 0
@@ -5191,7 +5194,7 @@ _0xFA:
 ;PCODE: $00000FE1 VOL: 0
 ;PCODE: $00000FE2 VOL: 0
 ;PCODE: $00000FE3 VOL: 0
-; 0000 03A7                printf( "%c", gps);  //Herramienta de DEBUG
+; 0000 03AA                printf( "%c", gps);  //Herramienta de DEBUG
 ;PCODE: $00000FE4 VOL: 0
 ;PCODE: $00000FE5 VOL: 0
 ;PCODE: $00000FE6 VOL: 0
@@ -5202,10 +5205,10 @@ _0xFA:
 ;PCODE: $00000FEB VOL: 0
 ;PCODE: $00000FEC VOL: 0
 ;PCODE: $00000FED VOL: 0
-; 0000 03A8 
-; 0000 03A9                //Obtener Hora y dia
-; 0000 03AA                if( (rx_b0[pos3+1]-48) >= 0 &&
-; 0000 03AB                    (rx_b0[pos3+1]-48) < 10 )
+; 0000 03AB 
+; 0000 03AC                //Obtener Hora y dia
+; 0000 03AD                if( (rx_b0[pos3+1]-48) >= 0 &&
+; 0000 03AE                    (rx_b0[pos3+1]-48) < 10 )
 ;PCODE: $00000FEE VOL: 0
 ;PCODE: $00000FEF VOL: 0
 ;PCODE: $00000FF0 VOL: 0
@@ -5220,9 +5223,9 @@ _0xFA:
 ;PCODE: $00000FF9 VOL: 0
 ;PCODE: $00000FFA VOL: 0
 ;PCODE: $00000FFB VOL: 0
-; 0000 03AC                {
-; 0000 03AD 
-; 0000 03AE                   dia1 = rx_b0[pos3+1]-48;
+; 0000 03AF                {
+; 0000 03B0 
+; 0000 03B1                   dia1 = rx_b0[pos3+1]-48;
 ;PCODE: $00000FFC VOL: 0
 ;PCODE: $00000FFD VOL: 0
 ;PCODE: $00000FFE VOL: 0
@@ -5231,7 +5234,7 @@ _0xFA:
 ;PCODE: $00001001 VOL: 0
 ;PCODE: $00001002 VOL: 0
 ;PCODE: $00001003 VOL: 0
-; 0000 03AF                   dia  = rx_b0[pos3+2]-48;
+; 0000 03B2                   dia  = rx_b0[pos3+2]-48;
 ;PCODE: $00001004 VOL: 0
 ;PCODE: $00001005 VOL: 0
 ;PCODE: $00001006 VOL: 0
@@ -5240,7 +5243,7 @@ _0xFA:
 ;PCODE: $00001009 VOL: 0
 ;PCODE: $0000100A VOL: 0
 ;PCODE: $0000100B VOL: 0
-; 0000 03B0                   mes1 = rx_b0[pos3+3]-48;
+; 0000 03B3                   mes1 = rx_b0[pos3+3]-48;
 ;PCODE: $0000100C VOL: 0
 ;PCODE: $0000100D VOL: 0
 ;PCODE: $0000100E VOL: 0
@@ -5249,7 +5252,7 @@ _0xFA:
 ;PCODE: $00001011 VOL: 0
 ;PCODE: $00001012 VOL: 0
 ;PCODE: $00001013 VOL: 0
-; 0000 03B1                   mes  = rx_b0[pos3+4]-48;
+; 0000 03B4                   mes  = rx_b0[pos3+4]-48;
 ;PCODE: $00001014 VOL: 0
 ;PCODE: $00001015 VOL: 0
 ;PCODE: $00001016 VOL: 0
@@ -5258,7 +5261,7 @@ _0xFA:
 ;PCODE: $00001019 VOL: 0
 ;PCODE: $0000101A VOL: 0
 ;PCODE: $0000101B VOL: 0
-; 0000 03B2                   an1  = rx_b0[pos3+5]-48;
+; 0000 03B5                   an1  = rx_b0[pos3+5]-48;
 ;PCODE: $0000101C VOL: 0
 ;PCODE: $0000101D VOL: 0
 ;PCODE: $0000101E VOL: 0
@@ -5267,7 +5270,7 @@ _0xFA:
 ;PCODE: $00001021 VOL: 0
 ;PCODE: $00001022 VOL: 0
 ;PCODE: $00001023 VOL: 0
-; 0000 03B3                   an   = rx_b0[pos3+6]-48;
+; 0000 03B6                   an   = rx_b0[pos3+6]-48;
 ;PCODE: $00001024 VOL: 0
 ;PCODE: $00001025 VOL: 0
 ;PCODE: $00001026 VOL: 0
@@ -5276,47 +5279,47 @@ _0xFA:
 ;PCODE: $00001029 VOL: 0
 ;PCODE: $0000102A VOL: 0
 ;PCODE: $0000102B VOL: 0
-; 0000 03B4 
-; 0000 03B5                   if( n4 > 18)
+; 0000 03B7 
+; 0000 03B8                   if( n4 > 18)
 ;PCODE: $0000102C VOL: 0
 ;PCODE: $0000102D VOL: 0
 ;PCODE: $0000102E VOL: 0
-; 0000 03B6                      dia = dia-1;  // Por la zona horaria de EC-5GTM
+; 0000 03B9                      dia = dia-1;  // Por la zona horaria de EC-5GTM
 ;PCODE: $0000102F VOL: 0
 ;PCODE: $00001030 VOL: 0
 ;PCODE: $00001031 VOL: 0
 ;PCODE: $00001032 VOL: 0
 ;PCODE: $00001033 VOL: 0
 ;PCODE: $00001034 VOL: 0
-; 0000 03B7 
-; 0000 03B8                }else{
+; 0000 03BA 
+; 0000 03BB                }else{
 ;PCODE: $00001035 VOL: 0
 ;PCODE: $00001036 VOL: 0
 ;PCODE: $00001037 VOL: 0
-; 0000 03B9 
-; 0000 03BA                 // No actualizar la hora, continuar con la anterior
-; 0000 03BB                }
+; 0000 03BC 
+; 0000 03BD                 // No actualizar la hora, continuar con la anterior
+; 0000 03BE                }
 ;PCODE: $00001038 VOL: 0
-; 0000 03BC             }
-; 0000 03BD          }
+; 0000 03BF             }
+; 0000 03C0          }
 ;PCODE: $00001039 VOL: 0
 ;PCODE: $0000103A VOL: 0
 ;PCODE: $0000103B VOL: 0
 ;PCODE: $0000103C VOL: 0
 ;PCODE: $0000103D VOL: 0
 ;PCODE: $0000103E VOL: 0
-; 0000 03BE 
-; 0000 03BF          rx_counter0  = 0;
-;PCODE: $0000103F VOL: 0
-; 0000 03C0          rx_wr_index0 = 0;
-;PCODE: $00001040 VOL: 0
 ; 0000 03C1 
-; 0000 03C2          BIT_UART=1;
+; 0000 03C2          rx_counter0  = 0;
+;PCODE: $0000103F VOL: 0
+; 0000 03C3          rx_wr_index0 = 0;
+;PCODE: $00001040 VOL: 0
+; 0000 03C4 
+; 0000 03C5          BIT_UART=1;
 ;PCODE: $00001041 VOL: 0
 ;PCODE: $00001042 VOL: 0
-; 0000 03C3 
-; 0000 03C4          // Limpia el buffer
-; 0000 03C5          for( i=0; i<RX_BUFFER_SIZE0; i++ )
+; 0000 03C6 
+; 0000 03C7          // Limpia el buffer
+; 0000 03C8          for( i=0; i<RX_BUFFER_SIZE0; i++ )
 ;PCODE: $00001043 VOL: 0
 ;PCODE: $00001044 VOL: 0
 ;PCODE: $00001045 VOL: 0
@@ -5326,19 +5329,19 @@ _0xFA:
 ;PCODE: $00001049 VOL: 0
 ;PCODE: $0000104A VOL: 0
 ;PCODE: $0000104B VOL: 0
-; 0000 03C6          {
-; 0000 03C7             rx_b0[i]=0;
+; 0000 03C9          {
+; 0000 03CA             rx_b0[i]=0;
 ;PCODE: $0000104C VOL: 0
 ;PCODE: $0000104D VOL: 0
 ;PCODE: $0000104E VOL: 0
 ;PCODE: $0000104F VOL: 0
-; 0000 03C8          }
+; 0000 03CB          }
 ;PCODE: $00001050 VOL: 0
 ;PCODE: $00001051 VOL: 0
 ;PCODE: $00001052 VOL: 0
 ;PCODE: $00001053 VOL: 0
 ;PCODE: $00001054 VOL: 0
-; 0000 03C9       }
+; 0000 03CC       }
 ;PCODE: $00001055 VOL: 0
 ;PCODE: $00001056 VOL: 0
 ;PCODE: $00001057 VOL: 0
@@ -5352,130 +5355,130 @@ _0xFA:
 ;//******************************************** PROGRAMA PRINCIPAL *************************************************//
 ;/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ;void main(void)
-; 0000 03D3 {
+; 0000 03D6 {
 ;PCODE: $00001059 VOL: 0
-; 0000 03D4 
-; 0000 03D5    int j = 0;
-; 0000 03D6    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
-; 0000 03D7       #pragma optsize-
-; 0000 03D8       CLKPR=0x80;
+; 0000 03D7 
+; 0000 03D8    int j = 0;
+; 0000 03D9    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
+; 0000 03DA       #pragma optsize-
+; 0000 03DB       CLKPR=0x80;
 ;	j -> R16,R17
 ;PCODE: $0000105A VOL: 0
 ;PCODE: $0000105B VOL: 0
 ;PCODE: $0000105C VOL: 0
 ;PCODE: $0000105D VOL: 0
-; 0000 03D9       CLKPR=0x00;
+; 0000 03DC       CLKPR=0x00;
 ;PCODE: $0000105E VOL: 0
 ;PCODE: $0000105F VOL: 0
-; 0000 03DA       #ifdef _OPTIMIZE_SIZE_
-; 0000 03DB          #pragma optsize+
-; 0000 03DC       #endif
-; 0000 03DD 
-; 0000 03DE       DATADDR = 0xff;
+; 0000 03DD       #ifdef _OPTIMIZE_SIZE_
+; 0000 03DE          #pragma optsize+
+; 0000 03DF       #endif
+; 0000 03E0 
+; 0000 03E1       DATADDR = 0xff;
 ;PCODE: $00001060 VOL: 0
 ;PCODE: $00001061 VOL: 0
-; 0000 03DF 
-; 0000 03E0       PORTA=0xFF;
+; 0000 03E2 
+; 0000 03E3       PORTA=0xFF;
 ;PCODE: $00001062 VOL: 0
 ;PCODE: $00001063 VOL: 0
-; 0000 03E1       DDRA=0xF0;
+; 0000 03E4       DDRA=0xF0;
 ;PCODE: $00001064 VOL: 0
 ;PCODE: $00001065 VOL: 0
-; 0000 03E2 
-; 0000 03E3       PORTB=0x00;
+; 0000 03E5 
+; 0000 03E6       PORTB=0x00;
 ;PCODE: $00001066 VOL: 0
 ;PCODE: $00001067 VOL: 0
-; 0000 03E4       DDRB=0xFF;
+; 0000 03E7       DDRB=0xFF;
 ;PCODE: $00001068 VOL: 0
 ;PCODE: $00001069 VOL: 0
-; 0000 03E5 
-; 0000 03E6       PORTD=0x00;
+; 0000 03E8 
+; 0000 03E9       PORTD=0x00;
 ;PCODE: $0000106A VOL: 0
 ;PCODE: $0000106B VOL: 0
-; 0000 03E7       DDRD=0b11110000;
+; 0000 03EA       DDRD=0b11110000;
 ;PCODE: $0000106C VOL: 0
 ;PCODE: $0000106D VOL: 0
-; 0000 03E8 
-; 0000 03E9       // USART0 initialization
-; 0000 03EA       // Communication Parameters: 8 Data, 1 Stop, No Parity
-; 0000 03EB       // USART0 Receiver: On
-; 0000 03EC       // USART0 Transmitter: On
-; 0000 03ED       // USART0 Mode: Asynchronous
-; 0000 03EE       //// USART0 Baud Rate: 9600 11.0592 MHz
-; 0000 03EF       //UCSR0A=0x00;
-; 0000 03F0       //UCSR0B=0x98;
-; 0000 03F1       //UCSR0C=0x06;
-; 0000 03F2       //UBRR0H=0x00;
-; 0000 03F3       //UBRR0L=0x47;
-; 0000 03F4 
-; 0000 03F5       // USART0 Baud Rate: 115200
-; 0000 03F6       UCSR0A=0x00;
+; 0000 03EB 
+; 0000 03EC       // USART0 initialization
+; 0000 03ED       // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 03EE       // USART0 Receiver: On
+; 0000 03EF       // USART0 Transmitter: On
+; 0000 03F0       // USART0 Mode: Asynchronous
+; 0000 03F1       //// USART0 Baud Rate: 9600 11.0592 MHz
+; 0000 03F2       //UCSR0A=0x00;
+; 0000 03F3       //UCSR0B=0x98;
+; 0000 03F4       //UCSR0C=0x06;
+; 0000 03F5       //UBRR0H=0x00;
+; 0000 03F6       //UBRR0L=0x47;
+; 0000 03F7 
+; 0000 03F8       // USART0 Baud Rate: 115200
+; 0000 03F9       UCSR0A=0x00;
 ;PCODE: $0000106E VOL: 0
 ;PCODE: $0000106F VOL: 0
-; 0000 03F7       UCSR0B=0x98;
+; 0000 03FA       UCSR0B=0x98;
 ;PCODE: $00001070 VOL: 0
 ;PCODE: $00001071 VOL: 0
-; 0000 03F8       UCSR0C=0x06;
+; 0000 03FB       UCSR0C=0x06;
 ;PCODE: $00001072 VOL: 0
 ;PCODE: $00001073 VOL: 0
-; 0000 03F9       UBRR0H=0x00;
+; 0000 03FC       UBRR0H=0x00;
 ;PCODE: $00001074 VOL: 0
 ;PCODE: $00001075 VOL: 0
-; 0000 03FA       UBRR0L=0x05;
+; 0000 03FD       UBRR0L=0x05;
 ;PCODE: $00001076 VOL: 0
 ;PCODE: $00001077 VOL: 0
-; 0000 03FB 
-; 0000 03FC       //USART0 Baud Rate: 9600 8 MHz
-; 0000 03FD       //UCSR0A=0x00;
-; 0000 03FE       //UCSR0B=0x18;
-; 0000 03FF       //UCSR0C=0x06;
-; 0000 0400       //UBRR0H=0x00;
-; 0000 0401       //UBRR0L=0x33;
-; 0000 0402 
-; 0000 0403       // Timer/Counter 0 initialization
-; 0000 0404       // Clock source: System Clock
-; 0000 0405       // Clock value: 10,800 kHz
-; 0000 0406       // Mode: Normal top=0xFF
-; 0000 0407       // OC0A output: Disconnected
-; 0000 0408       // OC0B output: Disconnected
-; 0000 0409       TCCR0A=0x00;
+; 0000 03FE 
+; 0000 03FF       //USART0 Baud Rate: 9600 8 MHz
+; 0000 0400       //UCSR0A=0x00;
+; 0000 0401       //UCSR0B=0x18;
+; 0000 0402       //UCSR0C=0x06;
+; 0000 0403       //UBRR0H=0x00;
+; 0000 0404       //UBRR0L=0x33;
+; 0000 0405 
+; 0000 0406       // Timer/Counter 0 initialization
+; 0000 0407       // Clock source: System Clock
+; 0000 0408       // Clock value: 10,800 kHz
+; 0000 0409       // Mode: Normal top=0xFF
+; 0000 040A       // OC0A output: Disconnected
+; 0000 040B       // OC0B output: Disconnected
+; 0000 040C       TCCR0A=0x00;
 ;PCODE: $00001078 VOL: 0
 ;PCODE: $00001079 VOL: 0
-; 0000 040A       TCCR0B=0x05;
+; 0000 040D       TCCR0B=0x05;
 ;PCODE: $0000107A VOL: 0
 ;PCODE: $0000107B VOL: 0
-; 0000 040B       TCNT0=0x00;
+; 0000 040E       TCNT0=0x00;
 ;PCODE: $0000107C VOL: 0
 ;PCODE: $0000107D VOL: 0
-; 0000 040C       OCR0A=0x00;
+; 0000 040F       OCR0A=0x00;
 ;PCODE: $0000107E VOL: 0
 ;PCODE: $0000107F VOL: 0
-; 0000 040D       OCR0B=0x00;
+; 0000 0410       OCR0B=0x00;
 ;PCODE: $00001080 VOL: 0
 ;PCODE: $00001081 VOL: 0
-; 0000 040E 
-; 0000 040F       // Timer/Counter 0 Interrupt(s) initialization
-; 0000 0410       TIMSK0=0x01;
+; 0000 0411 
+; 0000 0412       // Timer/Counter 0 Interrupt(s) initialization
+; 0000 0413       TIMSK0=0x01;
 ;PCODE: $00001082 VOL: 0
 ;PCODE: $00001083 VOL: 0
-; 0000 0411 
-; 0000 0412    // Inicilizar GLCD
-; 0000 0413       glcd_on();
+; 0000 0414 
+; 0000 0415    // Inicilizar GLCD
+; 0000 0416       glcd_on();
 ;PCODE: $00001084 VOL: 0
-; 0000 0414       delay_ms(INIT_DELAY_GLCD_MS);
+; 0000 0417       delay_ms(INIT_DELAY_GLCD_MS);
 ;PCODE: $00001085 VOL: 0
 ;PCODE: $00001086 VOL: 0
 ;PCODE: $00001087 VOL: 0
-; 0000 0415       glcd_clear();
+; 0000 0418       glcd_clear();
 ;PCODE: $00001088 VOL: 0
-; 0000 0416 
-; 0000 0417       buzz();
-;PCODE: $00001089 VOL: 0
-; 0000 0418       buzz();
-;PCODE: $0000108A VOL: 0
 ; 0000 0419 
-; 0000 041A       // Dibuja KRADAC
-; 0000 041B       bmp_disp(arr,0,0,127,7);
+; 0000 041A       buzz();
+;PCODE: $00001089 VOL: 0
+; 0000 041B       buzz();
+;PCODE: $0000108A VOL: 0
+; 0000 041C 
+; 0000 041D       // Dibuja KRADAC
+; 0000 041E       bmp_disp(arr,0,0,127,7);
 ;PCODE: $0000108B VOL: 0
 ;PCODE: $0000108C VOL: 0
 ;PCODE: $0000108D VOL: 0
@@ -5487,15 +5490,15 @@ _0xFA:
 ;PCODE: $00001093 VOL: 0
 ;PCODE: $00001094 VOL: 0
 ;PCODE: $00001095 VOL: 0
-; 0000 041C       delay_ms( DELAY_PANTALLA_INI );
+; 0000 041F       delay_ms( DELAY_PANTALLA_INI );
 ;PCODE: $00001096 VOL: 0
 ;PCODE: $00001097 VOL: 0
 ;PCODE: $00001098 VOL: 0
-; 0000 041D       glcd_clear();
+; 0000 0420       glcd_clear();
 ;PCODE: $00001099 VOL: 0
-; 0000 041E 
-; 0000 041F       // Dibuja BUS
-; 0000 0420       bmp_disp(bus,0,0,45,7);
+; 0000 0421 
+; 0000 0422       // Dibuja BUS
+; 0000 0423       bmp_disp(bus,0,0,45,7);
 ;PCODE: $0000109A VOL: 0
 ;PCODE: $0000109B VOL: 0
 ;PCODE: $0000109C VOL: 0
@@ -5507,9 +5510,9 @@ _0xFA:
 ;PCODE: $000010A2 VOL: 0
 ;PCODE: $000010A3 VOL: 0
 ;PCODE: $000010A4 VOL: 0
-; 0000 0421 
-; 0000 0422       // Escribe NOMBRE_PANTALLA "SITU"
-; 0000 0423       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);
+; 0000 0424 
+; 0000 0425       // Escribe NOMBRE_PANTALLA "SITU"
+; 0000 0426       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);
 ;PCODE: $000010A5 VOL: 0
 ;PCODE: $000010A6 VOL: 0
 ;PCODE: $000010A7 VOL: 0
@@ -5523,9 +5526,9 @@ _0xFA:
 ;PCODE: $000010AF VOL: 0
 ;PCODE: $000010B0 VOL: 0
 ;PCODE: $000010B1 VOL: 0
-; 0000 0424 
-; 0000 0425       // Escribe NUMERO_PANTALLA "BUS####"
-; 0000 0426       glcd_puts("BUS",59,5,0,1,-1);
+; 0000 0427 
+; 0000 0428       // Escribe NUMERO_PANTALLA "BUS####"
+; 0000 0429       glcd_puts("BUS",59,5,0,1,-1);
 ;PCODE: $000010B2 VOL: 0
 ;PCODE: $000010B3 VOL: 0
 ;PCODE: $000010B4 VOL: 0
@@ -5540,7 +5543,7 @@ _0xFA:
 ;PCODE: $000010BD VOL: 0
 ;PCODE: $000010BE VOL: 0
 ;PCODE: $000010BF VOL: 0
-; 0000 0427       glcd_puts(NUM_DISP,82,5,0,1,-1);
+; 0000 042A       glcd_puts(NUM_DISP,82,5,0,1,-1);
 ;PCODE: $000010C0 VOL: 0
 ;PCODE: $000010C1 VOL: 0
 ;PCODE: $000010C2 VOL: 0
@@ -5554,55 +5557,52 @@ _0xFA:
 ;PCODE: $000010CA VOL: 0
 ;PCODE: $000010CB VOL: 0
 ;PCODE: $000010CC VOL: 0
-; 0000 0428 
-; 0000 0429       //Tiempo q muestra la pantalla de inicio
-; 0000 042A       delay_ms( DELAY_PANTALLA_INI );
+; 0000 042B       glcd_puts(VERSION,40,7,0,1,-1);
 ;PCODE: $000010CD VOL: 0
 ;PCODE: $000010CE VOL: 0
 ;PCODE: $000010CF VOL: 0
-; 0000 042B       glcd_clear();
 ;PCODE: $000010D0 VOL: 0
-; 0000 042C 
-; 0000 042D 
-; 0000 042E    ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
-; 0000 042F 
-; 0000 0430       // En caso de que no haya recibido tramas del sky
-; 0000 0431       // previene que muestre valores de -1 en la hora y fecha
-; 0000 0432       if (hora1 == 0xff )
 ;PCODE: $000010D1 VOL: 0
 ;PCODE: $000010D2 VOL: 0
 ;PCODE: $000010D3 VOL: 0
 ;PCODE: $000010D4 VOL: 0
-; 0000 0433       {
-; 0000 0434          hora1 = 0; min1 = 0; seg1 = 0;
 ;PCODE: $000010D5 VOL: 0
 ;PCODE: $000010D6 VOL: 0
 ;PCODE: $000010D7 VOL: 0
 ;PCODE: $000010D8 VOL: 0
 ;PCODE: $000010D9 VOL: 0
 ;PCODE: $000010DA VOL: 0
+; 0000 042C 
+; 0000 042D       //Tiempo q muestra la pantalla de inicio
+; 0000 042E       delay_ms( DELAY_PANTALLA_INI );
 ;PCODE: $000010DB VOL: 0
 ;PCODE: $000010DC VOL: 0
 ;PCODE: $000010DD VOL: 0
-; 0000 0435            hora = 0; minu = 0;  seg = 0;
+; 0000 042F       glcd_clear();
 ;PCODE: $000010DE VOL: 0
+; 0000 0430 
+; 0000 0431 
+; 0000 0432    ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
+; 0000 0433 
+; 0000 0434       // En caso de que no haya recibido tramas del sky
+; 0000 0435       // previene que muestre valores de -1 en la hora y fecha
+; 0000 0436       if (hora1 == 0xff )
 ;PCODE: $000010DF VOL: 0
 ;PCODE: $000010E0 VOL: 0
 ;PCODE: $000010E1 VOL: 0
 ;PCODE: $000010E2 VOL: 0
+; 0000 0437       {
+; 0000 0438          hora1 = 0; min1 = 0; seg1 = 0;
 ;PCODE: $000010E3 VOL: 0
 ;PCODE: $000010E4 VOL: 0
 ;PCODE: $000010E5 VOL: 0
 ;PCODE: $000010E6 VOL: 0
-; 0000 0436       }
-; 0000 0437 
-; 0000 0438       // En caso de que no haya fecha
-; 0000 0439       if (mes == 0xff && dia == 0xff && an == 0xff)
 ;PCODE: $000010E7 VOL: 0
 ;PCODE: $000010E8 VOL: 0
 ;PCODE: $000010E9 VOL: 0
 ;PCODE: $000010EA VOL: 0
 ;PCODE: $000010EB VOL: 0
+; 0000 0439            hora = 0; minu = 0;  seg = 0;
 ;PCODE: $000010EC VOL: 0
 ;PCODE: $000010ED VOL: 0
 ;PCODE: $000010EE VOL: 0
@@ -5612,112 +5612,111 @@ _0xFA:
 ;PCODE: $000010F2 VOL: 0
 ;PCODE: $000010F3 VOL: 0
 ;PCODE: $000010F4 VOL: 0
+; 0000 043A       }
+; 0000 043B 
+; 0000 043C       // En caso de que no haya fecha
+; 0000 043D       if (mes == 0xff && dia == 0xff && an == 0xff)
 ;PCODE: $000010F5 VOL: 0
 ;PCODE: $000010F6 VOL: 0
 ;PCODE: $000010F7 VOL: 0
-; 0000 043A       {
-; 0000 043B          dia = 0; dia1 = 0;
 ;PCODE: $000010F8 VOL: 0
 ;PCODE: $000010F9 VOL: 0
 ;PCODE: $000010FA VOL: 0
 ;PCODE: $000010FB VOL: 0
 ;PCODE: $000010FC VOL: 0
 ;PCODE: $000010FD VOL: 0
-; 0000 043C           mes = 0; mes1 = 0;
 ;PCODE: $000010FE VOL: 0
 ;PCODE: $000010FF VOL: 0
 ;PCODE: $00001100 VOL: 0
 ;PCODE: $00001101 VOL: 0
 ;PCODE: $00001102 VOL: 0
 ;PCODE: $00001103 VOL: 0
-; 0000 043D            an = 0;  an1 = 0;
 ;PCODE: $00001104 VOL: 0
 ;PCODE: $00001105 VOL: 0
+; 0000 043E       {
+; 0000 043F          dia = 0; dia1 = 0;
 ;PCODE: $00001106 VOL: 0
 ;PCODE: $00001107 VOL: 0
 ;PCODE: $00001108 VOL: 0
 ;PCODE: $00001109 VOL: 0
-; 0000 043E       }
-; 0000 043F 
-; 0000 0440       // Iniciala la eeprom.
-; 0000 0441       if (num_ruta  == 0xff)
 ;PCODE: $0000110A VOL: 0
 ;PCODE: $0000110B VOL: 0
+; 0000 0440           mes = 0; mes1 = 0;
 ;PCODE: $0000110C VOL: 0
 ;PCODE: $0000110D VOL: 0
 ;PCODE: $0000110E VOL: 0
-; 0000 0442       {
-; 0000 0443          num_ruta  = 0;
 ;PCODE: $0000110F VOL: 0
 ;PCODE: $00001110 VOL: 0
 ;PCODE: $00001111 VOL: 0
-; 0000 0444          _num_ruta = 0;
+; 0000 0441            an = 0;  an1 = 0;
 ;PCODE: $00001112 VOL: 0
 ;PCODE: $00001113 VOL: 0
-; 0000 0445       }
-; 0000 0446       else
 ;PCODE: $00001114 VOL: 0
 ;PCODE: $00001115 VOL: 0
-; 0000 0447          _num_ruta = num_ruta;
 ;PCODE: $00001116 VOL: 0
 ;PCODE: $00001117 VOL: 0
+; 0000 0442       }
+; 0000 0443 
+; 0000 0444       // Iniciala la eeprom.
+; 0000 0445       if (num_ruta  == 0xff)
 ;PCODE: $00001118 VOL: 0
-; 0000 0448 
-; 0000 0449       if (laborando == 0xff)
 ;PCODE: $00001119 VOL: 0
 ;PCODE: $0000111A VOL: 0
 ;PCODE: $0000111B VOL: 0
 ;PCODE: $0000111C VOL: 0
+; 0000 0446       {
+; 0000 0447          num_ruta  = 0;
 ;PCODE: $0000111D VOL: 0
-; 0000 044A       {
-; 0000 044B          laborando = 0;
 ;PCODE: $0000111E VOL: 0
 ;PCODE: $0000111F VOL: 0
+; 0000 0448          _num_ruta = 0;
 ;PCODE: $00001120 VOL: 0
-; 0000 044C          _laborando= 0;
 ;PCODE: $00001121 VOL: 0
+; 0000 0449       }
+; 0000 044A       else
 ;PCODE: $00001122 VOL: 0
-; 0000 044D       }
-; 0000 044E       else
 ;PCODE: $00001123 VOL: 0
+; 0000 044B          _num_ruta = num_ruta;
 ;PCODE: $00001124 VOL: 0
-; 0000 044F          _laborando = laborando;
 ;PCODE: $00001125 VOL: 0
 ;PCODE: $00001126 VOL: 0
+; 0000 044C 
+; 0000 044D       if (laborando == 0xff)
 ;PCODE: $00001127 VOL: 0
-; 0000 0450 
-; 0000 0451       // Limpia el buffer de mensaje recibido
-; 0000 0452       for( j = 0; j < TXT_BUF_SZ; j++ )
 ;PCODE: $00001128 VOL: 0
 ;PCODE: $00001129 VOL: 0
 ;PCODE: $0000112A VOL: 0
 ;PCODE: $0000112B VOL: 0
+; 0000 044E       {
+; 0000 044F          laborando = 0;
 ;PCODE: $0000112C VOL: 0
 ;PCODE: $0000112D VOL: 0
 ;PCODE: $0000112E VOL: 0
+; 0000 0450          _laborando= 0;
 ;PCODE: $0000112F VOL: 0
 ;PCODE: $00001130 VOL: 0
+; 0000 0451       }
+; 0000 0452       else
 ;PCODE: $00001131 VOL: 0
-; 0000 0453               txt_glcd_b0[j] = 0x00;
 ;PCODE: $00001132 VOL: 0
+; 0000 0453          _laborando = laborando;
 ;PCODE: $00001133 VOL: 0
 ;PCODE: $00001134 VOL: 0
 ;PCODE: $00001135 VOL: 0
+; 0000 0454 
+; 0000 0455       // Limpia el buffer de mensaje recibido
+; 0000 0456       for( j = 0; j < TXT_BUF_SZ; j++ )
 ;PCODE: $00001136 VOL: 0
 ;PCODE: $00001137 VOL: 0
 ;PCODE: $00001138 VOL: 0
 ;PCODE: $00001139 VOL: 0
 ;PCODE: $0000113A VOL: 0
-; 0000 0458 #asm("sei")
 ;PCODE: $0000113B VOL: 0
-	sei
 ;PCODE: $0000113C VOL: 0
-; 0000 0459 
-; 0000 045A    // Muestra vacio
-; 0000 045B    bmp_disp(vacio,0,5,25,7);
 ;PCODE: $0000113D VOL: 0
 ;PCODE: $0000113E VOL: 0
 ;PCODE: $0000113F VOL: 0
+; 0000 0457               txt_glcd_b0[j] = 0x00;
 ;PCODE: $00001140 VOL: 0
 ;PCODE: $00001141 VOL: 0
 ;PCODE: $00001142 VOL: 0
@@ -5726,109 +5725,112 @@ _0xFA:
 ;PCODE: $00001145 VOL: 0
 ;PCODE: $00001146 VOL: 0
 ;PCODE: $00001147 VOL: 0
-; 0000 045C 
-; 0000 045D    // Pide el ID del Skypatrol para verificar la pantalla
-; 0000 045E    printf("AT$TTDEVID?\n\r");
 ;PCODE: $00001148 VOL: 0
+; 0000 045C #asm("sei")
 ;PCODE: $00001149 VOL: 0
+	sei
 ;PCODE: $0000114A VOL: 0
+; 0000 045D 
+; 0000 045E    // Muestra vacio
+; 0000 045F    bmp_disp(vacio,0,5,25,7);
 ;PCODE: $0000114B VOL: 0
 ;PCODE: $0000114C VOL: 0
 ;PCODE: $0000114D VOL: 0
 ;PCODE: $0000114E VOL: 0
-; 0000 045F    delay_us( 500 );
 ;PCODE: $0000114F VOL: 0
-; 0000 0460    obt();
 ;PCODE: $00001150 VOL: 0
-; 0000 0461 
-; 0000 0462    // Estados iniciales de los botones
-; 0000 0463    bandera1 = 0;
 ;PCODE: $00001151 VOL: 0
-; 0000 0464    bandera2 = 0;
 ;PCODE: $00001152 VOL: 0
-; 0000 0465    bandera3 = 0;
 ;PCODE: $00001153 VOL: 0
-; 0000 0466 
-; 0000 0467     // Forza la autorizacion de la pantalla
-; 0000 0468     act =1;
 ;PCODE: $00001154 VOL: 0
 ;PCODE: $00001155 VOL: 0
-; 0000 0469 
-; 0000 046A    while (1)
+; 0000 0460 
+; 0000 0461    // Pide el ID del Skypatrol para verificar la pantalla
+; 0000 0462    printf("AT$TTDEVID?\n\r");
 ;PCODE: $00001156 VOL: 0
-; 0000 046B    {
-; 0000 046C 
-; 0000 046D       // Verifica la bandera de interrupcion serial
-; 0000 046E       if( BIT_UART == 0 )
 ;PCODE: $00001157 VOL: 0
 ;PCODE: $00001158 VOL: 0
 ;PCODE: $00001159 VOL: 0
-; 0000 046F       {
-; 0000 0470          obt();
 ;PCODE: $0000115A VOL: 0
-; 0000 0471          BIT_UART=1;
 ;PCODE: $0000115B VOL: 0
 ;PCODE: $0000115C VOL: 0
-; 0000 0472       }
-; 0000 0473 
-; 0000 0474       // GRAFICA LA RUTA ACTUAL.
-; 0000 0475       glcd_putchar(ruta_aux,79,7,0,1);
+; 0000 0463    delay_us( 500 );
 ;PCODE: $0000115D VOL: 0
+; 0000 0464    obt();
 ;PCODE: $0000115E VOL: 0
+; 0000 0465 
+; 0000 0466    // Estados iniciales de los botones
+; 0000 0467    bandera1 = 0;
 ;PCODE: $0000115F VOL: 0
+; 0000 0468    bandera2 = 0;
 ;PCODE: $00001160 VOL: 0
+; 0000 0469    bandera3 = 0;
 ;PCODE: $00001161 VOL: 0
+; 0000 046A 
+; 0000 046B     // Forza la autorizacion de la pantalla
+; 0000 046C     act =1;
 ;PCODE: $00001162 VOL: 0
 ;PCODE: $00001163 VOL: 0
+; 0000 046D 
+; 0000 046E    while (1)
 ;PCODE: $00001164 VOL: 0
+; 0000 046F    {
+; 0000 0470 
+; 0000 0471       // Verifica la bandera de interrupcion serial
+; 0000 0472       if( BIT_UART == 0 )
 ;PCODE: $00001165 VOL: 0
 ;PCODE: $00001166 VOL: 0
 ;PCODE: $00001167 VOL: 0
-; 0000 0476 
-; 0000 0477       boton1();
+; 0000 0473       {
+; 0000 0474          obt();
 ;PCODE: $00001168 VOL: 0
-; 0000 0478 
-; 0000 0479       boton2();
+; 0000 0475          BIT_UART=1;
 ;PCODE: $00001169 VOL: 0
-; 0000 047A 
-; 0000 047B       boton3();
 ;PCODE: $0000116A VOL: 0
-; 0000 047C 
-; 0000 047D       boton4();
+; 0000 0476       }
+; 0000 0477 
+; 0000 0478       // GRAFICA LA RUTA ACTUAL.
+; 0000 0479       glcd_putchar(ruta_aux,79,7,0,1);
 ;PCODE: $0000116B VOL: 0
-; 0000 047E 
-; 0000 047F       dibujar_senal();
 ;PCODE: $0000116C VOL: 0
-; 0000 0480 
-; 0000 0481 
-; 0000 0482       // act = autoirzado
-; 0000 0483       if(act==1)
 ;PCODE: $0000116D VOL: 0
 ;PCODE: $0000116E VOL: 0
 ;PCODE: $0000116F VOL: 0
-; 0000 0484       {
-; 0000 0485          if( gsm == 1)
 ;PCODE: $00001170 VOL: 0
 ;PCODE: $00001171 VOL: 0
 ;PCODE: $00001172 VOL: 0
-; 0000 0486          {
-; 0000 0487             glcd_putchar('E',19,0,1,1);
 ;PCODE: $00001173 VOL: 0
 ;PCODE: $00001174 VOL: 0
 ;PCODE: $00001175 VOL: 0
+; 0000 047A 
+; 0000 047B       boton1();
 ;PCODE: $00001176 VOL: 0
+; 0000 047C 
+; 0000 047D       boton2();
 ;PCODE: $00001177 VOL: 0
+; 0000 047E 
+; 0000 047F       boton3();
 ;PCODE: $00001178 VOL: 0
+; 0000 0480 
+; 0000 0481       boton4();
 ;PCODE: $00001179 VOL: 0
+; 0000 0482 
+; 0000 0483       dibujar_senal();
 ;PCODE: $0000117A VOL: 0
+; 0000 0484 
+; 0000 0485 
+; 0000 0486       // act = autoirzado
+; 0000 0487       if(act==1)
 ;PCODE: $0000117B VOL: 0
 ;PCODE: $0000117C VOL: 0
 ;PCODE: $0000117D VOL: 0
-; 0000 0488          }else{
+; 0000 0488       {
+; 0000 0489          if( gsm == 1)
 ;PCODE: $0000117E VOL: 0
 ;PCODE: $0000117F VOL: 0
-; 0000 0489             glcd_putchar(' ',19,0,1,1);
 ;PCODE: $00001180 VOL: 0
+; 0000 048A          {
+; 0000 048B             glcd_putchar('E',19,0,1,1);
 ;PCODE: $00001181 VOL: 0
 ;PCODE: $00001182 VOL: 0
 ;PCODE: $00001183 VOL: 0
@@ -5839,17 +5841,12 @@ _0xFA:
 ;PCODE: $00001188 VOL: 0
 ;PCODE: $00001189 VOL: 0
 ;PCODE: $0000118A VOL: 0
-; 0000 048A          }
 ;PCODE: $0000118B VOL: 0
-; 0000 048B 
-; 0000 048C 
-; 0000 048D          // Muestra el reloj al conductor
-; 0000 048E          if(pt==0)
+; 0000 048C          }else{
 ;PCODE: $0000118C VOL: 0
 ;PCODE: $0000118D VOL: 0
+; 0000 048D             glcd_putchar(' ',19,0,1,1);
 ;PCODE: $0000118E VOL: 0
-; 0000 048F          {
-; 0000 0490             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
 ;PCODE: $0000118F VOL: 0
 ;PCODE: $00001190 VOL: 0
 ;PCODE: $00001191 VOL: 0
@@ -5860,10 +5857,17 @@ _0xFA:
 ;PCODE: $00001196 VOL: 0
 ;PCODE: $00001197 VOL: 0
 ;PCODE: $00001198 VOL: 0
+; 0000 048E          }
 ;PCODE: $00001199 VOL: 0
+; 0000 048F 
+; 0000 0490 
+; 0000 0491          // Muestra el reloj al conductor
+; 0000 0492          if(pt==0)
 ;PCODE: $0000119A VOL: 0
 ;PCODE: $0000119B VOL: 0
 ;PCODE: $0000119C VOL: 0
+; 0000 0493          {
+; 0000 0494             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
 ;PCODE: $0000119D VOL: 0
 ;PCODE: $0000119E VOL: 0
 ;PCODE: $0000119F VOL: 0
@@ -5883,212 +5887,210 @@ _0xFA:
 ;PCODE: $000011AD VOL: 0
 ;PCODE: $000011AE VOL: 0
 ;PCODE: $000011AF VOL: 0
-; 0000 0491             //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
-; 0000 0492 
-; 0000 0493             // pasa de la eeprom a la flash del micro
-; 0000 0494             _seg  = seg  ;
 ;PCODE: $000011B0 VOL: 0
 ;PCODE: $000011B1 VOL: 0
 ;PCODE: $000011B2 VOL: 0
-; 0000 0495             _seg1 = seg1 ;    // segundos en unidades y decenas
 ;PCODE: $000011B3 VOL: 0
 ;PCODE: $000011B4 VOL: 0
 ;PCODE: $000011B5 VOL: 0
-; 0000 0496             _minu = minu ;
 ;PCODE: $000011B6 VOL: 0
 ;PCODE: $000011B7 VOL: 0
 ;PCODE: $000011B8 VOL: 0
-; 0000 0497             _min1 = min1 ;    // minutos en unidades y decenas
 ;PCODE: $000011B9 VOL: 0
 ;PCODE: $000011BA VOL: 0
 ;PCODE: $000011BB VOL: 0
-; 0000 0498             _hora = hora ;
 ;PCODE: $000011BC VOL: 0
 ;PCODE: $000011BD VOL: 0
+; 0000 0495             //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
+; 0000 0496 
+; 0000 0497             // pasa de la eeprom a la flash del micro
+; 0000 0498             _seg  = seg  ;
 ;PCODE: $000011BE VOL: 0
-; 0000 0499             _hora1= hora1;    // hora en unidades y decenas
 ;PCODE: $000011BF VOL: 0
 ;PCODE: $000011C0 VOL: 0
+; 0000 0499             _seg1 = seg1 ;    // segundos en unidades y decenas
 ;PCODE: $000011C1 VOL: 0
-; 0000 049A             _dia  = dia  ;
 ;PCODE: $000011C2 VOL: 0
 ;PCODE: $000011C3 VOL: 0
+; 0000 049A             _minu = minu ;
 ;PCODE: $000011C4 VOL: 0
-; 0000 049B             _dia1 = dia1 ;    // dias en unidades y decenas
 ;PCODE: $000011C5 VOL: 0
 ;PCODE: $000011C6 VOL: 0
+; 0000 049B             _min1 = min1 ;    // minutos en unidades y decenas
 ;PCODE: $000011C7 VOL: 0
-; 0000 049C             _mes  = mes  ;
 ;PCODE: $000011C8 VOL: 0
 ;PCODE: $000011C9 VOL: 0
+; 0000 049C             _hora = hora ;
 ;PCODE: $000011CA VOL: 0
-; 0000 049D             _mes1 = mes1 ;    // mes en unidades y decenas
 ;PCODE: $000011CB VOL: 0
 ;PCODE: $000011CC VOL: 0
+; 0000 049D             _hora1= hora1;    // hora en unidades y decenas
 ;PCODE: $000011CD VOL: 0
-; 0000 049E             _an   = an   ;
 ;PCODE: $000011CE VOL: 0
 ;PCODE: $000011CF VOL: 0
+; 0000 049E             _dia  = dia  ;
 ;PCODE: $000011D0 VOL: 0
-; 0000 049F             _an1  = an1  ;     // anos en unidades y decenas
 ;PCODE: $000011D1 VOL: 0
 ;PCODE: $000011D2 VOL: 0
+; 0000 049F             _dia1 = dia1 ;    // dias en unidades y decenas
 ;PCODE: $000011D3 VOL: 0
-; 0000 04A0 
-; 0000 04A1             num_ruta  = _num_ruta;
 ;PCODE: $000011D4 VOL: 0
 ;PCODE: $000011D5 VOL: 0
+; 0000 04A0             _mes  = mes  ;
 ;PCODE: $000011D6 VOL: 0
-; 0000 04A2             laborando = _laborando;
 ;PCODE: $000011D7 VOL: 0
 ;PCODE: $000011D8 VOL: 0
+; 0000 04A1             _mes1 = mes1 ;    // mes en unidades y decenas
 ;PCODE: $000011D9 VOL: 0
-; 0000 04A3 
-; 0000 04A4             glcd_puts(reloj,7,2,0,2,-1);
 ;PCODE: $000011DA VOL: 0
 ;PCODE: $000011DB VOL: 0
+; 0000 04A2             _an   = an   ;
 ;PCODE: $000011DC VOL: 0
 ;PCODE: $000011DD VOL: 0
 ;PCODE: $000011DE VOL: 0
+; 0000 04A3             _an1  = an1  ;     // anos en unidades y decenas
 ;PCODE: $000011DF VOL: 0
 ;PCODE: $000011E0 VOL: 0
 ;PCODE: $000011E1 VOL: 0
+; 0000 04A4 
+; 0000 04A5             num_ruta  = _num_ruta;
 ;PCODE: $000011E2 VOL: 0
 ;PCODE: $000011E3 VOL: 0
 ;PCODE: $000011E4 VOL: 0
+; 0000 04A6             laborando = _laborando;
 ;PCODE: $000011E5 VOL: 0
 ;PCODE: $000011E6 VOL: 0
-; 0000 04A5          }
-; 0000 04A6 
-; 0000 04A7          //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
-; 0000 04A8          else if(pt==1)
 ;PCODE: $000011E7 VOL: 0
+; 0000 04A7 
+; 0000 04A8             glcd_puts(reloj,7,2,0,2,-1);
 ;PCODE: $000011E8 VOL: 0
 ;PCODE: $000011E9 VOL: 0
 ;PCODE: $000011EA VOL: 0
 ;PCODE: $000011EB VOL: 0
-; 0000 04A9          {
-; 0000 04AA             glcd_clrln(2);
 ;PCODE: $000011EC VOL: 0
 ;PCODE: $000011ED VOL: 0
 ;PCODE: $000011EE VOL: 0
-; 0000 04AB             glcd_clrln(3);
 ;PCODE: $000011EF VOL: 0
 ;PCODE: $000011F0 VOL: 0
 ;PCODE: $000011F1 VOL: 0
-; 0000 04AC             glcd_clrln(4);
 ;PCODE: $000011F2 VOL: 0
 ;PCODE: $000011F3 VOL: 0
 ;PCODE: $000011F4 VOL: 0
-; 0000 04AD             glcd_clrln(5);
+; 0000 04A9          }
+; 0000 04AA 
+; 0000 04AB          //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
+; 0000 04AC          else if(pt==1)
 ;PCODE: $000011F5 VOL: 0
 ;PCODE: $000011F6 VOL: 0
 ;PCODE: $000011F7 VOL: 0
-; 0000 04AE 
-; 0000 04AF             delay_ms(1);
 ;PCODE: $000011F8 VOL: 0
 ;PCODE: $000011F9 VOL: 0
+; 0000 04AD          {
+; 0000 04AE             glcd_clrln(2);
 ;PCODE: $000011FA VOL: 0
-; 0000 04B0 
-; 0000 04B1             glcd_puts(no_pt,48,3,0,2,1);
 ;PCODE: $000011FB VOL: 0
 ;PCODE: $000011FC VOL: 0
+; 0000 04AF             glcd_clrln(3);
 ;PCODE: $000011FD VOL: 0
 ;PCODE: $000011FE VOL: 0
 ;PCODE: $000011FF VOL: 0
+; 0000 04B0             glcd_clrln(4);
 ;PCODE: $00001200 VOL: 0
 ;PCODE: $00001201 VOL: 0
 ;PCODE: $00001202 VOL: 0
+; 0000 04B1             glcd_clrln(5);
 ;PCODE: $00001203 VOL: 0
 ;PCODE: $00001204 VOL: 0
 ;PCODE: $00001205 VOL: 0
+; 0000 04B2 
+; 0000 04B3             delay_ms(1);
 ;PCODE: $00001206 VOL: 0
 ;PCODE: $00001207 VOL: 0
-; 0000 04B2             //glcd_puts(nombre_pt,10,2,0,1,-2);
-; 0000 04B3 
-; 0000 04B4             buzz();
 ;PCODE: $00001208 VOL: 0
-; 0000 04B5             buzz();
+; 0000 04B4 
+; 0000 04B5             glcd_puts(no_pt,48,3,0,2,1);
 ;PCODE: $00001209 VOL: 0
-; 0000 04B6 
-; 0000 04B7             delay_ms(MOSTRAR_NUM_RUTA_MS);
 ;PCODE: $0000120A VOL: 0
 ;PCODE: $0000120B VOL: 0
 ;PCODE: $0000120C VOL: 0
-; 0000 04B8 
-; 0000 04B9             glcd_clrln(2);
 ;PCODE: $0000120D VOL: 0
 ;PCODE: $0000120E VOL: 0
 ;PCODE: $0000120F VOL: 0
-; 0000 04BA             glcd_clrln(3);
 ;PCODE: $00001210 VOL: 0
 ;PCODE: $00001211 VOL: 0
 ;PCODE: $00001212 VOL: 0
-; 0000 04BB             glcd_clrln(4);
 ;PCODE: $00001213 VOL: 0
 ;PCODE: $00001214 VOL: 0
 ;PCODE: $00001215 VOL: 0
-; 0000 04BC             glcd_clrln(5);
+; 0000 04B6             //glcd_puts(nombre_pt,10,2,0,1,-2);
+; 0000 04B7 
+; 0000 04B8             buzz();
 ;PCODE: $00001216 VOL: 0
+; 0000 04B9             buzz();
 ;PCODE: $00001217 VOL: 0
+; 0000 04BA 
+; 0000 04BB             delay_ms(MOSTRAR_NUM_RUTA_MS);
 ;PCODE: $00001218 VOL: 0
-; 0000 04BD 
-; 0000 04BE             //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 04BF             pt=0;
 ;PCODE: $00001219 VOL: 0
 ;PCODE: $0000121A VOL: 0
-; 0000 04C0          }
-; 0000 04C1 
-; 0000 04C2          // CHOFER HA INICIADO SESION
-; 0000 04C3          else if (pt==2){
+; 0000 04BC 
+; 0000 04BD             glcd_clrln(2);
 ;PCODE: $0000121B VOL: 0
 ;PCODE: $0000121C VOL: 0
 ;PCODE: $0000121D VOL: 0
+; 0000 04BE             glcd_clrln(3);
 ;PCODE: $0000121E VOL: 0
 ;PCODE: $0000121F VOL: 0
-; 0000 04C4             glcd_clrln(2);
 ;PCODE: $00001220 VOL: 0
+; 0000 04BF             glcd_clrln(4);
 ;PCODE: $00001221 VOL: 0
 ;PCODE: $00001222 VOL: 0
-; 0000 04C5             glcd_clrln(3);
 ;PCODE: $00001223 VOL: 0
+; 0000 04C0             glcd_clrln(5);
 ;PCODE: $00001224 VOL: 0
 ;PCODE: $00001225 VOL: 0
-; 0000 04C6             glcd_clrln(4);
 ;PCODE: $00001226 VOL: 0
+; 0000 04C1 
+; 0000 04C2             //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+; 0000 04C3             pt=0;
 ;PCODE: $00001227 VOL: 0
 ;PCODE: $00001228 VOL: 0
-; 0000 04C7             glcd_clrln(5);
+; 0000 04C4          }
+; 0000 04C5 
+; 0000 04C6          // CHOFER HA INICIADO SESION
+; 0000 04C7          else if (pt==2){
 ;PCODE: $00001229 VOL: 0
 ;PCODE: $0000122A VOL: 0
 ;PCODE: $0000122B VOL: 0
-; 0000 04C8 
-; 0000 04C9             delay_ms(1);
 ;PCODE: $0000122C VOL: 0
 ;PCODE: $0000122D VOL: 0
+; 0000 04C8             glcd_clrln(2);
 ;PCODE: $0000122E VOL: 0
-; 0000 04CA 
-; 0000 04CB             // Simulacion de un inicio de sesion
-; 0000 04CC             glcd_puts("INICIO DE SESION",5,2,0,1,-1);
 ;PCODE: $0000122F VOL: 0
 ;PCODE: $00001230 VOL: 0
+; 0000 04C9             glcd_clrln(3);
 ;PCODE: $00001231 VOL: 0
 ;PCODE: $00001232 VOL: 0
 ;PCODE: $00001233 VOL: 0
+; 0000 04CA             glcd_clrln(4);
 ;PCODE: $00001234 VOL: 0
 ;PCODE: $00001235 VOL: 0
 ;PCODE: $00001236 VOL: 0
+; 0000 04CB             glcd_clrln(5);
 ;PCODE: $00001237 VOL: 0
 ;PCODE: $00001238 VOL: 0
 ;PCODE: $00001239 VOL: 0
+; 0000 04CC 
+; 0000 04CD             delay_ms(1);
 ;PCODE: $0000123A VOL: 0
 ;PCODE: $0000123B VOL: 0
 ;PCODE: $0000123C VOL: 0
-; 0000 04CD             delay_ms( 500 );
+; 0000 04CE 
+; 0000 04CF             // Simulacion de un inicio de sesion
+; 0000 04D0             glcd_puts("INICIO DE SESION",5,2,0,1,-1);
 ;PCODE: $0000123D VOL: 0
 ;PCODE: $0000123E VOL: 0
 ;PCODE: $0000123F VOL: 0
-; 0000 04CE             glcd_puts("*",45,4,0,1,-1);
 ;PCODE: $00001240 VOL: 0
 ;PCODE: $00001241 VOL: 0
 ;PCODE: $00001242 VOL: 0
@@ -6100,14 +6102,14 @@ _0xFA:
 ;PCODE: $00001248 VOL: 0
 ;PCODE: $00001249 VOL: 0
 ;PCODE: $0000124A VOL: 0
+; 0000 04D1             delay_ms( 500 );
 ;PCODE: $0000124B VOL: 0
 ;PCODE: $0000124C VOL: 0
 ;PCODE: $0000124D VOL: 0
-; 0000 04CF             delay_ms( 300 );
+; 0000 04D2             glcd_puts("*",45,4,0,1,-1);
 ;PCODE: $0000124E VOL: 0
 ;PCODE: $0000124F VOL: 0
 ;PCODE: $00001250 VOL: 0
-; 0000 04D0             glcd_puts("*",53,4,0,1,-1);
 ;PCODE: $00001251 VOL: 0
 ;PCODE: $00001252 VOL: 0
 ;PCODE: $00001253 VOL: 0
@@ -6119,14 +6121,14 @@ _0xFA:
 ;PCODE: $00001259 VOL: 0
 ;PCODE: $0000125A VOL: 0
 ;PCODE: $0000125B VOL: 0
+; 0000 04D3             delay_ms( 300 );
 ;PCODE: $0000125C VOL: 0
 ;PCODE: $0000125D VOL: 0
 ;PCODE: $0000125E VOL: 0
-; 0000 04D1             delay_ms( 300 );
+; 0000 04D4             glcd_puts("*",53,4,0,1,-1);
 ;PCODE: $0000125F VOL: 0
 ;PCODE: $00001260 VOL: 0
 ;PCODE: $00001261 VOL: 0
-; 0000 04D2             glcd_puts("*",61,4,0,1,-1);
 ;PCODE: $00001262 VOL: 0
 ;PCODE: $00001263 VOL: 0
 ;PCODE: $00001264 VOL: 0
@@ -6138,14 +6140,14 @@ _0xFA:
 ;PCODE: $0000126A VOL: 0
 ;PCODE: $0000126B VOL: 0
 ;PCODE: $0000126C VOL: 0
+; 0000 04D5             delay_ms( 300 );
 ;PCODE: $0000126D VOL: 0
 ;PCODE: $0000126E VOL: 0
 ;PCODE: $0000126F VOL: 0
-; 0000 04D3             delay_ms( 300 );
+; 0000 04D6             glcd_puts("*",61,4,0,1,-1);
 ;PCODE: $00001270 VOL: 0
 ;PCODE: $00001271 VOL: 0
 ;PCODE: $00001272 VOL: 0
-; 0000 04D4             glcd_puts("*",69,4,0,1,-1);
 ;PCODE: $00001273 VOL: 0
 ;PCODE: $00001274 VOL: 0
 ;PCODE: $00001275 VOL: 0
@@ -6157,239 +6159,240 @@ _0xFA:
 ;PCODE: $0000127B VOL: 0
 ;PCODE: $0000127C VOL: 0
 ;PCODE: $0000127D VOL: 0
+; 0000 04D7             delay_ms( 300 );
 ;PCODE: $0000127E VOL: 0
 ;PCODE: $0000127F VOL: 0
 ;PCODE: $00001280 VOL: 0
-; 0000 04D5             delay_ms( 500 );
+; 0000 04D8             glcd_puts("*",69,4,0,1,-1);
 ;PCODE: $00001281 VOL: 0
 ;PCODE: $00001282 VOL: 0
 ;PCODE: $00001283 VOL: 0
-; 0000 04D6 
-; 0000 04D7             buzz();
 ;PCODE: $00001284 VOL: 0
-; 0000 04D8             buzz();
 ;PCODE: $00001285 VOL: 0
-; 0000 04D9 
-; 0000 04DA             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001286 VOL: 0
 ;PCODE: $00001287 VOL: 0
 ;PCODE: $00001288 VOL: 0
-; 0000 04DB 
-; 0000 04DC             glcd_clrln(2);
 ;PCODE: $00001289 VOL: 0
 ;PCODE: $0000128A VOL: 0
 ;PCODE: $0000128B VOL: 0
-; 0000 04DD             glcd_clrln(3);
 ;PCODE: $0000128C VOL: 0
 ;PCODE: $0000128D VOL: 0
 ;PCODE: $0000128E VOL: 0
-; 0000 04DE             glcd_clrln(4);
+; 0000 04D9             delay_ms( 500 );
 ;PCODE: $0000128F VOL: 0
 ;PCODE: $00001290 VOL: 0
 ;PCODE: $00001291 VOL: 0
-; 0000 04DF             glcd_clrln(5);
+; 0000 04DA 
+; 0000 04DB             buzz();
 ;PCODE: $00001292 VOL: 0
+; 0000 04DC             buzz();
 ;PCODE: $00001293 VOL: 0
+; 0000 04DD 
+; 0000 04DE             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001294 VOL: 0
-; 0000 04E0 
-; 0000 04E1             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00001295 VOL: 0
 ;PCODE: $00001296 VOL: 0
-; 0000 04E2          }
-; 0000 04E3 
-; 0000 04E4          // FINALIZO LA RUTA
-; 0000 04E5          else if (pt==3){
+; 0000 04DF 
+; 0000 04E0             glcd_clrln(2);
 ;PCODE: $00001297 VOL: 0
 ;PCODE: $00001298 VOL: 0
 ;PCODE: $00001299 VOL: 0
+; 0000 04E1             glcd_clrln(3);
 ;PCODE: $0000129A VOL: 0
 ;PCODE: $0000129B VOL: 0
-; 0000 04E6 
-; 0000 04E7             glcd_clrln(2);
 ;PCODE: $0000129C VOL: 0
+; 0000 04E2             glcd_clrln(4);
 ;PCODE: $0000129D VOL: 0
 ;PCODE: $0000129E VOL: 0
-; 0000 04E8             glcd_clrln(3);
 ;PCODE: $0000129F VOL: 0
+; 0000 04E3             glcd_clrln(5);
 ;PCODE: $000012A0 VOL: 0
 ;PCODE: $000012A1 VOL: 0
-; 0000 04E9             glcd_clrln(4);
 ;PCODE: $000012A2 VOL: 0
+; 0000 04E4 
+; 0000 04E5             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $000012A3 VOL: 0
 ;PCODE: $000012A4 VOL: 0
-; 0000 04EA             glcd_clrln(5);
+; 0000 04E6          }
+; 0000 04E7 
+; 0000 04E8          // FINALIZO LA RUTA
+; 0000 04E9          else if (pt==3){
 ;PCODE: $000012A5 VOL: 0
 ;PCODE: $000012A6 VOL: 0
 ;PCODE: $000012A7 VOL: 0
-; 0000 04EB             delay_ms(1);
 ;PCODE: $000012A8 VOL: 0
 ;PCODE: $000012A9 VOL: 0
+; 0000 04EA 
+; 0000 04EB             glcd_clrln(2);
 ;PCODE: $000012AA VOL: 0
-; 0000 04EC 
-; 0000 04ED             glcd_puts("FIN RUTA",28,3,0,1,-1);
 ;PCODE: $000012AB VOL: 0
 ;PCODE: $000012AC VOL: 0
+; 0000 04EC             glcd_clrln(3);
 ;PCODE: $000012AD VOL: 0
 ;PCODE: $000012AE VOL: 0
 ;PCODE: $000012AF VOL: 0
+; 0000 04ED             glcd_clrln(4);
 ;PCODE: $000012B0 VOL: 0
 ;PCODE: $000012B1 VOL: 0
 ;PCODE: $000012B2 VOL: 0
+; 0000 04EE             glcd_clrln(5);
 ;PCODE: $000012B3 VOL: 0
 ;PCODE: $000012B4 VOL: 0
 ;PCODE: $000012B5 VOL: 0
+; 0000 04EF             delay_ms(1);
 ;PCODE: $000012B6 VOL: 0
 ;PCODE: $000012B7 VOL: 0
 ;PCODE: $000012B8 VOL: 0
-; 0000 04EE 
-; 0000 04EF             buzz();
+; 0000 04F0 
+; 0000 04F1             glcd_puts("FIN RUTA",28,3,0,1,-1);
 ;PCODE: $000012B9 VOL: 0
-; 0000 04F0             buzz();
 ;PCODE: $000012BA VOL: 0
-; 0000 04F1 
-; 0000 04F2             delay_ms(1000);
 ;PCODE: $000012BB VOL: 0
 ;PCODE: $000012BC VOL: 0
 ;PCODE: $000012BD VOL: 0
-; 0000 04F3 
-; 0000 04F4             glcd_clrln(2);
 ;PCODE: $000012BE VOL: 0
 ;PCODE: $000012BF VOL: 0
 ;PCODE: $000012C0 VOL: 0
-; 0000 04F5             glcd_clrln(3);
 ;PCODE: $000012C1 VOL: 0
 ;PCODE: $000012C2 VOL: 0
 ;PCODE: $000012C3 VOL: 0
-; 0000 04F6             glcd_clrln(4);
 ;PCODE: $000012C4 VOL: 0
 ;PCODE: $000012C5 VOL: 0
 ;PCODE: $000012C6 VOL: 0
-; 0000 04F7             glcd_clrln(5);
+; 0000 04F2 
+; 0000 04F3             buzz();
 ;PCODE: $000012C7 VOL: 0
+; 0000 04F4             buzz();
 ;PCODE: $000012C8 VOL: 0
+; 0000 04F5 
+; 0000 04F6             delay_ms(1000);
 ;PCODE: $000012C9 VOL: 0
-; 0000 04F8             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $000012CA VOL: 0
 ;PCODE: $000012CB VOL: 0
-; 0000 04F9          }
-; 0000 04FA 
-; 0000 04FB          else if (pt==4){
+; 0000 04F7 
+; 0000 04F8             glcd_clrln(2);
 ;PCODE: $000012CC VOL: 0
 ;PCODE: $000012CD VOL: 0
 ;PCODE: $000012CE VOL: 0
+; 0000 04F9             glcd_clrln(3);
 ;PCODE: $000012CF VOL: 0
 ;PCODE: $000012D0 VOL: 0
-; 0000 04FC 
-; 0000 04FD             glcd_clrln(2);
 ;PCODE: $000012D1 VOL: 0
+; 0000 04FA             glcd_clrln(4);
 ;PCODE: $000012D2 VOL: 0
 ;PCODE: $000012D3 VOL: 0
-; 0000 04FE             glcd_clrln(3);
 ;PCODE: $000012D4 VOL: 0
+; 0000 04FB             glcd_clrln(5);
 ;PCODE: $000012D5 VOL: 0
 ;PCODE: $000012D6 VOL: 0
-; 0000 04FF             glcd_clrln(4);
 ;PCODE: $000012D7 VOL: 0
+; 0000 04FC             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $000012D8 VOL: 0
 ;PCODE: $000012D9 VOL: 0
-; 0000 0500             glcd_clrln(5);
+; 0000 04FD          }
+; 0000 04FE 
+; 0000 04FF          else if (pt==4){
 ;PCODE: $000012DA VOL: 0
 ;PCODE: $000012DB VOL: 0
 ;PCODE: $000012DC VOL: 0
-; 0000 0501             delay_ms(1);
 ;PCODE: $000012DD VOL: 0
 ;PCODE: $000012DE VOL: 0
+; 0000 0500 
+; 0000 0501             glcd_clrln(2);
 ;PCODE: $000012DF VOL: 0
-; 0000 0502 
-; 0000 0503             glcd_puts("INICIO RUTA",20,3,0,1,-1);
 ;PCODE: $000012E0 VOL: 0
 ;PCODE: $000012E1 VOL: 0
+; 0000 0502             glcd_clrln(3);
 ;PCODE: $000012E2 VOL: 0
 ;PCODE: $000012E3 VOL: 0
 ;PCODE: $000012E4 VOL: 0
+; 0000 0503             glcd_clrln(4);
 ;PCODE: $000012E5 VOL: 0
 ;PCODE: $000012E6 VOL: 0
 ;PCODE: $000012E7 VOL: 0
+; 0000 0504             glcd_clrln(5);
 ;PCODE: $000012E8 VOL: 0
 ;PCODE: $000012E9 VOL: 0
 ;PCODE: $000012EA VOL: 0
+; 0000 0505             delay_ms(1);
 ;PCODE: $000012EB VOL: 0
 ;PCODE: $000012EC VOL: 0
 ;PCODE: $000012ED VOL: 0
-; 0000 0504             buzz();
+; 0000 0506 
+; 0000 0507             glcd_puts("INICIO RUTA",20,3,0,1,-1);
 ;PCODE: $000012EE VOL: 0
-; 0000 0505             buzz();
 ;PCODE: $000012EF VOL: 0
-; 0000 0506             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $000012F0 VOL: 0
 ;PCODE: $000012F1 VOL: 0
 ;PCODE: $000012F2 VOL: 0
-; 0000 0507 
-; 0000 0508             glcd_clrln(2);
 ;PCODE: $000012F3 VOL: 0
 ;PCODE: $000012F4 VOL: 0
 ;PCODE: $000012F5 VOL: 0
-; 0000 0509             glcd_clrln(3);
 ;PCODE: $000012F6 VOL: 0
 ;PCODE: $000012F7 VOL: 0
 ;PCODE: $000012F8 VOL: 0
-; 0000 050A             glcd_clrln(4);
 ;PCODE: $000012F9 VOL: 0
 ;PCODE: $000012FA VOL: 0
 ;PCODE: $000012FB VOL: 0
-; 0000 050B             glcd_clrln(5);
+; 0000 0508             buzz();
 ;PCODE: $000012FC VOL: 0
+; 0000 0509             buzz();
 ;PCODE: $000012FD VOL: 0
+; 0000 050A             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $000012FE VOL: 0
-; 0000 050C             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $000012FF VOL: 0
 ;PCODE: $00001300 VOL: 0
-; 0000 050D          }
-; 0000 050E          //  CIERRA SESION
-; 0000 050F          else if (pt==5){
+; 0000 050B 
+; 0000 050C             glcd_clrln(2);
 ;PCODE: $00001301 VOL: 0
 ;PCODE: $00001302 VOL: 0
 ;PCODE: $00001303 VOL: 0
+; 0000 050D             glcd_clrln(3);
 ;PCODE: $00001304 VOL: 0
 ;PCODE: $00001305 VOL: 0
-; 0000 0510             glcd_clrln(2);
 ;PCODE: $00001306 VOL: 0
+; 0000 050E             glcd_clrln(4);
 ;PCODE: $00001307 VOL: 0
 ;PCODE: $00001308 VOL: 0
-; 0000 0511             glcd_clrln(3);
 ;PCODE: $00001309 VOL: 0
+; 0000 050F             glcd_clrln(5);
 ;PCODE: $0000130A VOL: 0
 ;PCODE: $0000130B VOL: 0
-; 0000 0512             glcd_clrln(4);
 ;PCODE: $0000130C VOL: 0
+; 0000 0510             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $0000130D VOL: 0
 ;PCODE: $0000130E VOL: 0
-; 0000 0513             glcd_clrln(5);
+; 0000 0511          }
+; 0000 0512          //  CIERRA SESION
+; 0000 0513          else if (pt==5){
 ;PCODE: $0000130F VOL: 0
 ;PCODE: $00001310 VOL: 0
 ;PCODE: $00001311 VOL: 0
-; 0000 0514 
-; 0000 0515             delay_ms(1);
 ;PCODE: $00001312 VOL: 0
 ;PCODE: $00001313 VOL: 0
+; 0000 0514             glcd_clrln(2);
 ;PCODE: $00001314 VOL: 0
-; 0000 0516 
-; 0000 0517             glcd_puts(" HA SALIDO",20,2,0,1,-1);
 ;PCODE: $00001315 VOL: 0
 ;PCODE: $00001316 VOL: 0
+; 0000 0515             glcd_clrln(3);
 ;PCODE: $00001317 VOL: 0
 ;PCODE: $00001318 VOL: 0
 ;PCODE: $00001319 VOL: 0
+; 0000 0516             glcd_clrln(4);
 ;PCODE: $0000131A VOL: 0
 ;PCODE: $0000131B VOL: 0
 ;PCODE: $0000131C VOL: 0
+; 0000 0517             glcd_clrln(5);
 ;PCODE: $0000131D VOL: 0
 ;PCODE: $0000131E VOL: 0
 ;PCODE: $0000131F VOL: 0
+; 0000 0518 
+; 0000 0519             delay_ms(1);
 ;PCODE: $00001320 VOL: 0
 ;PCODE: $00001321 VOL: 0
 ;PCODE: $00001322 VOL: 0
-; 0000 0518             glcd_puts("DEL SISTEMA",20,4,0,1,-1);
+; 0000 051A 
+; 0000 051B             glcd_puts(" HA SALIDO",20,2,0,1,-1);
 ;PCODE: $00001323 VOL: 0
 ;PCODE: $00001324 VOL: 0
 ;PCODE: $00001325 VOL: 0
@@ -6404,150 +6407,147 @@ _0xFA:
 ;PCODE: $0000132E VOL: 0
 ;PCODE: $0000132F VOL: 0
 ;PCODE: $00001330 VOL: 0
-; 0000 0519 
-; 0000 051A             buzz();
+; 0000 051C             glcd_puts("DEL SISTEMA",20,4,0,1,-1);
 ;PCODE: $00001331 VOL: 0
-; 0000 051B             buzz();
 ;PCODE: $00001332 VOL: 0
-; 0000 051C 
-; 0000 051D             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001333 VOL: 0
 ;PCODE: $00001334 VOL: 0
 ;PCODE: $00001335 VOL: 0
-; 0000 051E 
-; 0000 051F             glcd_clrln(2);
 ;PCODE: $00001336 VOL: 0
 ;PCODE: $00001337 VOL: 0
 ;PCODE: $00001338 VOL: 0
-; 0000 0520             glcd_clrln(3);
 ;PCODE: $00001339 VOL: 0
 ;PCODE: $0000133A VOL: 0
 ;PCODE: $0000133B VOL: 0
-; 0000 0521             glcd_clrln(4);
 ;PCODE: $0000133C VOL: 0
 ;PCODE: $0000133D VOL: 0
 ;PCODE: $0000133E VOL: 0
-; 0000 0522             glcd_clrln(5);
+; 0000 051D 
+; 0000 051E             buzz();
 ;PCODE: $0000133F VOL: 0
+; 0000 051F             buzz();
 ;PCODE: $00001340 VOL: 0
+; 0000 0520 
+; 0000 0521             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001341 VOL: 0
-; 0000 0523 
-; 0000 0524             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00001342 VOL: 0
 ;PCODE: $00001343 VOL: 0
-; 0000 0525 
-; 0000 0526             // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
-; 0000 0527             //pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 0528          }
-; 0000 0529 
-; 0000 052A          // Debe iniciar sesion // Aun no implementada
-; 0000 052B          else if (pt==6){
+; 0000 0522 
+; 0000 0523             glcd_clrln(2);
 ;PCODE: $00001344 VOL: 0
 ;PCODE: $00001345 VOL: 0
 ;PCODE: $00001346 VOL: 0
+; 0000 0524             glcd_clrln(3);
 ;PCODE: $00001347 VOL: 0
 ;PCODE: $00001348 VOL: 0
-; 0000 052C             glcd_clrln(2);
 ;PCODE: $00001349 VOL: 0
+; 0000 0525             glcd_clrln(4);
 ;PCODE: $0000134A VOL: 0
 ;PCODE: $0000134B VOL: 0
-; 0000 052D             glcd_clrln(3);
 ;PCODE: $0000134C VOL: 0
+; 0000 0526             glcd_clrln(5);
 ;PCODE: $0000134D VOL: 0
 ;PCODE: $0000134E VOL: 0
-; 0000 052E             glcd_clrln(4);
 ;PCODE: $0000134F VOL: 0
+; 0000 0527 
+; 0000 0528             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00001350 VOL: 0
 ;PCODE: $00001351 VOL: 0
-; 0000 052F             glcd_clrln(5);
+; 0000 0529 
+; 0000 052A             // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
+; 0000 052B             //pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+; 0000 052C          }
+; 0000 052D 
+; 0000 052E          // Debe iniciar sesion // Aun no implementada
+; 0000 052F          else if (pt==6){
 ;PCODE: $00001352 VOL: 0
 ;PCODE: $00001353 VOL: 0
 ;PCODE: $00001354 VOL: 0
-; 0000 0530 
-; 0000 0531             delay_ms(1);
 ;PCODE: $00001355 VOL: 0
 ;PCODE: $00001356 VOL: 0
+; 0000 0530             glcd_clrln(2);
 ;PCODE: $00001357 VOL: 0
-; 0000 0532 
-; 0000 0533             glcd_puts("NECESITA INICIAR JORNADA",20,2,0,1,-1);
 ;PCODE: $00001358 VOL: 0
 ;PCODE: $00001359 VOL: 0
+; 0000 0531             glcd_clrln(3);
 ;PCODE: $0000135A VOL: 0
 ;PCODE: $0000135B VOL: 0
 ;PCODE: $0000135C VOL: 0
+; 0000 0532             glcd_clrln(4);
 ;PCODE: $0000135D VOL: 0
 ;PCODE: $0000135E VOL: 0
 ;PCODE: $0000135F VOL: 0
+; 0000 0533             glcd_clrln(5);
 ;PCODE: $00001360 VOL: 0
 ;PCODE: $00001361 VOL: 0
 ;PCODE: $00001362 VOL: 0
+; 0000 0534 
+; 0000 0535             delay_ms(1);
 ;PCODE: $00001363 VOL: 0
 ;PCODE: $00001364 VOL: 0
 ;PCODE: $00001365 VOL: 0
-; 0000 0534 
-; 0000 0535             buzz();
+; 0000 0536 
+; 0000 0537             glcd_puts("NECESITA INICIAR JORNADA",20,2,0,1,-1);
 ;PCODE: $00001366 VOL: 0
-; 0000 0536             buzz();
 ;PCODE: $00001367 VOL: 0
-; 0000 0537 
-; 0000 0538             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001368 VOL: 0
 ;PCODE: $00001369 VOL: 0
 ;PCODE: $0000136A VOL: 0
-; 0000 0539 
-; 0000 053A             glcd_clrln(2);
 ;PCODE: $0000136B VOL: 0
 ;PCODE: $0000136C VOL: 0
 ;PCODE: $0000136D VOL: 0
-; 0000 053B             glcd_clrln(3);
 ;PCODE: $0000136E VOL: 0
 ;PCODE: $0000136F VOL: 0
 ;PCODE: $00001370 VOL: 0
-; 0000 053C             glcd_clrln(4);
 ;PCODE: $00001371 VOL: 0
 ;PCODE: $00001372 VOL: 0
 ;PCODE: $00001373 VOL: 0
-; 0000 053D             glcd_clrln(5);
+; 0000 0538 
+; 0000 0539             buzz();
 ;PCODE: $00001374 VOL: 0
+; 0000 053A             buzz();
 ;PCODE: $00001375 VOL: 0
+; 0000 053B 
+; 0000 053C             delay_ms(MOSTRAR_MSN_ENV_MS);
 ;PCODE: $00001376 VOL: 0
-; 0000 053E 
-; 0000 053F             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00001377 VOL: 0
 ;PCODE: $00001378 VOL: 0
-; 0000 0540          }
-; 0000 0541 
-; 0000 0542          // Mostrar el texto que llego desde el servidor
-; 0000 0543          else if ( pt == 7)
+; 0000 053D 
+; 0000 053E             glcd_clrln(2);
 ;PCODE: $00001379 VOL: 0
 ;PCODE: $0000137A VOL: 0
 ;PCODE: $0000137B VOL: 0
+; 0000 053F             glcd_clrln(3);
 ;PCODE: $0000137C VOL: 0
 ;PCODE: $0000137D VOL: 0
-; 0000 0544          {
-; 0000 0545 
-; 0000 0546             glcd_clrln(2);
 ;PCODE: $0000137E VOL: 0
+; 0000 0540             glcd_clrln(4);
 ;PCODE: $0000137F VOL: 0
 ;PCODE: $00001380 VOL: 0
-; 0000 0547             glcd_clrln(3);
 ;PCODE: $00001381 VOL: 0
+; 0000 0541             glcd_clrln(5);
 ;PCODE: $00001382 VOL: 0
 ;PCODE: $00001383 VOL: 0
-; 0000 0548             glcd_clrln(4);
 ;PCODE: $00001384 VOL: 0
+; 0000 0542 
+; 0000 0543             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
 ;PCODE: $00001385 VOL: 0
 ;PCODE: $00001386 VOL: 0
-; 0000 0549             glcd_clrln(5);
+; 0000 0544          }
+; 0000 0545 
+; 0000 0546          // Mostrar el texto que llego desde el servidor
+; 0000 0547          else if ( pt == 7)
 ;PCODE: $00001387 VOL: 0
 ;PCODE: $00001388 VOL: 0
 ;PCODE: $00001389 VOL: 0
-; 0000 054A 
-; 0000 054B             // Falta para hacer mensajes grandes
-; 0000 054C             glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
 ;PCODE: $0000138A VOL: 0
 ;PCODE: $0000138B VOL: 0
+; 0000 0548          {
+; 0000 0549 
+; 0000 054A             glcd_clear();
 ;PCODE: $0000138C VOL: 0
+; 0000 054B 
+; 0000 054C             glcd_puts( "MENSAJE:",30,0,0,1,-1 );  // Muestra el mensaje
 ;PCODE: $0000138D VOL: 0
 ;PCODE: $0000138E VOL: 0
 ;PCODE: $0000138F VOL: 0
@@ -6558,60 +6558,57 @@ _0xFA:
 ;PCODE: $00001394 VOL: 0
 ;PCODE: $00001395 VOL: 0
 ;PCODE: $00001396 VOL: 0
-; 0000 054D 
-; 0000 054E             delay_ms( DELAY_TXT_SERVIDOR );
 ;PCODE: $00001397 VOL: 0
 ;PCODE: $00001398 VOL: 0
 ;PCODE: $00001399 VOL: 0
-; 0000 054F 
-; 0000 0550             glcd_clrln(2);
 ;PCODE: $0000139A VOL: 0
+; 0000 054D 
+; 0000 054E             // Falta para hacer mensajes grandes
+; 0000 054F             glcd_puts( txt_glcd_b0,0,1,0,1,-1 );  // Muestra el mensaje
 ;PCODE: $0000139B VOL: 0
 ;PCODE: $0000139C VOL: 0
-; 0000 0551             glcd_clrln(3);
 ;PCODE: $0000139D VOL: 0
 ;PCODE: $0000139E VOL: 0
 ;PCODE: $0000139F VOL: 0
-; 0000 0552             glcd_clrln(4);
 ;PCODE: $000013A0 VOL: 0
 ;PCODE: $000013A1 VOL: 0
 ;PCODE: $000013A2 VOL: 0
-; 0000 0553             glcd_clrln(5);
 ;PCODE: $000013A3 VOL: 0
 ;PCODE: $000013A4 VOL: 0
 ;PCODE: $000013A5 VOL: 0
-; 0000 0554 
-; 0000 0555             // Vacia el buffer
-; 0000 0556            for( j = 0; j < TXT_BUF_SZ; j++ )
 ;PCODE: $000013A6 VOL: 0
 ;PCODE: $000013A7 VOL: 0
+; 0000 0550 
+; 0000 0551             delay_ms( DELAY_TXT_SERVIDOR );
 ;PCODE: $000013A8 VOL: 0
 ;PCODE: $000013A9 VOL: 0
 ;PCODE: $000013AA VOL: 0
+; 0000 0552 
+; 0000 0553             glcd_clear();
 ;PCODE: $000013AB VOL: 0
+; 0000 0554 
+; 0000 0555             printf("AT+CSQ\n\r"); // Vuelve a dibujar la senal
 ;PCODE: $000013AC VOL: 0
 ;PCODE: $000013AD VOL: 0
 ;PCODE: $000013AE VOL: 0
-; 0000 0557               txt_glcd_b0[j] = 0x00;
 ;PCODE: $000013AF VOL: 0
 ;PCODE: $000013B0 VOL: 0
 ;PCODE: $000013B1 VOL: 0
 ;PCODE: $000013B2 VOL: 0
+; 0000 0556 
+; 0000 0557 
+; 0000 0558             // Vacia el buffer
+; 0000 0559            for( j = 0; j < TXT_BUF_SZ; j++ )
 ;PCODE: $000013B3 VOL: 0
 ;PCODE: $000013B4 VOL: 0
 ;PCODE: $000013B5 VOL: 0
 ;PCODE: $000013B6 VOL: 0
 ;PCODE: $000013B7 VOL: 0
-; 0000 0559 pt = 0;
 ;PCODE: $000013B8 VOL: 0
 ;PCODE: $000013B9 VOL: 0
-; 0000 055A 
-; 0000 055B          }
-; 0000 055C 
-; 0000 055D          // Con senal GPS
-; 0000 055E          if( gps == 'A' )
 ;PCODE: $000013BA VOL: 0
 ;PCODE: $000013BB VOL: 0
+; 0000 055A               txt_glcd_b0[j] = 0x00;
 ;PCODE: $000013BC VOL: 0
 ;PCODE: $000013BD VOL: 0
 ;PCODE: $000013BE VOL: 0
@@ -6621,10 +6618,14 @@ _0xFA:
 ;PCODE: $000013C2 VOL: 0
 ;PCODE: $000013C3 VOL: 0
 ;PCODE: $000013C4 VOL: 0
-; 0000 055F          {
-; 0000 0560             bmp_disp(GPS1,95,0,127,1);
+; 0000 055C pt = 0;
 ;PCODE: $000013C5 VOL: 0
 ;PCODE: $000013C6 VOL: 0
+; 0000 055D 
+; 0000 055E          }
+; 0000 055F 
+; 0000 0560          // Con senal GPS
+; 0000 0561          if( gps == 'A' )
 ;PCODE: $000013C7 VOL: 0
 ;PCODE: $000013C8 VOL: 0
 ;PCODE: $000013C9 VOL: 0
@@ -6634,10 +6635,10 @@ _0xFA:
 ;PCODE: $000013CD VOL: 0
 ;PCODE: $000013CE VOL: 0
 ;PCODE: $000013CF VOL: 0
-; 0000 0561 
-; 0000 0562             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $000013D0 VOL: 0
 ;PCODE: $000013D1 VOL: 0
+; 0000 0562          {
+; 0000 0563             bmp_disp(GPS1,95,0,127,1);
 ;PCODE: $000013D2 VOL: 0
 ;PCODE: $000013D3 VOL: 0
 ;PCODE: $000013D4 VOL: 0
@@ -6649,6 +6650,8 @@ _0xFA:
 ;PCODE: $000013DA VOL: 0
 ;PCODE: $000013DB VOL: 0
 ;PCODE: $000013DC VOL: 0
+; 0000 0564 
+; 0000 0565             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $000013DD VOL: 0
 ;PCODE: $000013DE VOL: 0
 ;PCODE: $000013DF VOL: 0
@@ -6669,7 +6672,6 @@ _0xFA:
 ;PCODE: $000013EE VOL: 0
 ;PCODE: $000013EF VOL: 0
 ;PCODE: $000013F0 VOL: 0
-; 0000 0563             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $000013F1 VOL: 0
 ;PCODE: $000013F2 VOL: 0
 ;PCODE: $000013F3 VOL: 0
@@ -6683,10 +6685,7 @@ _0xFA:
 ;PCODE: $000013FB VOL: 0
 ;PCODE: $000013FC VOL: 0
 ;PCODE: $000013FD VOL: 0
-; 0000 0564 
-; 0000 0565          }
-; 0000 0566          // Sin senal GPS
-; 0000 0567          else if (gps == 'V' || gps == '9' )
+; 0000 0566             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $000013FE VOL: 0
 ;PCODE: $000013FF VOL: 0
 ;PCODE: $00001400 VOL: 0
@@ -6697,11 +6696,13 @@ _0xFA:
 ;PCODE: $00001405 VOL: 0
 ;PCODE: $00001406 VOL: 0
 ;PCODE: $00001407 VOL: 0
-; 0000 0568          {
-; 0000 0569             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00001408 VOL: 0
 ;PCODE: $00001409 VOL: 0
 ;PCODE: $0000140A VOL: 0
+; 0000 0567 
+; 0000 0568          }
+; 0000 0569          // Sin senal GPS
+; 0000 056A          else if (gps == 'V' || gps == '9' )
 ;PCODE: $0000140B VOL: 0
 ;PCODE: $0000140C VOL: 0
 ;PCODE: $0000140D VOL: 0
@@ -6710,10 +6711,10 @@ _0xFA:
 ;PCODE: $00001410 VOL: 0
 ;PCODE: $00001411 VOL: 0
 ;PCODE: $00001412 VOL: 0
-; 0000 056A 
-; 0000 056B             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00001413 VOL: 0
 ;PCODE: $00001414 VOL: 0
+; 0000 056B          {
+; 0000 056C             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00001415 VOL: 0
 ;PCODE: $00001416 VOL: 0
 ;PCODE: $00001417 VOL: 0
@@ -6725,6 +6726,8 @@ _0xFA:
 ;PCODE: $0000141D VOL: 0
 ;PCODE: $0000141E VOL: 0
 ;PCODE: $0000141F VOL: 0
+; 0000 056D 
+; 0000 056E             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $00001420 VOL: 0
 ;PCODE: $00001421 VOL: 0
 ;PCODE: $00001422 VOL: 0
@@ -6745,7 +6748,6 @@ _0xFA:
 ;PCODE: $00001431 VOL: 0
 ;PCODE: $00001432 VOL: 0
 ;PCODE: $00001433 VOL: 0
-; 0000 056C             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00001434 VOL: 0
 ;PCODE: $00001435 VOL: 0
 ;PCODE: $00001436 VOL: 0
@@ -6759,13 +6761,9 @@ _0xFA:
 ;PCODE: $0000143E VOL: 0
 ;PCODE: $0000143F VOL: 0
 ;PCODE: $00001440 VOL: 0
-; 0000 056D 
-; 0000 056E          }
-; 0000 056F          else
+; 0000 056F             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $00001441 VOL: 0
 ;PCODE: $00001442 VOL: 0
-; 0000 0570          {
-; 0000 0571             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00001443 VOL: 0
 ;PCODE: $00001444 VOL: 0
 ;PCODE: $00001445 VOL: 0
@@ -6777,9 +6775,13 @@ _0xFA:
 ;PCODE: $0000144B VOL: 0
 ;PCODE: $0000144C VOL: 0
 ;PCODE: $0000144D VOL: 0
-; 0000 0572             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
+; 0000 0570 
+; 0000 0571          }
+; 0000 0572          else
 ;PCODE: $0000144E VOL: 0
 ;PCODE: $0000144F VOL: 0
+; 0000 0573          {
+; 0000 0574             bmp_disp(GPS2,95,0,127,1);
 ;PCODE: $00001450 VOL: 0
 ;PCODE: $00001451 VOL: 0
 ;PCODE: $00001452 VOL: 0
@@ -6791,6 +6793,7 @@ _0xFA:
 ;PCODE: $00001458 VOL: 0
 ;PCODE: $00001459 VOL: 0
 ;PCODE: $0000145A VOL: 0
+; 0000 0575             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 ;PCODE: $0000145B VOL: 0
 ;PCODE: $0000145C VOL: 0
 ;PCODE: $0000145D VOL: 0
@@ -6811,7 +6814,6 @@ _0xFA:
 ;PCODE: $0000146C VOL: 0
 ;PCODE: $0000146D VOL: 0
 ;PCODE: $0000146E VOL: 0
-; 0000 0573             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $0000146F VOL: 0
 ;PCODE: $00001470 VOL: 0
 ;PCODE: $00001471 VOL: 0
@@ -6825,16 +6827,11 @@ _0xFA:
 ;PCODE: $00001479 VOL: 0
 ;PCODE: $0000147A VOL: 0
 ;PCODE: $0000147B VOL: 0
-; 0000 0574          }
+; 0000 0576             glcd_puts(fecha,34,5,0,1,-1);
 ;PCODE: $0000147C VOL: 0
 ;PCODE: $0000147D VOL: 0
-; 0000 0575       }
-; 0000 0576 
-; 0000 0577       else
 ;PCODE: $0000147E VOL: 0
 ;PCODE: $0000147F VOL: 0
-; 0000 0578       {
-; 0000 0579          glcd_puts("Pantalla",30,2,0,1,-1);
 ;PCODE: $00001480 VOL: 0
 ;PCODE: $00001481 VOL: 0
 ;PCODE: $00001482 VOL: 0
@@ -6844,12 +6841,17 @@ _0xFA:
 ;PCODE: $00001486 VOL: 0
 ;PCODE: $00001487 VOL: 0
 ;PCODE: $00001488 VOL: 0
+; 0000 0577          }
 ;PCODE: $00001489 VOL: 0
 ;PCODE: $0000148A VOL: 0
+; 0000 0578       }
+; 0000 0579 
+; 0000 057A       else
 ;PCODE: $0000148B VOL: 0
 ;PCODE: $0000148C VOL: 0
+; 0000 057B       {
+; 0000 057C          glcd_puts("Pantalla",30,2,0,1,-1);
 ;PCODE: $0000148D VOL: 0
-; 0000 057A          glcd_puts("No Autorizada",15,4,0,1,-1);
 ;PCODE: $0000148E VOL: 0
 ;PCODE: $0000148F VOL: 0
 ;PCODE: $00001490 VOL: 0
@@ -6863,11 +6865,9 @@ _0xFA:
 ;PCODE: $00001498 VOL: 0
 ;PCODE: $00001499 VOL: 0
 ;PCODE: $0000149A VOL: 0
+; 0000 057D          glcd_puts("No Autorizada",15,4,0,1,-1);
 ;PCODE: $0000149B VOL: 0
-; 0000 057B       }
 ;PCODE: $0000149C VOL: 0
-; 0000 057C 
-; 0000 057D          bmp_disp(frente,105,5,127,7);
 ;PCODE: $0000149D VOL: 0
 ;PCODE: $0000149E VOL: 0
 ;PCODE: $0000149F VOL: 0
@@ -6879,15 +6879,31 @@ _0xFA:
 ;PCODE: $000014A5 VOL: 0
 ;PCODE: $000014A6 VOL: 0
 ;PCODE: $000014A7 VOL: 0
-; 0000 057E    } // Fin del While
 ;PCODE: $000014A8 VOL: 0
+; 0000 057E       }
 ;PCODE: $000014A9 VOL: 0
-; 0000 057F }
+; 0000 057F 
+; 0000 0580          bmp_disp(frente,105,5,127,7);
 ;PCODE: $000014AA VOL: 0
 ;PCODE: $000014AB VOL: 0
 ;PCODE: $000014AC VOL: 0
+;PCODE: $000014AD VOL: 0
+;PCODE: $000014AE VOL: 0
+;PCODE: $000014AF VOL: 0
+;PCODE: $000014B0 VOL: 0
+;PCODE: $000014B1 VOL: 0
+;PCODE: $000014B2 VOL: 0
+;PCODE: $000014B3 VOL: 0
+;PCODE: $000014B4 VOL: 0
+; 0000 0581    } // Fin del While
+;PCODE: $000014B5 VOL: 0
+;PCODE: $000014B6 VOL: 0
+; 0000 0582 }
+;PCODE: $000014B7 VOL: 0
+;PCODE: $000014B8 VOL: 0
+;PCODE: $000014B9 VOL: 0
 
 	.DSEG
 _0x1B1:
-	.BYTE 0x79
+	.BYTE 0x8C
 ;//---------------------------------------- FIN DEL PROGRAMA PRINCIPAL ---------------------------------------------//

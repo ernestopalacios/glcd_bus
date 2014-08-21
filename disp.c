@@ -5,7 +5,8 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.9.6                   *
+ *                  Jeferson C                *
+ *  version:        0.9.0.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -61,6 +62,7 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
+   #define VERSION               "VER_0.9.0"
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"
    #define DELAY_BUZZER_MS          100
@@ -653,7 +655,15 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       void obt(void)
       {
 
-         int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
+         int i;                        // Contador de lazo FOR() buffer serial
+         int j;                       // Contador de ??
+         int n=0;                    //
+         int ini;
+         int coma=0;
+         int pos1=0;
+         int pos2=0;
+         int pos3=0;
+         int barras;
          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
 
          char digito_hora_temp; //Variable temporal para la hora y fecha
@@ -675,23 +685,20 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
                do
                {
-                  if (i_txt_glcd <= 100)
+                  if (i_txt_glcd <= TXT_BUF_SZ )
                   {
 
-                     txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ]; 
+                     txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+6 + i_txt_glcd ]; 
                      i_txt_glcd++;
                      
-                  }
-                  else{  // Mas de 100 caracteres recibidos. Romper el while
+                  }else{  // Mas de 100 caracteres recibidos. Romper el while
 
                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
 
-                     //Obliga a salir del while:
-                     rx_b0[ i+7 + i_txt_glcd ] = '"';
-                     //break;  // Se sale del while?
+                     rx_b0[ i+6 + i_txt_glcd ] = ',';//Obliga a salir del while:
                   }
 
-               }while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+               }while( rx_b0[ i+6 + i_txt_glcd ] != ',' ); // Mientras el caracter no sea com
 
                pt = 7;          // Muestra en mensaje en main()
             }
@@ -1057,6 +1064,7 @@ void main(void)
       // Escribe NUMERO_PANTALLA "BUS####"
       glcd_puts("BUS",59,5,0,1,-1);
       glcd_puts(NUM_DISP,82,5,0,1,-1);
+      glcd_puts(VERSION,40,7,0,1,-1);
 
       //Tiempo q muestra la pantalla de inicio
       delay_ms( DELAY_PANTALLA_INI ); 
@@ -1343,21 +1351,20 @@ void main(void)
          else if ( pt == 7)
          {
             
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
+            glcd_clear(); 
 
+            glcd_puts( "MENSAJE:",30,0,0,1,-1 );  // Muestra el mensaje
+            
             // Falta para hacer mensajes grandes
-            glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
+            glcd_puts( txt_glcd_b0,0,1,0,1,-1 );  // Muestra el mensaje
             
             delay_ms( DELAY_TXT_SERVIDOR );
 
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
+            glcd_clear(); 
 
+            printf("AT+CSQ\n\r"); // Vuelve a dibujar la senal
+
+            
             // Vacia el buffer
            for( j = 0; j < TXT_BUF_SZ; j++ )
               txt_glcd_b0[j] = 0x00;
