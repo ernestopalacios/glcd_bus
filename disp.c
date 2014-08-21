@@ -75,7 +75,12 @@
    #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
    char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
 
-////////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
+   # define TXT_BUF_SZ 160
+   char txt_glcd_b0[ TXT_BUF_SZ ];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
+   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
+   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+   
+   /////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
    #define BT5 PINA.0
    #define BT4 PINA.1
    #define BT3 PINA.2
@@ -126,9 +131,7 @@
    char punto[4], pt=0, no_pt[4], nombre_pt[20];        // variables para reconocer geocercas
    int unidades_ruta, decenas_ruta, centenas_ruta;
    
-   char txt_glcd_b0[102];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
-   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
-   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+   
    
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
@@ -669,6 +672,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                // Guarda lo que hay entre las comillas en el 
                // buffer txt_glcd
                i_txt_glcd = 0;
+
                do
                {
                   if (i_txt_glcd <= 100)
@@ -687,10 +691,8 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                      //break;  // Se sale del while?
                   }
 
-               }
-               while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+               }while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
 
-               txt_glcd_b0[ i_txt_glcd ] = '\0';  // Que el ultimo caracter sea NULL.
                pt = 7;          // Muestra en mensaje en main()
             }
 
@@ -955,9 +957,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
           
          BIT_UART=1;     
          
-         for (j=0;j<201;j++) 
+         // Limpia el buffer
+         for( i=0; i<RX_BUFFER_SIZE0; i++ ) 
          {
-            rx_b0[j]=0;
+            rx_b0[i]=0;
          }
       }
    //---------------------------------------------------------------------------------------------//
@@ -971,6 +974,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 void main(void)
 {
    
+   int j = 0;
    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
       #pragma optsize-
       CLKPR=0x80;
@@ -1093,6 +1097,10 @@ void main(void)
       }
       else
          _laborando = laborando;
+
+      // Limpia el buffer de mensaje recibido
+      for( j = 0; j < TXT_BUF_SZ; j++ )
+              txt_glcd_b0[j] = 0x00;
    //------------------------------------------------------------------------//
    
 
@@ -1342,12 +1350,17 @@ void main(void)
 
             // Falta para hacer mensajes grandes
             glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
+            
             delay_ms( DELAY_TXT_SERVIDOR );
 
             glcd_clrln(2); 
             glcd_clrln(3); 
             glcd_clrln(4); 
             glcd_clrln(5); 
+
+            // Vacia el buffer
+           for( j = 0; j < TXT_BUF_SZ; j++ )
+              txt_glcd_b0[j] = 0x00;
 
             pt = 0; // Mostrar el reloj
             

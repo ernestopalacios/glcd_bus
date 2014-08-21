@@ -1050,18 +1050,18 @@ __DELAY_USW_LOOP:
 	.ENDM
 
 ;NAME DEFINITIONS FOR GLOBAL VARIABLES ALLOCATED TO REGISTERS
-	.DEF _rx_wr_index0=R4
-	.DEF _rx_rd_index0=R3
-	.DEF _rx_counter0=R6
-	.DEF _ruta=R5
-	.DEF _ruta_aux=R8
-	.DEF _bandera1=R7
-	.DEF _bandera2=R10
-	.DEF _bandera3=R9
-	.DEF _bandera4=R12
-	.DEF _bandera5=R11
-	.DEF _aceptar=R14
-	.DEF _btn1=R13
+	.DEF _i_txt_glcd=R4
+	.DEF _i_txt_overflow=R3
+	.DEF _rx_wr_index0=R6
+	.DEF _rx_rd_index0=R5
+	.DEF _rx_counter0=R8
+	.DEF _ruta=R7
+	.DEF _ruta_aux=R10
+	.DEF _bandera1=R9
+	.DEF _bandera2=R12
+	.DEF _bandera3=R11
+	.DEF _bandera4=R14
+	.DEF _bandera5=R13
 
 	.CSEG
 	.ORG 0x00
@@ -2557,9 +2557,9 @@ _0xC7:
 	.DB  0x53,0x49,0x54,0x55
 _0xC8:
 	.DB  0x31,0x36,0x39,0x37
-_0x1E8:
-	.DB  0x20,0x0,0x0,0x20,0x0,0x0,0x0,0x0
-	.DB  0x0,0x0
+_0x1EE:
+	.DB  0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x20
+	.DB  0x0,0x0,0x0,0x0
 _0x0:
 	.DB  0x41,0x54,0x24,0x54,0x54,0x44,0x45,0x56
 	.DB  0x49,0x44,0x3F,0xA,0xD,0x0,0x41,0x54
@@ -2684,9 +2684,9 @@ __GLOBAL_INI_TBL:
 	.DW  _0x1B1+107
 	.DW  _0x0*2+343
 
-	.DW  0x0A
-	.DW  0x05
-	.DW  _0x1E8*2
+	.DW  0x0C
+	.DW  0x03
+	.DW  _0x1EE*2
 
 	.DW  0x01
 	.DW  __seed_G101
@@ -3265,35 +3265,35 @@ _glcd_putchar:
 	CPC  R31,R26
 	BRNE _0x96
 	LDI  R30,LOW(250)
-	RJMP _0x1DC
+	RJMP _0x1E2
 _0x96:
 	CPI  R30,LOW(0x90)
 	LDI  R26,HIGH(0x90)
 	CPC  R31,R26
 	BRNE _0x97
 	LDI  R30,LOW(251)
-	RJMP _0x1DC
+	RJMP _0x1E2
 _0x97:
 	CPI  R30,LOW(0x98)
 	LDI  R26,HIGH(0x98)
 	CPC  R31,R26
 	BRNE _0x98
 	LDI  R30,LOW(252)
-	RJMP _0x1DC
+	RJMP _0x1E2
 _0x98:
 	CPI  R30,LOW(0x8E)
 	LDI  R26,HIGH(0x8E)
 	CPC  R31,R26
 	BRNE _0x99
 	LDI  R30,LOW(253)
-	RJMP _0x1DC
+	RJMP _0x1E2
 _0x99:
 	CPI  R30,LOW(0x8D)
 	LDI  R26,HIGH(0x8D)
 	CPC  R31,R26
 	BRNE _0x95
 	LDI  R30,LOW(254)
-_0x1DC:
+_0x1E2:
 	STD  Y+6,R30
 _0x95:
 	LDD  R26,Y+6
@@ -3334,10 +3334,10 @@ _0x9D:
 	CALL SUBOPT_0xB
 	RCALL _putIt
 	LDI  R30,LOW(2)
-	RJMP _0x1DD
+	RJMP _0x1E3
 _0x9B:
 	LDI  R30,LOW(0)
-_0x1DD:
+_0x1E3:
 	STS  _stat_G000,R30
 	LDD  R26,Y+6
 	CPI  R26,LOW(0xC1)
@@ -3348,10 +3348,10 @@ _0x1DD:
 	LDS  R30,_stat_G000
 	CALL SUBOPT_0xC
 	LPM  R30,Z
-	RJMP _0x1DE
+	RJMP _0x1E4
 _0x9F:
 	LDD  R30,Y+6
-_0x1DE:
+_0x1E4:
 	LDI  R31,0
 	CALL SUBOPT_0xD
 	CALL SUBOPT_0xD
@@ -3523,10 +3523,10 @@ _0xBC:
 	CPI  R26,LOW(0x20)
 	BRNE _0xBE
 	CALL SUBOPT_0x13
-	RJMP _0x1DF
+	RJMP _0x1E5
 _0xBE:
 	CALL SUBOPT_0x14
-_0x1DF:
+_0x1E5:
 	LDD  R26,Y+7
 	LDD  R27,Y+7+1
 	CALL SUBOPT_0x18
@@ -3653,7 +3653,12 @@ _0xC3:
 ;   #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
 ;   char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer
 ;
-;////////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
+;   # define TXT_BUF_SZ 160
+;   char txt_glcd_b0[ TXT_BUF_SZ ];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
+;   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
+;   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+;
+;   /////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
 ;   #define BT5 PINA.0
 ;   #define BT4 PINA.1
 ;   #define BT3 PINA.2
@@ -3706,9 +3711,7 @@ _0xC3:
 ;   char punto[4], pt=0, no_pt[4], nombre_pt[20];        // variables para reconocer geocercas
 ;   int unidades_ruta, decenas_ruta, centenas_ruta;
 ;
-;   char txt_glcd_b0[102];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
-;   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
-;   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+;
 ;
 ;//-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 ;
@@ -3762,7 +3765,7 @@ _0xC3:
 ; * Captura datos desde el puerto serial UART0
 ; */
 ;   interrupt [USART0_RXC] void usart0_rx_isr(void)
-; 0000 00B9    {
+; 0000 00BC    {
 
 	.CSEG
 _usart0_rx_isr:
@@ -3770,16 +3773,16 @@ _usart0_rx_isr:
 	ST   -Y,R31
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 00BA       char status,data;
-; 0000 00BB       status = UCSR0A;
+; 0000 00BD       char status,data;
+; 0000 00BE       status = UCSR0A;
 	ST   -Y,R17
 	ST   -Y,R16
 ;	status -> R17
 ;	data -> R16
 	LDS  R17,192
-; 0000 00BC       data   = UDR0;
+; 0000 00BF       data   = UDR0;
 	LDS  R16,198
-; 0000 00BD       BIT_UART = UCSR0A & 0b10000000;
+; 0000 00C0       BIT_UART = UCSR0A & 0b10000000;
 	LDS  R30,192
 	ANDI R30,LOW(0x80)
 	BRNE _0xC9
@@ -3788,45 +3791,45 @@ _usart0_rx_isr:
 _0xC9:
 	SBI  0x1E,1
 _0xCA:
-; 0000 00BE 
-; 0000 00BF       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN)) == 0)
+; 0000 00C1 
+; 0000 00C2       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN)) == 0)
 	MOV  R30,R17
 	ANDI R30,LOW(0x1C)
 	BRNE _0xCB
-; 0000 00C0       {
-; 0000 00C1          rx_b0 [rx_wr_index0++] = data;
-	MOV  R30,R4
-	INC  R4
+; 0000 00C3       {
+; 0000 00C4          rx_b0 [rx_wr_index0++] = data;
+	MOV  R30,R6
+	INC  R6
 	LDI  R31,0
 	SUBI R30,LOW(-_rx_b0)
 	SBCI R31,HIGH(-_rx_b0)
 	ST   Z,R16
-; 0000 00C2          #if RX_BUFFER_SIZE0 == 256
-; 0000 00C3             // special case for receiver buffer size=256
-; 0000 00C4             if (++rx_counter0 == 0) rx_buffer_overflow0=1;
-; 0000 00C5 
-; 0000 00C6          #else
-; 0000 00C7             if (rx_wr_index0 == RX_BUFFER_SIZE0) rx_wr_index0=0;
-	LDI  R30,LOW(200)
-	CP   R30,R4
-	BRNE _0xCC
-	CLR  R4
-; 0000 00C8             if (++rx_counter0 == RX_BUFFER_SIZE0)
-_0xCC:
-	INC  R6
+; 0000 00C5          #if RX_BUFFER_SIZE0 == 256
+; 0000 00C6             // special case for receiver buffer size=256
+; 0000 00C7             if (++rx_counter0 == 0) rx_buffer_overflow0=1;
+; 0000 00C8 
+; 0000 00C9          #else
+; 0000 00CA             if (rx_wr_index0 == RX_BUFFER_SIZE0) rx_wr_index0=0;
 	LDI  R30,LOW(200)
 	CP   R30,R6
-	BRNE _0xCD
-; 0000 00C9             {
-; 0000 00CA                rx_counter0=0;
+	BRNE _0xCC
 	CLR  R6
-; 0000 00CB                rx_buffer_overflow0=1;
+; 0000 00CB             if (++rx_counter0 == RX_BUFFER_SIZE0)
+_0xCC:
+	INC  R8
+	LDI  R30,LOW(200)
+	CP   R30,R8
+	BRNE _0xCD
+; 0000 00CC             {
+; 0000 00CD                rx_counter0=0;
+	CLR  R8
+; 0000 00CE                rx_buffer_overflow0=1;
 	SBI  0x1E,0
-; 0000 00CC             }
-; 0000 00CD          #endif
-; 0000 00CE       }
+; 0000 00CF             }
+; 0000 00D0          #endif
+; 0000 00D1       }
 _0xCD:
-; 0000 00CF    }
+; 0000 00D2    }
 _0xCB:
 	LD   R16,Y+
 	LD   R17,Y+
@@ -3840,7 +3843,7 @@ _0xCB:
 ;
 ;/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
 ;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
-; 0000 00D5 {
+; 0000 00D8 {
 _timer0_ovf_isr:
 	ST   -Y,R0
 	ST   -Y,R1
@@ -3855,31 +3858,31 @@ _timer0_ovf_isr:
 	ST   -Y,R31
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 00D6    TCNT0 = 6;
+; 0000 00D9    TCNT0 = 6;
 	LDI  R30,LOW(6)
 	OUT  0x26,R30
-; 0000 00D7    ++time_count;
+; 0000 00DA    ++time_count;
 	LDI  R26,LOW(_time_count_G000)
 	LDI  R27,HIGH(_time_count_G000)
 	CALL SUBOPT_0x7
-; 0000 00D8 
-; 0000 00D9    if ( time_count == 43 )
+; 0000 00DB 
+; 0000 00DC    if ( time_count == 43 )
 	LDS  R26,_time_count_G000
 	LDS  R27,_time_count_G000+1
 	SBIW R26,43
 	BREQ PC+3
 	JMP _0xD0
-; 0000 00DA    {
-; 0000 00DB       seg++;
+; 0000 00DD    {
+; 0000 00DE       seg++;
 	CALL SUBOPT_0x19
 	CALL SUBOPT_0x1A
-; 0000 00DC       time_count = 0;  //reiniciar contador
+; 0000 00DF       time_count = 0;  //reiniciar contador
 	LDI  R30,LOW(0)
 	STS  _time_count_G000,R30
 	STS  _time_count_G000+1,R30
-; 0000 00DD 
-; 0000 00DE       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-; 0000 00DF          if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+; 0000 00E0 
+; 0000 00E1       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
+; 0000 00E2          if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
 	CALL SUBOPT_0x19
 	CPI  R30,LOW(0x1)
 	BRNE _0xD2
@@ -3890,7 +3893,7 @@ _0xD2:
 	RJMP _0xD1
 _0xD3:
 	CALL SUBOPT_0x1C
-; 0000 00E0          if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
+; 0000 00E3          if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
 _0xD1:
 	CALL SUBOPT_0x19
 	CPI  R30,LOW(0x1)
@@ -3903,9 +3906,9 @@ _0xD5:
 _0xD6:
 	__POINTW1FN _0x0,14
 	CALL SUBOPT_0x1D
-; 0000 00E1       //Envio pra ver antenas, igualar hora y fecha...
-; 0000 00E2          // Envio cada 20 segundos
-; 0000 00E3          if (seg==1 && seg1==3) printf("AT$TTNETIP?\n\r");
+; 0000 00E4       //Envio pra ver antenas, igualar hora y fecha...
+; 0000 00E5          // Envio cada 20 segundos
+; 0000 00E6          if (seg==1 && seg1==3) printf("AT$TTNETIP?\n\r");
 _0xD4:
 	CALL SUBOPT_0x19
 	CPI  R30,LOW(0x1)
@@ -3918,7 +3921,7 @@ _0xD8:
 _0xD9:
 	__POINTW1FN _0x0,23
 	CALL SUBOPT_0x1D
-; 0000 00E4          if (seg==1 && seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
+; 0000 00E7          if (seg==1 && seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
 _0xD7:
 	CALL SUBOPT_0x19
 	CPI  R30,LOW(0x1)
@@ -3931,59 +3934,59 @@ _0xDB:
 _0xDC:
 	__POINTW1FN _0x0,37
 	CALL SUBOPT_0x1D
-; 0000 00E5 
-; 0000 00E6 
-; 0000 00E7       if (seg>9)
+; 0000 00E8 
+; 0000 00E9 
+; 0000 00EA       if (seg>9)
 _0xDA:
 	CALL SUBOPT_0x19
 	CPI  R30,LOW(0xA)
 	BRSH PC+3
 	JMP _0xDD
-; 0000 00E8       {
-; 0000 00E9          seg=0; seg1++;
+; 0000 00EB       {
+; 0000 00EC          seg=0; seg1++;
 	CALL SUBOPT_0x1E
 	CALL SUBOPT_0x1B
 	CALL SUBOPT_0x1A
-; 0000 00EA 
-; 0000 00EB          if(seg1>5)  // Cambio de minuto
+; 0000 00ED 
+; 0000 00EE          if(seg1>5)  // Cambio de minuto
 	CALL SUBOPT_0x1B
 	CPI  R30,LOW(0x6)
 	BRSH PC+3
 	JMP _0xDE
-; 0000 00EC          {
-; 0000 00ED             seg1=0; minu++;
+; 0000 00EF          {
+; 0000 00F0             seg1=0; minu++;
 	CALL SUBOPT_0x1F
 	CALL SUBOPT_0x20
 	CALL SUBOPT_0x1A
-; 0000 00EE             if(minu>9)
+; 0000 00F1             if(minu>9)
 	CALL SUBOPT_0x20
 	CPI  R30,LOW(0xA)
 	BRSH PC+3
 	JMP _0xDF
-; 0000 00EF             {
-; 0000 00F0                minu=0; min1++;
+; 0000 00F2             {
+; 0000 00F3                minu=0; min1++;
 	CALL SUBOPT_0x21
 	CALL SUBOPT_0x22
 	CALL SUBOPT_0x1A
-; 0000 00F1                if(min1>5)
+; 0000 00F4                if(min1>5)
 	CALL SUBOPT_0x22
 	CPI  R30,LOW(0x6)
 	BRLO _0xE0
-; 0000 00F2                {
-; 0000 00F3                   min1=0; hora++;
+; 0000 00F5                {
+; 0000 00F6                   min1=0; hora++;
 	CALL SUBOPT_0x23
 	CALL SUBOPT_0x24
 	CALL SUBOPT_0x1A
-; 0000 00F4                   if(hora>9)
+; 0000 00F7                   if(hora>9)
 	CALL SUBOPT_0x24
 	CPI  R30,LOW(0xA)
 	BRLO _0xE1
-; 0000 00F5                   {
-; 0000 00F6                      hora=0; hora1++;
+; 0000 00F8                   {
+; 0000 00F9                      hora=0; hora1++;
 	CALL SUBOPT_0x25
 	CALL SUBOPT_0x26
 	CALL SUBOPT_0x1A
-; 0000 00F7                      if((hora1==2 && hora==3)&&(min1==5 && minu==9)&&(seg1==5 && seg==9))
+; 0000 00FA                      if((hora1==2 && hora==3)&&(min1==5 && minu==9)&&(seg1==5 && seg==9))
 	CALL SUBOPT_0x26
 	CPI  R30,LOW(0x2)
 	BRNE _0xE3
@@ -4015,8 +4018,8 @@ _0xE9:
 _0xE5:
 	RJMP _0xE2
 _0xEA:
-; 0000 00F8                      {
-; 0000 00F9                         hora1=0; hora=0; min1=0; minu=0;seg1=0;seg=0;
+; 0000 00FB                      {
+; 0000 00FC                         hora1=0; hora=0; min1=0; minu=0;seg1=0;seg=0;
 	LDI  R26,LOW(_hora1)
 	LDI  R27,HIGH(_hora1)
 	LDI  R30,LOW(0)
@@ -4026,20 +4029,20 @@ _0xEA:
 	CALL SUBOPT_0x21
 	CALL SUBOPT_0x1F
 	CALL SUBOPT_0x1E
-; 0000 00FA                      }
-; 0000 00FB                   }
+; 0000 00FD                      }
+; 0000 00FE                   }
 _0xE2:
-; 0000 00FC                }
+; 0000 00FF                }
 _0xE1:
-; 0000 00FD             }
+; 0000 0100             }
 _0xE0:
-; 0000 00FE          }
+; 0000 0101          }
 _0xDF:
-; 0000 00FF       }
+; 0000 0102       }
 _0xDE:
-; 0000 0100    }
+; 0000 0103    }
 _0xDD:
-; 0000 0101 }
+; 0000 0104 }
 _0xD0:
 	LD   R30,Y+
 	OUT  SREG,R30
@@ -4069,15 +4072,15 @@ _0xD0:
 ;       * El tiempo que suena depende del Macro: DELAY BUZZER
 ;       */
 ;      void buzz()
-; 0000 0110       {       //Sonido de Buzzer
+; 0000 0113       {       //Sonido de Buzzer
 _buzz:
-; 0000 0111          buzzer=1; delay_ms( DELAY_BUZZER_MS );
+; 0000 0114          buzzer=1; delay_ms( DELAY_BUZZER_MS );
 	SBI  0xB,4
 	CALL SUBOPT_0x27
-; 0000 0112          buzzer=0; delay_ms( DELAY_BUZZER_MS );
+; 0000 0115          buzzer=0; delay_ms( DELAY_BUZZER_MS );
 	CBI  0xB,4
 	CALL SUBOPT_0x27
-; 0000 0113       }
+; 0000 0116       }
 	RET
 ;   //---------------------------------------------------------------------------//
 ;
@@ -4090,12 +4093,12 @@ _buzz:
 ;       * Solo soporta un carcater, máximo se puede tener 35 rutas.
 ;       */
 ;      int8 calcuar_ruta( char ruta )
-; 0000 011F       {
+; 0000 0122       {
 _calcuar_ruta:
-; 0000 0120          int8 numero_ruta = ruta - 0x40;
-; 0000 0121 
-; 0000 0122          // Verificar que la letra corresponde a un número de ruta
-; 0000 0123          if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
+; 0000 0123          int8 numero_ruta = ruta - 0x40;
+; 0000 0124 
+; 0000 0125          // Verificar que la letra corresponde a un número de ruta
+; 0000 0126          if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
 	ST   -Y,R17
 ;	ruta -> Y+1
 ;	numero_ruta -> R17
@@ -4111,15 +4114,15 @@ _calcuar_ruta:
 _0xF0:
 	RJMP _0xEF
 _0xF1:
-; 0000 0124             return numero_ruta;
+; 0000 0127             return numero_ruta;
 	MOV  R30,R17
 	RJMP _0x20A0002
-; 0000 0125          else
+; 0000 0128          else
 _0xEF:
-; 0000 0126             return 0; // El caracter no corresponde a una ruta.
+; 0000 0129             return 0; // El caracter no corresponde a una ruta.
 	LDI  R30,LOW(0)
-; 0000 0127 
-; 0000 0128       }
+; 0000 012A 
+; 0000 012B       }
 _0x20A0002:
 	LDD  R17,Y+0
 	ADIW R28,2
@@ -4134,22 +4137,22 @@ _0x20A0002:
 ;       *
 ;       */
 ;      void enviar_estado_ruta(){
-; 0000 0132 void enviar_estado_ruta(){
+; 0000 0135 void enviar_estado_ruta(){
 _enviar_estado_ruta:
-; 0000 0133 
-; 0000 0134          _num_ruta = calcuar_ruta( ruta );
-	ST   -Y,R5
+; 0000 0136 
+; 0000 0137          _num_ruta = calcuar_ruta( ruta );
+	ST   -Y,R7
 	RCALL _calcuar_ruta
 	STS  __num_ruta,R30
-; 0000 0135          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
-; 0000 0136                                           NUM_DISP,
-; 0000 0137                                                _dia1,_dia,
-; 0000 0138                                                _mes1,_mes,
-; 0000 0139                                                _an1,_an,
-; 0000 013A                                                    _hora1,hora,
-; 0000 013B                                                    _min1 ,minu,
-; 0000 013C                                                    _seg1 ,seg,
-; 0000 013D                                                       _num_ruta,aceptar  );
+; 0000 0138          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n",
+; 0000 0139                                           NUM_DISP,
+; 0000 013A                                                _dia1,_dia,
+; 0000 013B                                                _mes1,_mes,
+; 0000 013C                                                _an1,_an,
+; 0000 013D                                                    _hora1,hora,
+; 0000 013E                                                    _min1 ,minu,
+; 0000 013F                                                    _seg1 ,seg,
+; 0000 0140                                                       _num_ruta,aceptar  );
 	__POINTW1FN _0x0,56
 	CALL SUBOPT_0x28
 	CALL SUBOPT_0x29
@@ -4163,12 +4166,12 @@ _enviar_estado_ruta:
 	CALL SUBOPT_0x29
 	LDS  R30,__num_ruta
 	CALL SUBOPT_0x29
-	MOV  R30,R14
+	LDS  R30,_aceptar
 	CALL SUBOPT_0x29
 	LDI  R24,60
 	CALL _printf
 	ADIW R28,62
-; 0000 013E       }
+; 0000 0141       }
 	RET
 ;   //---------------------------------------------------------------------------//
 ;
@@ -4181,18 +4184,18 @@ _enviar_estado_ruta:
 ;       *
 ;       */
 ;      void envia_estado_login(){
-; 0000 0149 void envia_estado_login(){
+; 0000 014C void envia_estado_login(){
 _envia_estado_login:
-; 0000 014A          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n",
-; 0000 014B                                        NUM_DISP,
-; 0000 014C                                             _dia1,_dia,
-; 0000 014D                                             _mes1,_mes,
-; 0000 014E                                             _an1,_an,
-; 0000 014F                                                 _hora1,hora,
-; 0000 0150                                                 _min1 ,minu,
-; 0000 0151                                                 _seg1 ,seg,
-; 0000 0152                                                   // id_conductor, 1234 temporalmente
-; 0000 0153                                                      _laborando  );
+; 0000 014D          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n",
+; 0000 014E                                        NUM_DISP,
+; 0000 014F                                             _dia1,_dia,
+; 0000 0150                                             _mes1,_mes,
+; 0000 0151                                             _an1,_an,
+; 0000 0152                                                 _hora1,hora,
+; 0000 0153                                                 _min1 ,minu,
+; 0000 0154                                                 _seg1 ,seg,
+; 0000 0155                                                   // id_conductor, 1234 temporalmente
+; 0000 0156                                                      _laborando  );
 	__POINTW1FN _0x0,122
 	CALL SUBOPT_0x28
 	CALL SUBOPT_0x29
@@ -4209,65 +4212,67 @@ _envia_estado_login:
 	LDI  R24,56
 	CALL _printf
 	ADIW R28,58
-; 0000 0154       }
+; 0000 0157       }
 	RET
 ;   //---------------------------------------------------------------------------//
 ;
 ;
 ;   ////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) ///////////
 ;      void boton1()
-; 0000 015A       {
+; 0000 015D       {
 _boton1:
-; 0000 015B          // Primera presion del botòn
-; 0000 015C          if( BT1 == 0 && bandera1==0)
+; 0000 015E          // Primera presion del botòn
+; 0000 015F          if( BT1 == 0 && bandera1==0)
 	LDI  R26,0
 	SBIC 0x0,4
 	LDI  R26,1
 	CPI  R26,LOW(0x0)
 	BRNE _0xF4
 	LDI  R30,LOW(0)
-	CP   R30,R7
+	CP   R30,R9
 	BREQ _0xF5
 _0xF4:
 	RJMP _0xF3
 _0xF5:
-; 0000 015D          {
-; 0000 015E             pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
+; 0000 0160          {
+; 0000 0161             pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
 	LDI  R30,LOW(2)
 	STS  _pt,R30
-; 0000 015F             btn1++;                          // Aumenta el contador del boton
-	INC  R13
-; 0000 0160             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
+; 0000 0162             btn1++;                          // Aumenta el contador del boton
+	LDS  R30,_btn1
+	SUBI R30,-LOW(1)
+	STS  _btn1,R30
+; 0000 0163             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
 	LDI  R30,LOW(1)
-	MOV  R7,R30
-; 0000 0161 
-; 0000 0162             buzz();
-	CALL SUBOPT_0x2A
-; 0000 0163             delay_ms( DELAY_BOTONES_MS );
+	MOV  R9,R30
 ; 0000 0164 
-; 0000 0165             switch (btn1)
-	MOV  R30,R13
+; 0000 0165             buzz();
+	CALL SUBOPT_0x2A
+; 0000 0166             delay_ms( DELAY_BOTONES_MS );
+; 0000 0167 
+; 0000 0168             switch (btn1)
+	LDS  R30,_btn1
 	CALL SUBOPT_0x2B
-; 0000 0166             {
-; 0000 0167                // PRIMERA PRESION DEL BOTON
-; 0000 0168                case 1:
+; 0000 0169             {
+; 0000 016A                // PRIMERA PRESION DEL BOTON
+; 0000 016B                case 1:
 	BRNE _0xF9
-; 0000 0169 
-; 0000 016A                   // Envia Inicio de sesion al servidor
-; 0000 016B                   _laborando = 1;                  // INICIA SESION  ***
+; 0000 016C 
+; 0000 016D                   // Envia Inicio de sesion al servidor
+; 0000 016E                   _laborando = 1;                  // INICIA SESION  ***
 	LDI  R30,LOW(1)
 	STS  __laborando,R30
-; 0000 016C                   envia_estado_login();
+; 0000 016F                   envia_estado_login();
 	RCALL _envia_estado_login
-; 0000 016D                   // DEBE HABILITAR EL BOTON 4
-; 0000 016E 
-; 0000 016F                   // Muestra la RUTA A: primero y por defecto
-; 0000 0170                   btn2 = 1;
+; 0000 0170                   // DEBE HABILITAR EL BOTON 4
+; 0000 0171 
+; 0000 0172                   // Muestra la RUTA A: primero y por defecto
+; 0000 0173                   btn2 = 1;
 	LDI  R30,LOW(1)
 	STS  _btn2,R30
-; 0000 0171 
-; 0000 0172                   //Muestra el chofer
-; 0000 0173                   bmp_disp(chofer,0,5,35,7);
+; 0000 0174 
+; 0000 0175                   //Muestra el chofer
+; 0000 0176                   bmp_disp(chofer,0,5,35,7);
 	LDI  R30,LOW(_chofer*2)
 	LDI  R31,HIGH(_chofer*2)
 	CALL SUBOPT_0x2C
@@ -4276,27 +4281,27 @@ _0xF5:
 	LDI  R31,HIGH(35)
 	CALL SUBOPT_0x2E
 	RCALL _bmp_disp
-; 0000 0174 
-; 0000 0175                   // Muestra la ruta
-; 0000 0176                   glcd_puts("RUTA:",44,7,0,1,-1);
+; 0000 0177 
+; 0000 0178                   // Muestra la ruta
+; 0000 0179                   glcd_puts("RUTA:",44,7,0,1,-1);
 	__POINTW1MN _0xFA,0
 	CALL SUBOPT_0x2F
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0177 
-; 0000 0178                break;
+; 0000 017A 
+; 0000 017B                break;
 	RJMP _0xF8
-; 0000 0179 
-; 0000 017A                // SEGUNDA PRESION DEL BOTON
-; 0000 017B                //solamente quita la ruta de la pantalla
-; 0000 017C                //no cierra sesion de la ruta actual
-; 0000 017D                case 2:
+; 0000 017C 
+; 0000 017D                // SEGUNDA PRESION DEL BOTON
+; 0000 017E                //solamente quita la ruta de la pantalla
+; 0000 017F                //no cierra sesion de la ruta actual
+; 0000 0180                case 2:
 _0xF9:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0xF8
-; 0000 017E                   bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+; 0000 0181                   bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
 	LDI  R30,LOW(_vacio*2)
 	LDI  R31,HIGH(_vacio*2)
 	CALL SUBOPT_0x2C
@@ -4305,78 +4310,76 @@ _0xF9:
 	LDI  R31,HIGH(25)
 	CALL SUBOPT_0x2E
 	RCALL _bmp_disp
-; 0000 017F                   btn2 = 15;                       // Carrera Vacia
-	LDI  R30,LOW(15)
-	STS  _btn2,R30
-; 0000 0180 
-; 0000 0181                   _laborando = 0;     // No se encuentra en laborando.
-	LDI  R30,LOW(0)
+; 0000 0182                   btn2 = 15;                       // Carrera Vacia
+	CALL SUBOPT_0x32
+; 0000 0183 
+; 0000 0184                   _laborando = 0;     // No se encuentra en laborando.
 	STS  __laborando,R30
-; 0000 0182                   pt=5;             // Muestra mensaje de FIN JORNADA  ***
+; 0000 0185                   pt=5;             // Muestra mensaje de FIN JORNADA  ***
 	LDI  R30,LOW(5)
 	STS  _pt,R30
-; 0000 0183                   envia_estado_login();
+; 0000 0186                   envia_estado_login();
 	RCALL _envia_estado_login
-; 0000 0184 
-; 0000 0185                   btn2 = 15;         // Borra el caracter de ruta
-	LDI  R30,LOW(15)
-	STS  _btn2,R30
-; 0000 0186                   aceptar = 0;      // Finalizar la Ruta
-	CLR  R14
 ; 0000 0187 
-; 0000 0188                   if( ruta != ' ' )
+; 0000 0188                   btn2 = 15;         // Borra el caracter de ruta
+	CALL SUBOPT_0x32
+; 0000 0189                   aceptar = 0;      // Finalizar la Ruta
+	STS  _aceptar,R30
+; 0000 018A 
+; 0000 018B                   if( ruta != ' ' )
 	LDI  R30,LOW(32)
-	CP   R30,R5
+	CP   R30,R7
 	BREQ _0xFC
-; 0000 0189                      enviar_estado_ruta();
+; 0000 018C                      enviar_estado_ruta();
 	RCALL _enviar_estado_ruta
-; 0000 018A                   ruta = ' ';      // Fin de la ruta
+; 0000 018D                   ruta = ' ';      // Fin de la ruta
 _0xFC:
 	LDI  R30,LOW(32)
-	MOV  R5,R30
-; 0000 018B 
-; 0000 018C                   // Borra el caracter de la carrera
-; 0000 018D                   glcd_putchar(' ',79,7,0,1);
+	MOV  R7,R30
+; 0000 018E 
+; 0000 018F                   // Borra el caracter de la carrera
+; 0000 0190                   glcd_putchar(' ',79,7,0,1);
 	ST   -Y,R30
 	LDI  R30,LOW(79)
 	LDI  R31,HIGH(79)
 	CALL SUBOPT_0x2E
 	CALL SUBOPT_0x30
 	RCALL _glcd_putchar
-; 0000 018E                   // Borra una trama de caracteres RUTA:
-; 0000 018F                   glcd_puts("      ",44,7,0,1,-1);
+; 0000 0191                   // Borra una trama de caracteres RUTA:
+; 0000 0192                   glcd_puts("      ",44,7,0,1,-1);
 	__POINTW1MN _0xFA,6
 	CALL SUBOPT_0x2F
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0190 
-; 0000 0191                   // Reiniciliza el contador, siguiente presion btn = 1;
-; 0000 0192                   btn1 = 0;
-	CLR  R13
 ; 0000 0193 
-; 0000 0194                break;
-; 0000 0195 
-; 0000 0196             }
-_0xF8:
-; 0000 0197          }
+; 0000 0194                   // Reiniciliza el contador, siguiente presion btn = 1;
+; 0000 0195                   btn1 = 0;
+	LDI  R30,LOW(0)
+	STS  _btn1,R30
+; 0000 0196 
+; 0000 0197                break;
 ; 0000 0198 
-; 0000 0199          // Cuando se levanta el boton del dedo levant la bandera
-; 0000 019A          else if( BT1 == 1 && bandera1 == 1 )
+; 0000 0199             }
+_0xF8:
+; 0000 019A          }
+; 0000 019B 
+; 0000 019C          // Cuando se levanta el boton del dedo levant la bandera
+; 0000 019D          else if( BT1 == 1 && bandera1 == 1 )
 	RJMP _0xFD
 _0xF3:
 	SBIS 0x0,4
 	RJMP _0xFF
 	LDI  R30,LOW(1)
-	CP   R30,R7
+	CP   R30,R9
 	BREQ _0x100
 _0xFF:
 	RJMP _0xFE
 _0x100:
-; 0000 019B          {
-; 0000 019C             bandera1=0;
-	CLR  R7
-; 0000 019D          }
-; 0000 019E       }
+; 0000 019E          {
+; 0000 019F             bandera1=0;
+	CLR  R9
+; 0000 01A0          }
+; 0000 01A1       }
 _0xFE:
 _0xFD:
 	RET
@@ -4389,23 +4392,24 @@ _0xFA:
 ;
 ;   ////////////////// FUNCION DEL BOTON 2 (ESCOGER RUTA AUMENTAR LETRA) /////
 ;      void boton2(){
-; 0000 01A3 void boton2(){
+; 0000 01A6 void boton2(){
 
 	.CSEG
 _boton2:
-; 0000 01A4 
-; 0000 01A5          // Si se presiona el boton dos, luego de haber presionado el boton
-; 0000 01A6          // uno, una vez. Y aún no se ha aceptado carrera
-; 0000 01A7          if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
+; 0000 01A7 
+; 0000 01A8          // Si se presiona el boton dos, luego de haber presionado el boton
+; 0000 01A9          // uno, una vez. Y aún no se ha aceptado carrera
+; 0000 01AA          if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
 	LDI  R26,0
 	SBIC 0x0,3
 	LDI  R26,1
 	CPI  R26,LOW(0x0)
 	BRNE _0x102
 	LDI  R30,LOW(0)
-	CP   R30,R10
+	CP   R30,R12
 	BRNE _0x102
-	CP   R30,R14
+	LDS  R26,_aceptar
+	CPI  R26,LOW(0x0)
 	BRNE _0x102
 	LDS  R26,__laborando
 	CPI  R26,LOW(0x1)
@@ -4413,18 +4417,18 @@ _boton2:
 _0x102:
 	RJMP _0x101
 _0x103:
-; 0000 01A8          {
-; 0000 01A9             btn2++;
+; 0000 01AB          {
+; 0000 01AC             btn2++;
 	LDS  R30,_btn2
 	SUBI R30,-LOW(1)
 	STS  _btn2,R30
-; 0000 01AA             buzz();
+; 0000 01AD             buzz();
 	RCALL _buzz
-; 0000 01AB             bandera2 = 1;
+; 0000 01AE             bandera2 = 1;
 	LDI  R30,LOW(1)
-	MOV  R10,R30
-; 0000 01AC 
-; 0000 01AD             if( btn2 > 12 && btn2 != 15)
+	MOV  R12,R30
+; 0000 01AF 
+; 0000 01B0             if( btn2 > 12 && btn2 != 15)
 	LDS  R26,_btn2
 	CPI  R26,LOW(0xD)
 	BRLO _0x105
@@ -4433,201 +4437,202 @@ _0x103:
 _0x105:
 	RJMP _0x104
 _0x106:
-; 0000 01AE                btn2 = 1;
+; 0000 01B1                btn2 = 1;
 	LDI  R30,LOW(1)
 	STS  _btn2,R30
-; 0000 01AF 
-; 0000 01B0             delay_ms(DELAY_BOTONES_MS);
-_0x104:
-	CALL SUBOPT_0x32
-; 0000 01B1          }
 ; 0000 01B2 
-; 0000 01B3 
-; 0000 01B4          // Luego de presionar el boton, puede volver a presionarlo.
-; 0000 01B5          else if(BT2==1 && bandera2==1)
+; 0000 01B3             delay_ms(DELAY_BOTONES_MS);
+_0x104:
+	CALL SUBOPT_0x33
+; 0000 01B4          }
+; 0000 01B5 
+; 0000 01B6 
+; 0000 01B7          // Luego de presionar el boton, puede volver a presionarlo.
+; 0000 01B8          else if(BT2==1 && bandera2==1)
 	RJMP _0x107
 _0x101:
 	SBIS 0x0,3
 	RJMP _0x109
 	LDI  R30,LOW(1)
-	CP   R30,R10
+	CP   R30,R12
 	BREQ _0x10A
 _0x109:
 	RJMP _0x108
 _0x10A:
-; 0000 01B6          {
-; 0000 01B7             bandera2=0;
-	CLR  R10
-; 0000 01B8          }
-; 0000 01B9 
-; 0000 01BA 
-; 0000 01BB          // El switch lo hace constantemente, ya que esta en el main y
-; 0000 01BC          // no depende de ningun IF
+; 0000 01B9          {
+; 0000 01BA             bandera2=0;
+	CLR  R12
+; 0000 01BB          }
+; 0000 01BC 
 ; 0000 01BD 
-; 0000 01BE          switch (btn2){
+; 0000 01BE          // El switch lo hace constantemente, ya que esta en el main y
+; 0000 01BF          // no depende de ningun IF
+; 0000 01C0 
+; 0000 01C1          switch (btn2){
 _0x108:
 _0x107:
 	LDS  R30,_btn2
 	CALL SUBOPT_0x2B
-; 0000 01BF             case 1:
+; 0000 01C2             case 1:
 	BRNE _0x10E
-; 0000 01C0               ruta_aux='A';
+; 0000 01C3               ruta_aux='A';
 	LDI  R30,LOW(65)
-	RJMP _0x1E0
-; 0000 01C1 
-; 0000 01C2               break;
-; 0000 01C3             case 2:
+	RJMP _0x1E6
+; 0000 01C4 
+; 0000 01C5               break;
+; 0000 01C6             case 2:
 _0x10E:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0x10F
-; 0000 01C4               ruta_aux='B';
+; 0000 01C7               ruta_aux='B';
 	LDI  R30,LOW(66)
-	RJMP _0x1E0
-; 0000 01C5 
-; 0000 01C6             break;
-; 0000 01C7             case 3:
+	RJMP _0x1E6
+; 0000 01C8 
+; 0000 01C9             break;
+; 0000 01CA             case 3:
 _0x10F:
 	CPI  R30,LOW(0x3)
 	LDI  R26,HIGH(0x3)
 	CPC  R31,R26
 	BRNE _0x110
-; 0000 01C8               ruta_aux='C';
+; 0000 01CB               ruta_aux='C';
 	LDI  R30,LOW(67)
-	RJMP _0x1E0
-; 0000 01C9 
-; 0000 01CA             break;
-; 0000 01CB             case 4:
+	RJMP _0x1E6
+; 0000 01CC 
+; 0000 01CD             break;
+; 0000 01CE             case 4:
 _0x110:
 	CPI  R30,LOW(0x4)
 	LDI  R26,HIGH(0x4)
 	CPC  R31,R26
 	BRNE _0x111
-; 0000 01CC               ruta_aux='D';
+; 0000 01CF               ruta_aux='D';
 	LDI  R30,LOW(68)
-	RJMP _0x1E0
-; 0000 01CD 
-; 0000 01CE             break;
-; 0000 01CF             case 5:
+	RJMP _0x1E6
+; 0000 01D0 
+; 0000 01D1             break;
+; 0000 01D2             case 5:
 _0x111:
 	CPI  R30,LOW(0x5)
 	LDI  R26,HIGH(0x5)
 	CPC  R31,R26
 	BRNE _0x112
-; 0000 01D0               ruta_aux='E';
+; 0000 01D3               ruta_aux='E';
 	LDI  R30,LOW(69)
-	RJMP _0x1E0
-; 0000 01D1             break;
-; 0000 01D2             case 6:
+	RJMP _0x1E6
+; 0000 01D4             break;
+; 0000 01D5             case 6:
 _0x112:
 	CPI  R30,LOW(0x6)
 	LDI  R26,HIGH(0x6)
 	CPC  R31,R26
 	BRNE _0x113
-; 0000 01D3               ruta_aux='F';
+; 0000 01D6               ruta_aux='F';
 	LDI  R30,LOW(70)
-	RJMP _0x1E0
-; 0000 01D4 
-; 0000 01D5             break;
-; 0000 01D6             case 7:
+	RJMP _0x1E6
+; 0000 01D7 
+; 0000 01D8             break;
+; 0000 01D9             case 7:
 _0x113:
 	CPI  R30,LOW(0x7)
 	LDI  R26,HIGH(0x7)
 	CPC  R31,R26
 	BRNE _0x114
-; 0000 01D7               ruta_aux='G';
+; 0000 01DA               ruta_aux='G';
 	LDI  R30,LOW(71)
-	RJMP _0x1E0
-; 0000 01D8 
-; 0000 01D9             break;
-; 0000 01DA             case 8:
+	RJMP _0x1E6
+; 0000 01DB 
+; 0000 01DC             break;
+; 0000 01DD             case 8:
 _0x114:
 	CPI  R30,LOW(0x8)
 	LDI  R26,HIGH(0x8)
 	CPC  R31,R26
 	BRNE _0x115
-; 0000 01DB               ruta_aux='H';
+; 0000 01DE               ruta_aux='H';
 	LDI  R30,LOW(72)
-	RJMP _0x1E0
-; 0000 01DC 
-; 0000 01DD             break;
-; 0000 01DE             case 9:
+	RJMP _0x1E6
+; 0000 01DF 
+; 0000 01E0             break;
+; 0000 01E1             case 9:
 _0x115:
 	CPI  R30,LOW(0x9)
 	LDI  R26,HIGH(0x9)
 	CPC  R31,R26
 	BRNE _0x116
-; 0000 01DF               ruta_aux='I';
+; 0000 01E2               ruta_aux='I';
 	LDI  R30,LOW(73)
-	RJMP _0x1E0
-; 0000 01E0 
-; 0000 01E1             break;
-; 0000 01E2             case 10:
+	RJMP _0x1E6
+; 0000 01E3 
+; 0000 01E4             break;
+; 0000 01E5             case 10:
 _0x116:
 	CPI  R30,LOW(0xA)
 	LDI  R26,HIGH(0xA)
 	CPC  R31,R26
 	BRNE _0x117
-; 0000 01E3               ruta_aux='J';
+; 0000 01E6               ruta_aux='J';
 	LDI  R30,LOW(74)
-	RJMP _0x1E0
-; 0000 01E4 
-; 0000 01E5             break;
-; 0000 01E6             case 11:
+	RJMP _0x1E6
+; 0000 01E7 
+; 0000 01E8             break;
+; 0000 01E9             case 11:
 _0x117:
 	CPI  R30,LOW(0xB)
 	LDI  R26,HIGH(0xB)
 	CPC  R31,R26
 	BRNE _0x118
-; 0000 01E7               ruta_aux='K';
+; 0000 01EA               ruta_aux='K';
 	LDI  R30,LOW(75)
-	RJMP _0x1E0
-; 0000 01E8 
-; 0000 01E9             break;
-; 0000 01EA             case 12:
+	RJMP _0x1E6
+; 0000 01EB 
+; 0000 01EC             break;
+; 0000 01ED             case 12:
 _0x118:
 	CPI  R30,LOW(0xC)
 	LDI  R26,HIGH(0xC)
 	CPC  R31,R26
 	BRNE _0x119
-; 0000 01EB               ruta_aux='L';
+; 0000 01EE               ruta_aux='L';
 	LDI  R30,LOW(76)
-	RJMP _0x1E0
-; 0000 01EC 
-; 0000 01ED             break;
-; 0000 01EE             case 15:
+	RJMP _0x1E6
+; 0000 01EF 
+; 0000 01F0             break;
+; 0000 01F1             case 15:
 _0x119:
 	CPI  R30,LOW(0xF)
 	LDI  R26,HIGH(0xF)
 	CPC  R31,R26
 	BRNE _0x10D
-; 0000 01EF               ruta_aux=' ';  // Carrera vacia
+; 0000 01F2               ruta_aux=' ';  // Carrera vacia
 	LDI  R30,LOW(32)
-_0x1E0:
-	MOV  R8,R30
-; 0000 01F0             break;
-; 0000 01F1          }
+_0x1E6:
+	MOV  R10,R30
+; 0000 01F3             break;
+; 0000 01F4          }
 _0x10D:
-; 0000 01F2       }
+; 0000 01F5       }
 	RET
 ;   //---------------------------------------------------------------------------//
 ;
 ;
 ;   ////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) //
 ;      void boton3()
-; 0000 01F8       {     //Boton 3
+; 0000 01FB       {     //Boton 3
 _boton3:
-; 0000 01F9          if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
+; 0000 01FC          if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
 	LDI  R26,0
 	SBIC 0x0,2
 	LDI  R26,1
 	CPI  R26,LOW(0x0)
 	BRNE _0x11C
 	LDI  R30,LOW(0)
-	CP   R30,R9
+	CP   R30,R11
 	BRNE _0x11C
-	CP   R30,R14
+	LDS  R26,_aceptar
+	CPI  R26,LOW(0x0)
 	BRNE _0x11C
 	LDS  R26,__laborando
 	CPI  R26,LOW(0x1)
@@ -4635,17 +4640,17 @@ _boton3:
 _0x11C:
 	RJMP _0x11B
 _0x11D:
-; 0000 01FA          {
-; 0000 01FB             btn2--;
+; 0000 01FD          {
+; 0000 01FE             btn2--;
 	LDS  R30,_btn2
 	SUBI R30,LOW(1)
 	STS  _btn2,R30
-; 0000 01FC             buzz();
+; 0000 01FF             buzz();
 	RCALL _buzz
-; 0000 01FD             bandera3=1;
+; 0000 0200             bandera3=1;
 	LDI  R30,LOW(1)
-	MOV  R9,R30
-; 0000 01FE             if(btn2<=0 && btn2!=15)
+	MOV  R11,R30
+; 0000 0201             if(btn2<=0 && btn2!=15)
 	LDS  R26,_btn2
 	CPI  R26,0
 	BRNE _0x11F
@@ -4654,28 +4659,28 @@ _0x11D:
 _0x11F:
 	RJMP _0x11E
 _0x120:
-; 0000 01FF                btn2=12;
+; 0000 0202                btn2=12;
 	LDI  R30,LOW(12)
 	STS  _btn2,R30
-; 0000 0200             delay_ms(200);
+; 0000 0203             delay_ms(200);
 _0x11E:
-	CALL SUBOPT_0x32
-; 0000 0201          }
-; 0000 0202          else if(BT3==1 && bandera3==1){
+	CALL SUBOPT_0x33
+; 0000 0204          }
+; 0000 0205          else if(BT3==1 && bandera3==1){
 	RJMP _0x121
 _0x11B:
 	SBIS 0x0,2
 	RJMP _0x123
 	LDI  R30,LOW(1)
-	CP   R30,R9
+	CP   R30,R11
 	BREQ _0x124
 _0x123:
 	RJMP _0x122
 _0x124:
-; 0000 0203             bandera3=0;
-	CLR  R9
-; 0000 0204          }
-; 0000 0205       }
+; 0000 0206             bandera3=0;
+	CLR  R11
+; 0000 0207          }
+; 0000 0208       }
 _0x122:
 _0x121:
 	RET
@@ -4684,18 +4689,18 @@ _0x121:
 ;
 ;   ////////////////// FUNCION DEL BOTON 4 (INICIO/FIN DE RUTA) //////////////
 ;      void boton4()
-; 0000 020B       {     //Boton 4
+; 0000 020E       {     //Boton 4
 _boton4:
-; 0000 020C 
-; 0000 020D          // Primera presiónn del boton 4. Acepta la carrera.
-; 0000 020E          if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
+; 0000 020F 
+; 0000 0210          // Primera presiónn del boton 4. Acepta la carrera.
+; 0000 0211          if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
 	LDI  R26,0
 	SBIC 0x0,1
 	LDI  R26,1
 	CPI  R26,LOW(0x0)
 	BRNE _0x126
 	LDI  R30,LOW(0)
-	CP   R30,R12
+	CP   R30,R14
 	BRNE _0x126
 	LDS  R26,__laborando
 	CPI  R26,LOW(0x1)
@@ -4703,84 +4708,83 @@ _boton4:
 _0x126:
 	RJMP _0x125
 _0x127:
-; 0000 020F          {
-; 0000 0210             bandera4++;           // Evita reentrada
-	INC  R12
-; 0000 0211             btn4++;              // Incrementa conteo de presiones del boton
+; 0000 0212          {
+; 0000 0213             bandera4++;           // Evita reentrada
+	INC  R14
+; 0000 0214             btn4++;              // Incrementa conteo de presiones del boton
 	LDS  R30,_btn4
 	SUBI R30,-LOW(1)
 	STS  _btn4,R30
-; 0000 0212             ruta = ruta_aux;    // Actualiza la ruta
-	MOV  R5,R8
-; 0000 0213 
-; 0000 0214             buzz();
-	CALL SUBOPT_0x2A
-; 0000 0215             delay_ms(200);
+; 0000 0215             ruta = ruta_aux;    // Actualiza la ruta
+	MOV  R7,R10
 ; 0000 0216 
-; 0000 0217             switch(btn4){
+; 0000 0217             buzz();
+	CALL SUBOPT_0x2A
+; 0000 0218             delay_ms(200);
+; 0000 0219 
+; 0000 021A             switch(btn4){
 	LDS  R30,_btn4
 	CALL SUBOPT_0x2B
-; 0000 0218 
-; 0000 0219                case 1:
+; 0000 021B 
+; 0000 021C                case 1:
 	BRNE _0x12B
-; 0000 021A                   aceptar = 1;        //Ha aceptado la carrera
+; 0000 021D                   aceptar = 1;        //Ha aceptado la carrera
 	LDI  R30,LOW(1)
-	MOV  R14,R30
-; 0000 021B                   pt=4;              // Muestra RUTA ACPETADA
+	STS  _aceptar,R30
+; 0000 021E                   pt=4;              // Muestra RUTA ACPETADA
 	LDI  R30,LOW(4)
 	STS  _pt,R30
-; 0000 021C                   enviar_estado_ruta();
+; 0000 021F                   enviar_estado_ruta();
 	RCALL _enviar_estado_ruta
-; 0000 021D 
-; 0000 021E                break;
+; 0000 0220 
+; 0000 0221                break;
 	RJMP _0x12A
-; 0000 021F 
-; 0000 0220                case 2:
+; 0000 0222 
+; 0000 0223                case 2:
 _0x12B:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0x12A
-; 0000 0221                   btn2    = 15;     // Borra el caracter de ruta
-	LDI  R30,LOW(15)
-	STS  _btn2,R30
-; 0000 0222                   aceptar = 0;     // Fin de la ruta
-	CLR  R14
-; 0000 0223                   pt=3;           // Muestra FIN RUTA
+; 0000 0224                   btn2    = 15;     // Borra el caracter de ruta
+	CALL SUBOPT_0x32
+; 0000 0225                   aceptar = 0;     // Fin de la ruta
+	STS  _aceptar,R30
+; 0000 0226                   pt=3;           // Muestra FIN RUTA
 	LDI  R30,LOW(3)
 	STS  _pt,R30
-; 0000 0224                   enviar_estado_ruta();
+; 0000 0227                   enviar_estado_ruta();
 	RCALL _enviar_estado_ruta
-; 0000 0225                   ruta=' ';      // Cambia la ruta a Vacia
+; 0000 0228                   ruta=' ';      // Cambia la ruta a Vacia
 	LDI  R30,LOW(32)
-	MOV  R5,R30
-; 0000 0226 
-; 0000 0227                   btn4 = 0;     // Reinicializa el cntador
+	MOV  R7,R30
+; 0000 0229 
+; 0000 022A                   btn4 = 0;     // Reinicializa el cntador
 	LDI  R30,LOW(0)
 	STS  _btn4,R30
-; 0000 0228                break;
-; 0000 0229             }
+; 0000 022B                break;
+; 0000 022C             }
 _0x12A:
-; 0000 022A          }
-; 0000 022B 
-; 0000 022C 
-; 0000 022D          // si se ha presionado el boton cuatro por tercera vez
-; 0000 022E          else if(BT4 == 1 && bandera4 == 1)
+; 0000 022D          }
+; 0000 022E 
+; 0000 022F 
+; 0000 0230          // si se ha presionado el boton cuatro por tercera vez
+; 0000 0231          else if(BT4 == 1 && bandera4 == 1)
 	RJMP _0x12D
 _0x125:
 	SBIS 0x0,1
 	RJMP _0x12F
 	LDI  R30,LOW(1)
-	CP   R30,R12
+	CP   R30,R14
 	BREQ _0x130
 _0x12F:
 	RJMP _0x12E
 _0x130:
-; 0000 022F          {
-; 0000 0230             bandera4 = 0;
-	CLR  R12
-; 0000 0231          }
-; 0000 0232       }
+; 0000 0232          {
+; 0000 0233             bandera4 = 0;
+	CLR  R14
+; 0000 0234          }
+; 0000 0235       }
 _0x12E:
 _0x12D:
 	RET
@@ -4789,142 +4793,142 @@ _0x12D:
 ;
 ;   ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
 ;      void boton5(){
-; 0000 0237 void boton5(){
-; 0000 0238 
-; 0000 0239          btn5++;
-; 0000 023A          bandera5++;
+; 0000 023A void boton5(){
 ; 0000 023B 
-; 0000 023C          buzz();
-; 0000 023D          delay_ms( DELAY_BOTONES_MS );
+; 0000 023C          btn5++;
+; 0000 023D          bandera5++;
 ; 0000 023E 
-; 0000 023F          switch( btn5 ){
-; 0000 0240 
-; 0000 0241             case 1:
-; 0000 0242                //envia estado mecanico 1:
-; 0000 0243             break;
-; 0000 0244 
-; 0000 0245             case 2:
-; 0000 0246                //envia estado mecanico 1:
-; 0000 0247             break;
-; 0000 0248 
-; 0000 0249             case 3:
-; 0000 024A                //envia estado mecanico 1:
-; 0000 024B             break;
-; 0000 024C 
-; 0000 024D             case 4:
-; 0000 024E                //envia estado mecanico 1:
-; 0000 024F             break;
-; 0000 0250 
-; 0000 0251             case 5:
-; 0000 0252                //envia estado mecanico 1:
-; 0000 0253             break;
-; 0000 0254 
-; 0000 0255             case 6:
-; 0000 0256                //envia estado mecanico 1:
-; 0000 0257             break;
-; 0000 0258 
-; 0000 0259             case 7:
-; 0000 025A                //envia estado mecanico 1:
-; 0000 025B             break;
-; 0000 025C 
-; 0000 025D             case 8:
-; 0000 025E                //envia estado mecanico 1:
-; 0000 025F             break;
-; 0000 0260 
-; 0000 0261             case 9:
-; 0000 0262                //envia estado mecanico 1:
-; 0000 0263             break;
-; 0000 0264 
-; 0000 0265             case 10:
-; 0000 0266                //envia estado mecanico 1:
-; 0000 0267             break;
-; 0000 0268 
-; 0000 0269             case 11:
-; 0000 026A                //envia estado mecanico 1:
-; 0000 026B                btn5 = 0;
-; 0000 026C             break;
-; 0000 026D          }
-; 0000 026E 
-; 0000 026F       }
+; 0000 023F          buzz();
+; 0000 0240          delay_ms( DELAY_BOTONES_MS );
+; 0000 0241 
+; 0000 0242          switch( btn5 ){
+; 0000 0243 
+; 0000 0244             case 1:
+; 0000 0245                //envia estado mecanico 1:
+; 0000 0246             break;
+; 0000 0247 
+; 0000 0248             case 2:
+; 0000 0249                //envia estado mecanico 1:
+; 0000 024A             break;
+; 0000 024B 
+; 0000 024C             case 3:
+; 0000 024D                //envia estado mecanico 1:
+; 0000 024E             break;
+; 0000 024F 
+; 0000 0250             case 4:
+; 0000 0251                //envia estado mecanico 1:
+; 0000 0252             break;
+; 0000 0253 
+; 0000 0254             case 5:
+; 0000 0255                //envia estado mecanico 1:
+; 0000 0256             break;
+; 0000 0257 
+; 0000 0258             case 6:
+; 0000 0259                //envia estado mecanico 1:
+; 0000 025A             break;
+; 0000 025B 
+; 0000 025C             case 7:
+; 0000 025D                //envia estado mecanico 1:
+; 0000 025E             break;
+; 0000 025F 
+; 0000 0260             case 8:
+; 0000 0261                //envia estado mecanico 1:
+; 0000 0262             break;
+; 0000 0263 
+; 0000 0264             case 9:
+; 0000 0265                //envia estado mecanico 1:
+; 0000 0266             break;
+; 0000 0267 
+; 0000 0268             case 10:
+; 0000 0269                //envia estado mecanico 1:
+; 0000 026A             break;
+; 0000 026B 
+; 0000 026C             case 11:
+; 0000 026D                //envia estado mecanico 1:
+; 0000 026E                btn5 = 0;
+; 0000 026F             break;
+; 0000 0270          }
+; 0000 0271 
+; 0000 0272       }
 ;   //---------------------------------------------------------------------------//
 ;
 ;
 ;   ////////////////// DIBUJAR BARRAS DE SENAL GPRS //////////////////////////
 ;      void dibujar_senal(void)
-; 0000 0275       {
+; 0000 0278       {
 _dibujar_senal:
-; 0000 0276           switch (ind_sen){
+; 0000 0279           switch (ind_sen){
 	LDS  R30,_ind_sen
 	LDS  R31,_ind_sen+1
-; 0000 0277           case 1:
+; 0000 027A           case 1:
 	CPI  R30,LOW(0x1)
 	LDI  R26,HIGH(0x1)
 	CPC  R31,R26
 	BRNE _0x142
-; 0000 0278           bmp_disp(GSM3,0,0,20,1);
+; 0000 027B           bmp_disp(GSM3,0,0,20,1);
 	LDI  R30,LOW(_GSM3*2)
 	LDI  R31,HIGH(_GSM3*2)
-	RJMP _0x1E1
-; 0000 0279           break;
-; 0000 027A           case 2:
+	RJMP _0x1E7
+; 0000 027C           break;
+; 0000 027D           case 2:
 _0x142:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0x143
-; 0000 027B           bmp_disp(GSM2,0,0,20,1);
+; 0000 027E           bmp_disp(GSM2,0,0,20,1);
 	LDI  R30,LOW(_GSM2*2)
 	LDI  R31,HIGH(_GSM2*2)
-	RJMP _0x1E1
-; 0000 027C           break;
-; 0000 027D           case 3:
+	RJMP _0x1E7
+; 0000 027F           break;
+; 0000 0280           case 3:
 _0x143:
 	CPI  R30,LOW(0x3)
 	LDI  R26,HIGH(0x3)
 	CPC  R31,R26
 	BRNE _0x144
-; 0000 027E           bmp_disp(GSM1,0,0,20,1);
+; 0000 0281           bmp_disp(GSM1,0,0,20,1);
 	LDI  R30,LOW(_GSM1*2)
 	LDI  R31,HIGH(_GSM1*2)
-	RJMP _0x1E1
-; 0000 027F           break;
-; 0000 0280           case 4:
+	RJMP _0x1E7
+; 0000 0282           break;
+; 0000 0283           case 4:
 _0x144:
 	CPI  R30,LOW(0x4)
 	LDI  R26,HIGH(0x4)
 	CPC  R31,R26
 	BRNE _0x141
-; 0000 0281           bmp_disp(GSM4,0,0,20,1);
+; 0000 0284           bmp_disp(GSM4,0,0,20,1);
 	LDI  R30,LOW(_GSM4*2)
 	LDI  R31,HIGH(_GSM4*2)
-_0x1E1:
+_0x1E7:
 	ST   -Y,R31
 	ST   -Y,R30
 	CALL SUBOPT_0x2
 	CALL SUBOPT_0x2
-	CALL SUBOPT_0x33
 	CALL SUBOPT_0x34
+	CALL SUBOPT_0x35
 	RCALL _bmp_disp
-; 0000 0282           break;
-; 0000 0283           };
+; 0000 0285           break;
+; 0000 0286           };
 _0x141:
-; 0000 0284 
-; 0000 0285       }
+; 0000 0287 
+; 0000 0288       }
 	RET
 ;   //---------------------------------------------------------------------------//
 ;
 ;
 ;   //////////////// FUNCION PARA OBTENER LA TRAMA DEL GPS SKYPATROL+ ///////////////////////////
 ;      void obt(void)
-; 0000 028B       {
+; 0000 028E       {
 _obt:
-; 0000 028C 
-; 0000 028D          int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
-; 0000 028E          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
 ; 0000 028F 
-; 0000 0290          char digito_hora_temp; //Variable temporal para la hora y fecha
-; 0000 0291 
-; 0000 0292          for (i=0; i<RX_BUFFER_SIZE0 ;i++)
+; 0000 0290          int i,j,n=0,ini,coma=0,pos1=0,pos2=0,pos3=0,barras;
+; 0000 0291          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
+; 0000 0292 
+; 0000 0293          char digito_hora_temp; //Variable temporal para la hora y fecha
+; 0000 0294 
+; 0000 0295          for (i=0; i<RX_BUFFER_SIZE0 ;i++)
 	SBIW R28,21
 	LDI  R30,LOW(0)
 	STD  Y+11,R30
@@ -4956,28 +4960,28 @@ _0x147:
 	__CPWRN 16,17,200
 	BRLT PC+3
 	JMP _0x148
-; 0000 0293          {
-; 0000 0294 
-; 0000 0295             // $$Txt,   Mensaje para mostrar en la GLCD.
-; 0000 0296             if ( rx_b0[i+0]== '$' &&
-; 0000 0297                   rx_b0[i+1]== '$' &&
-; 0000 0298                    rx_b0[i+2]== 'T' &&
-; 0000 0299                     rx_b0[i+3]== 'x' &&
-; 0000 029A                      rx_b0[i+4]== 't' &&
-; 0000 029B                       rx_b0[i+5]== ',')
-	CALL SUBOPT_0x35
-	CPI  R26,LOW(0x24)
-	BRNE _0x14A
+; 0000 0296          {
+; 0000 0297 
+; 0000 0298             // $$Txt,   Mensaje para mostrar en la GLCD.
+; 0000 0299             if ( rx_b0[i+0]== '$' &&
+; 0000 029A                   rx_b0[i+1]== '$' &&
+; 0000 029B                    rx_b0[i+2]== 'T' &&
+; 0000 029C                     rx_b0[i+3]== 'x' &&
+; 0000 029D                      rx_b0[i+4]== 't' &&
+; 0000 029E                       rx_b0[i+5]== ',')
 	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x24)
 	BRNE _0x14A
 	CALL SUBOPT_0x37
-	CPI  R26,LOW(0x54)
+	CPI  R26,LOW(0x24)
 	BRNE _0x14A
 	CALL SUBOPT_0x38
-	CPI  R26,LOW(0x78)
+	CPI  R26,LOW(0x54)
 	BRNE _0x14A
 	CALL SUBOPT_0x39
+	CPI  R26,LOW(0x78)
+	BRNE _0x14A
+	CALL SUBOPT_0x3A
 	CPI  R26,LOW(0x74)
 	BRNE _0x14A
 	MOVW R30,R16
@@ -4988,23 +4992,23 @@ _0x147:
 _0x14A:
 	RJMP _0x149
 _0x14B:
-; 0000 029C             {
-; 0000 029D                // Guarda lo que hay entre las comillas en el
-; 0000 029E                // buffer txt_glcd
-; 0000 029F                i_txt_glcd = 0;
-	LDI  R30,LOW(0)
-	STS  _i_txt_glcd,R30
-; 0000 02A0                do
+; 0000 029F             {
+; 0000 02A0                // Guarda lo que hay entre las comillas en el
+; 0000 02A1                // buffer txt_glcd
+; 0000 02A2                i_txt_glcd = 0;
+	CLR  R4
+; 0000 02A3 
+; 0000 02A4                do
 _0x14D:
-; 0000 02A1                {
-; 0000 02A2                   if (i_txt_glcd <= 100)
-	LDS  R26,_i_txt_glcd
-	CPI  R26,LOW(0x65)
-	BRSH _0x14F
-; 0000 02A3                   {
-; 0000 02A4 
-; 0000 02A5                      txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ];
-	LDS  R30,_i_txt_glcd
+; 0000 02A5                {
+; 0000 02A6                   if (i_txt_glcd <= 100)
+	LDI  R30,LOW(100)
+	CP   R30,R4
+	BRLO _0x14F
+; 0000 02A7                   {
+; 0000 02A8 
+; 0000 02A9                      txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ];
+	MOV  R30,R4
 	LDI  R31,0
 	MOVW R22,R30
 	SUBI R30,LOW(-_txt_glcd_b0)
@@ -5020,80 +5024,76 @@ _0x14D:
 	LD   R30,Z
 	MOVW R26,R0
 	ST   X,R30
-; 0000 02A6                      i_txt_glcd++;
-	LDS  R30,_i_txt_glcd
-	SUBI R30,-LOW(1)
-	STS  _i_txt_glcd,R30
-; 0000 02A7 
-; 0000 02A8                   }
-; 0000 02A9                   else{  // Mas de 100 caracteres recibidos. Romper el while
+; 0000 02AA                      i_txt_glcd++;
+	INC  R4
+; 0000 02AB 
+; 0000 02AC                   }
+; 0000 02AD                   else{  // Mas de 100 caracteres recibidos. Romper el while
 	RJMP _0x150
 _0x14F:
-; 0000 02AA 
-; 0000 02AB                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
+; 0000 02AE 
+; 0000 02AF                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
 	LDI  R30,LOW(1)
-	STS  _i_txt_overflow,R30
-; 0000 02AC 
-; 0000 02AD                      //Obliga a salir del while:
-; 0000 02AE                      rx_b0[ i+7 + i_txt_glcd ] = '"';
-	CALL SUBOPT_0x3A
+	MOV  R3,R30
+; 0000 02B0 
+; 0000 02B1                      //Obliga a salir del while:
+; 0000 02B2                      rx_b0[ i+7 + i_txt_glcd ] = '"';
+	MOVW R26,R16
+	ADIW R26,7
+	MOV  R30,R4
+	CALL SUBOPT_0xC
 	SUBI R30,LOW(-_rx_b0)
 	SBCI R31,HIGH(-_rx_b0)
 	LDI  R26,LOW(34)
 	STD  Z+0,R26
-; 0000 02AF                      //break;  // Se sale del while?
-; 0000 02B0                   }
+; 0000 02B3                      //break;  // Se sale del while?
+; 0000 02B4                   }
 _0x150:
-; 0000 02B1 
-; 0000 02B2                }
-; 0000 02B3                while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
-	CALL SUBOPT_0x3A
+; 0000 02B5 
+; 0000 02B6                }while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+	MOVW R26,R16
+	ADIW R26,7
+	MOV  R30,R4
+	CALL SUBOPT_0xC
 	SUBI R30,LOW(-_rx_b0)
 	SBCI R31,HIGH(-_rx_b0)
 	LD   R26,Z
 	CPI  R26,LOW(0x22)
 	BRNE _0x14D
-; 0000 02B4 
-; 0000 02B5                txt_glcd_b0[ i_txt_glcd ] = '\0';  // Que el ultimo caracter sea NULL.
-	LDS  R30,_i_txt_glcd
-	LDI  R31,0
-	SUBI R30,LOW(-_txt_glcd_b0)
-	SBCI R31,HIGH(-_txt_glcd_b0)
-	LDI  R26,LOW(0)
-	STD  Z+0,R26
-; 0000 02B6                pt = 7;          // Muestra en mensaje en main()
+; 0000 02B7 
+; 0000 02B8                pt = 7;          // Muestra en mensaje en main()
 	LDI  R30,LOW(7)
 	STS  _pt,R30
-; 0000 02B7             }
-; 0000 02B8 
-; 0000 02B9             //+CSQ:
-; 0000 02BA             if ( rx_b0[i+0]== '+' &&    //43d
+; 0000 02B9             }
+; 0000 02BA 
+; 0000 02BB             //+CSQ:
+; 0000 02BC             if ( rx_b0[i+0]== '+' &&    //43d
 _0x149:
-; 0000 02BB                   rx_b0[i+1]== 'C' &&     //67d
-; 0000 02BC                    rx_b0[i+2]== 'S' &&    //83d
-; 0000 02BD                     rx_b0[i+3]== 'Q' &&   //81d
-; 0000 02BE                      rx_b0[i+4]== ':')    //58d
-	CALL SUBOPT_0x35
+; 0000 02BD                   rx_b0[i+1]== 'C' &&     //67d
+; 0000 02BE                    rx_b0[i+2]== 'S' &&    //83d
+; 0000 02BF                     rx_b0[i+3]== 'Q' &&   //81d
+; 0000 02C0                      rx_b0[i+4]== ':')    //58d
+	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x2B)
 	BRNE _0x152
-	CALL SUBOPT_0x36
+	CALL SUBOPT_0x37
 	CPI  R26,LOW(0x43)
 	BRNE _0x152
-	CALL SUBOPT_0x37
+	CALL SUBOPT_0x38
 	CPI  R26,LOW(0x53)
 	BRNE _0x152
-	CALL SUBOPT_0x38
+	CALL SUBOPT_0x39
 	CPI  R26,LOW(0x51)
 	BRNE _0x152
-	CALL SUBOPT_0x39
+	CALL SUBOPT_0x3A
 	CPI  R26,LOW(0x3A)
 	BREQ _0x153
 _0x152:
 	RJMP _0x151
 _0x153:
-; 0000 02BF             {
-; 0000 02C0               // Valor decimal de la intensidad de la seÃ±al
-; 0000 02C1               barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
+; 0000 02C1             {
+; 0000 02C2               // Valor decimal de la intensidad de la seÃ±al
+; 0000 02C3               barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 	MOVW R30,R16
 	CALL SUBOPT_0x3B
 	LDI  R26,LOW(10)
@@ -5106,10 +5106,10 @@ _0x153:
 	ADC  R31,R27
 	STD  Y+15,R30
 	STD  Y+15+1,R31
-; 0000 02C2 
-; 0000 02C3               // Dibuja las barras en la panalla de acuerdo a la intensidad
-; 0000 02C4               // de la seÃ±al
-; 0000 02C5               if( barras > 10 && barras < 15 ){
+; 0000 02C4 
+; 0000 02C5               // Dibuja las barras en la panalla de acuerdo a la intensidad
+; 0000 02C6               // de la seÃ±al
+; 0000 02C7               if( barras > 10 && barras < 15 ){
 	LDD  R26,Y+15
 	LDD  R27,Y+15+1
 	SBIW R26,11
@@ -5121,13 +5121,13 @@ _0x153:
 _0x155:
 	RJMP _0x154
 _0x156:
-; 0000 02C6               ind_sen=1;
+; 0000 02C8               ind_sen=1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	CALL SUBOPT_0x3D
-; 0000 02C7               }
-; 0000 02C8 
-; 0000 02C9               else if( barras >= 15 && barras < 18){
+; 0000 02C9               }
+; 0000 02CA 
+; 0000 02CB               else if( barras >= 15 && barras < 18){
 	RJMP _0x157
 _0x154:
 	LDD  R26,Y+15
@@ -5141,13 +5141,13 @@ _0x154:
 _0x159:
 	RJMP _0x158
 _0x15A:
-; 0000 02CA               ind_sen=2;
+; 0000 02CC               ind_sen=2;
 	LDI  R30,LOW(2)
 	LDI  R31,HIGH(2)
 	CALL SUBOPT_0x3D
-; 0000 02CB               }
-; 0000 02CC 
-; 0000 02CD               else if( barras >= 18 && barras < 31){
+; 0000 02CD               }
+; 0000 02CE 
+; 0000 02CF               else if( barras >= 18 && barras < 31){
 	RJMP _0x15B
 _0x158:
 	LDD  R26,Y+15
@@ -5161,13 +5161,13 @@ _0x158:
 _0x15D:
 	RJMP _0x15C
 _0x15E:
-; 0000 02CE               ind_sen=3;
+; 0000 02D0               ind_sen=3;
 	LDI  R30,LOW(3)
 	LDI  R31,HIGH(3)
 	CALL SUBOPT_0x3D
-; 0000 02CF               }
-; 0000 02D0 
-; 0000 02D1               else if( barras > 31 && barras < 50){
+; 0000 02D1               }
+; 0000 02D2 
+; 0000 02D3               else if( barras > 31 && barras < 50){
 	RJMP _0x15F
 _0x15C:
 	LDD  R26,Y+15
@@ -5181,102 +5181,102 @@ _0x15C:
 _0x161:
 	RJMP _0x160
 _0x162:
-; 0000 02D2               ind_sen=4;
+; 0000 02D4               ind_sen=4;
 	LDI  R30,LOW(4)
 	LDI  R31,HIGH(4)
 	CALL SUBOPT_0x3D
-; 0000 02D3               }
-; 0000 02D4 
-; 0000 02D5               // En caso de que el valor en barras
-; 0000 02D6               // no sea ninguno de los anteriores, es posible
-; 0000 02D7               // que la trama recibida no sea valida.
-; 0000 02D8               else{   }
+; 0000 02D5               }
+; 0000 02D6 
+; 0000 02D7               // En caso de que el valor en barras
+; 0000 02D8               // no sea ninguno de los anteriores, es posible
+; 0000 02D9               // que la trama recibida no sea valida.
+; 0000 02DA               else{   }
 _0x160:
 _0x15F:
 _0x15B:
 _0x157:
-; 0000 02D9 
-; 0000 02DA             }
 ; 0000 02DB 
-; 0000 02DC 
-; 0000 02DD                 //________________________
-; 0000 02DE            //PARA PUNTO DE CONTROL:
-; 0000 02DF             //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
-; 0000 02E0             if ( rx_b0[i+0]== 'B' &&
+; 0000 02DC             }
+; 0000 02DD 
+; 0000 02DE 
+; 0000 02DF                 //________________________
+; 0000 02E0            //PARA PUNTO DE CONTROL:
+; 0000 02E1             //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
+; 0000 02E2             if ( rx_b0[i+0]== 'B' &&
 _0x151:
-; 0000 02E1                   rx_b0[i+1]== 'U' &&
-; 0000 02E2                    rx_b0[i+2]== 'S')
-	CALL SUBOPT_0x35
+; 0000 02E3                   rx_b0[i+1]== 'U' &&
+; 0000 02E4                    rx_b0[i+2]== 'S')
+	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x42)
 	BRNE _0x165
-	CALL SUBOPT_0x36
+	CALL SUBOPT_0x37
 	CPI  R26,LOW(0x55)
 	BRNE _0x165
-	CALL SUBOPT_0x37
+	CALL SUBOPT_0x38
 	CPI  R26,LOW(0x53)
 	BREQ _0x166
 _0x165:
 	RJMP _0x164
 _0x166:
-; 0000 02E3             {
-; 0000 02E4               // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto.
-; 0000 02E5                                        //010A
-; 0000 02E6                punto[0] = rx_b0[i+16]-48;  //   1
+; 0000 02E5             {
+; 0000 02E6               // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto.
+; 0000 02E7                                        //010A
+; 0000 02E8                punto[0] = rx_b0[i+16]-48;  //   1
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,16
 	CALL SUBOPT_0x3E
 	STS  _punto,R30
-; 0000 02E7                punto[1] = rx_b0[i+17]-48;  //   F
+; 0000 02E9                punto[1] = rx_b0[i+17]-48;  //   F
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,17
 	CALL SUBOPT_0x3E
 	__PUTB1MN _punto,1
-; 0000 02E8                punto[2] = rx_b0[i+18]-48;  //   0
+; 0000 02EA                punto[2] = rx_b0[i+18]-48;  //   0
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,18
 	CALL SUBOPT_0x3E
 	__PUTB1MN _punto,2
-; 0000 02E9                punto[3] = rx_b0[i+19]-48;  //   A
+; 0000 02EB                punto[3] = rx_b0[i+19]-48;  //   A
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,19
 	CALL SUBOPT_0x3E
 	__PUTB1MN _punto,3
-; 0000 02EA 
-; 0000 02EB                if(punto[3]==17){
+; 0000 02EC 
+; 0000 02ED                if(punto[3]==17){
 	__GETB2MN _punto,3
 	CPI  R26,LOW(0x11)
 	BRNE _0x167
-; 0000 02EC                   punto[3]=10;
+; 0000 02EE                   punto[3]=10;
 	LDI  R30,LOW(10)
 	__PUTB1MN _punto,3
-; 0000 02ED                }
-; 0000 02EE 
-; 0000 02EF                if(punto[0]>=17){
+; 0000 02EF                }
+; 0000 02F0 
+; 0000 02F1                if(punto[0]>=17){
 _0x167:
 	LDS  R26,_punto
 	CPI  R26,LOW(0x11)
 	BRLO _0x168
-; 0000 02F0                   punto[0]=punto[0]-7;
+; 0000 02F2                   punto[0]=punto[0]-7;
 	LDS  R30,_punto
 	LDI  R31,0
 	SBIW R30,7
 	STS  _punto,R30
-; 0000 02F1                }
-; 0000 02F2 
-; 0000 02F3                if(punto[1]>=17){
+; 0000 02F3                }
+; 0000 02F4 
+; 0000 02F5                if(punto[1]>=17){
 _0x168:
 	__GETB2MN _punto,1
 	CPI  R26,LOW(0x11)
 	BRLO _0x169
-; 0000 02F4                   punto[1]=punto[1]-7;
+; 0000 02F6                   punto[1]=punto[1]-7;
 	__GETB1MN _punto,1
 	LDI  R31,0
 	SBIW R30,7
 	__PUTB1MN _punto,1
-; 0000 02F5                }
-; 0000 02F6 
-; 0000 02F7                //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
-; 0000 02F8                if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
+; 0000 02F7                }
+; 0000 02F8 
+; 0000 02F9                //El 18 es el numero de evento, lo identifico para determinar si es geocerca, si esta bien se pone en 1 la variable "pt"
+; 0000 02FA                if( rx_b0[i+22]=='1' &&  rx_b0[i+23]=='8'){
 _0x169:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,22
@@ -5291,12 +5291,12 @@ _0x169:
 _0x16B:
 	RJMP _0x16A
 _0x16C:
-; 0000 02F9 
-; 0000 02FA                   pt = 1;
+; 0000 02FB 
+; 0000 02FC                   pt = 1;
 	LDI  R30,LOW(1)
 	STS  _pt,R30
-; 0000 02FB 
-; 0000 02FC                   unidades_ruta= (punto[2]*10) + punto[3];
+; 0000 02FD 
+; 0000 02FE                   unidades_ruta= (punto[2]*10) + punto[3];
 	__GETB2MN _punto,2
 	LDI  R30,LOW(10)
 	MULS R30,R26
@@ -5306,7 +5306,7 @@ _0x16C:
 	CALL SUBOPT_0xC
 	STS  _unidades_ruta,R30
 	STS  _unidades_ruta+1,R31
-; 0000 02FD                   decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10;
+; 0000 02FF                   decenas_ruta = (((punto[0]*16)-1)+ punto[1])*10;
 	LDS  R26,_punto
 	LDI  R30,LOW(16)
 	MULS R30,R26
@@ -5322,15 +5322,15 @@ _0x16C:
 	CALL __MULW12
 	STS  _decenas_ruta,R30
 	STS  _decenas_ruta+1,R31
-; 0000 02FE                   centenas_ruta=     unidades_ruta  +decenas_ruta;
+; 0000 0300                   centenas_ruta=     unidades_ruta  +decenas_ruta;
 	LDS  R26,_unidades_ruta
 	LDS  R27,_unidades_ruta+1
 	ADD  R30,R26
 	ADC  R31,R27
 	STS  _centenas_ruta,R30
 	STS  _centenas_ruta+1,R31
-; 0000 02FF 
-; 0000 0300                   sprintf(no_pt,"P%d", centenas_ruta);
+; 0000 0301 
+; 0000 0302                   sprintf(no_pt,"P%d", centenas_ruta);
 	LDI  R30,LOW(_no_pt)
 	LDI  R31,HIGH(_no_pt)
 	ST   -Y,R31
@@ -5345,80 +5345,80 @@ _0x16C:
 	LDI  R24,4
 	CALL _sprintf
 	ADIW R28,8
-; 0000 0301                }
-; 0000 0302 
-; 0000 0303             }
-_0x16A:
+; 0000 0303                }
 ; 0000 0304 
-; 0000 0305 
-; 0000 0306             //NETIP
-; 0000 0307             if ( rx_b0[i+0]== 'N' &&
+; 0000 0305             }
+_0x16A:
+; 0000 0306 
+; 0000 0307 
+; 0000 0308             //NETIP
+; 0000 0309             if ( rx_b0[i+0]== 'N' &&
 _0x164:
-; 0000 0308                   rx_b0[i+1]== 'E' &&
-; 0000 0309                    rx_b0[i+2]== 'T' &&
-; 0000 030A                     rx_b0[i+3]== 'I' &&
-; 0000 030B                      rx_b0[i+4]== 'P')
-	CALL SUBOPT_0x35
+; 0000 030A                   rx_b0[i+1]== 'E' &&
+; 0000 030B                    rx_b0[i+2]== 'T' &&
+; 0000 030C                     rx_b0[i+3]== 'I' &&
+; 0000 030D                      rx_b0[i+4]== 'P')
+	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x4E)
 	BRNE _0x16E
-	CALL SUBOPT_0x36
+	CALL SUBOPT_0x37
 	CPI  R26,LOW(0x45)
 	BRNE _0x16E
-	CALL SUBOPT_0x37
+	CALL SUBOPT_0x38
 	CPI  R26,LOW(0x54)
 	BRNE _0x16E
-	CALL SUBOPT_0x38
+	CALL SUBOPT_0x39
 	CPI  R26,LOW(0x49)
 	BRNE _0x16E
-	CALL SUBOPT_0x39
+	CALL SUBOPT_0x3A
 	CPI  R26,LOW(0x50)
 	BREQ _0x16F
 _0x16E:
 	RJMP _0x16D
 _0x16F:
-; 0000 030C             {
-; 0000 030D                ini = i + 4;
+; 0000 030E             {
+; 0000 030F                ini = i + 4;
 	CALL SUBOPT_0x3F
-; 0000 030E 
-; 0000 030F                for (n=0; n<201; n++)
+; 0000 0310 
+; 0000 0311                for (n=0; n<201; n++)
 	__GETWRN 20,21,0
 _0x171:
 	__CPWRN 20,21,201
 	BRGE _0x172
-; 0000 0310                {
-; 0000 0311                   // Busca el caracter ':'
-; 0000 0312                   if(rx_b0[ ini + n + 1 ] == ':' )
+; 0000 0312                {
+; 0000 0313                   // Busca el caracter ':'
+; 0000 0314                   if(rx_b0[ ini + n + 1 ] == ':' )
 	CALL SUBOPT_0x40
 	BRNE _0x173
-; 0000 0313                   {
-; 0000 0314                      coma++;
+; 0000 0315                   {
+; 0000 0316                      coma++;
 	CALL SUBOPT_0x41
-; 0000 0315                      if(coma == 1) pos1 = n + ini + 1; // Guarda la posicion de la primera trama
+; 0000 0317                      if(coma == 1) pos1 = n + ini + 1; // Guarda la posicion de la primera trama
 	BRNE _0x174
 	CALL SUBOPT_0x42
-; 0000 0316                   }
+; 0000 0318                   }
 _0x174:
-; 0000 0317                }
+; 0000 0319                }
 _0x173:
 	__ADDWRN 20,21,1
 	RJMP _0x171
 _0x172:
-; 0000 0318 
-; 0000 0319                // Verifica si despues del primer ':' Hay comillas
-; 0000 031A                if( rx_b0[ pos1 + 2] == 34 )
+; 0000 031A 
+; 0000 031B                // Verifica si despues del primer ':' Hay comillas
+; 0000 031C                if( rx_b0[ pos1 + 2] == 34 )
 	LDD  R30,Y+21
 	LDD  R31,Y+21+1
 	__ADDW1MN _rx_b0,2
 	LD   R26,Z
 	CPI  R26,LOW(0x22)
 	BRNE _0x175
-; 0000 031B                {
-; 0000 031C                   if( (rx_b0[pos1+3] - 48) == 0 &&
-; 0000 031D                       (rx_b0[pos1+4] - 48) == 0 &&
-; 0000 031E                       (rx_b0[pos1+5] - 48) == 0 &&
-; 0000 031F                       (rx_b0[pos1+7] - 48) == 0 &&
-; 0000 0320                       (rx_b0[pos1+8] - 48) == 0 &&
-; 0000 0321                       (rx_b0[pos1+9] - 48) == 0)
+; 0000 031D                {
+; 0000 031E                   if( (rx_b0[pos1+3] - 48) == 0 &&
+; 0000 031F                       (rx_b0[pos1+4] - 48) == 0 &&
+; 0000 0320                       (rx_b0[pos1+5] - 48) == 0 &&
+; 0000 0321                       (rx_b0[pos1+7] - 48) == 0 &&
+; 0000 0322                       (rx_b0[pos1+8] - 48) == 0 &&
+; 0000 0323                       (rx_b0[pos1+9] - 48) == 0)
 	CALL SUBOPT_0x43
 	CALL SUBOPT_0x3E
 	BRNE _0x177
@@ -5445,95 +5445,95 @@ _0x172:
 _0x177:
 	RJMP _0x176
 _0x178:
-; 0000 0322                   {
-; 0000 0323                      gsm=0;   // Sin seÃ±al GSM
+; 0000 0324                   {
+; 0000 0325                      gsm=0;   // Sin seÃ±al GSM
 	LDI  R30,LOW(0)
 	STS  _gsm,R30
 	STS  _gsm+1,R30
-; 0000 0324 
-; 0000 0325                   }else
+; 0000 0326 
+; 0000 0327                   }else
 	RJMP _0x179
 _0x176:
-; 0000 0326                      gsm=1;
+; 0000 0328                      gsm=1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	STS  _gsm,R30
 	STS  _gsm+1,R31
-; 0000 0327                }
+; 0000 0329                }
 _0x179:
-; 0000 0328             }
+; 0000 032A             }
 _0x175:
-; 0000 0329 
-; 0000 032A             //DEVID
-; 0000 032B             if ( rx_b0[i+0] == 'D' &&
+; 0000 032B 
+; 0000 032C             //DEVID
+; 0000 032D             if ( rx_b0[i+0] == 'D' &&
 _0x16D:
-; 0000 032C                   rx_b0[i+1] == 'E' &&
-; 0000 032D                    rx_b0[i+2] == 'V' &&
-; 0000 032E                     rx_b0[i+3] == 'I' &&
-; 0000 032F                      rx_b0[i+4] == 'D')
-	CALL SUBOPT_0x35
+; 0000 032E                   rx_b0[i+1] == 'E' &&
+; 0000 032F                    rx_b0[i+2] == 'V' &&
+; 0000 0330                     rx_b0[i+3] == 'I' &&
+; 0000 0331                      rx_b0[i+4] == 'D')
+	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x44)
 	BRNE _0x17B
-	CALL SUBOPT_0x36
+	CALL SUBOPT_0x37
 	CPI  R26,LOW(0x45)
 	BRNE _0x17B
-	CALL SUBOPT_0x37
+	CALL SUBOPT_0x38
 	CPI  R26,LOW(0x56)
 	BRNE _0x17B
-	CALL SUBOPT_0x38
+	CALL SUBOPT_0x39
 	CPI  R26,LOW(0x49)
 	BRNE _0x17B
-	CALL SUBOPT_0x39
+	CALL SUBOPT_0x3A
 	CPI  R26,LOW(0x44)
 	BREQ _0x17C
 _0x17B:
 	RJMP _0x17A
 _0x17C:
-; 0000 0330             {
-; 0000 0331                ini = i+4;
+; 0000 0332             {
+; 0000 0333                ini = i+4;
 	CALL SUBOPT_0x3F
-; 0000 0332 
-; 0000 0333                // Limpia las lineas 2,3,4,5
-; 0000 0334                glcd_clrln(2);
+; 0000 0334 
+; 0000 0335                // Limpia las lineas 2,3,4,5
+; 0000 0336                glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 0335                glcd_clrln(3);
-; 0000 0336                glcd_clrln(4);
-; 0000 0337                glcd_clrln(5);
-; 0000 0338 
-; 0000 0339                for (n=0;n<201;n++)
+; 0000 0337                glcd_clrln(3);
+; 0000 0338                glcd_clrln(4);
+; 0000 0339                glcd_clrln(5);
+; 0000 033A 
+; 0000 033B                for (n=0;n<201;n++)
 	__GETWRN 20,21,0
 _0x17E:
 	__CPWRN 20,21,201
 	BRGE _0x17F
-; 0000 033A                {
-; 0000 033B                   if( rx_b0[ini+n+1] == ':')
+; 0000 033C                {
+; 0000 033D                   if( rx_b0[ini+n+1] == ':')
 	CALL SUBOPT_0x40
 	BRNE _0x180
-; 0000 033C                   {
-; 0000 033D                      coma++;
+; 0000 033E                   {
+; 0000 033F                      coma++;
 	CALL SUBOPT_0x41
-; 0000 033E                      if(coma==1) pos1 = n+ini+1;
+; 0000 0340                      if(coma==1) pos1 = n+ini+1;
 	BRNE _0x181
 	CALL SUBOPT_0x42
-; 0000 033F                   }
+; 0000 0341                   }
 _0x181:
-; 0000 0340                }
+; 0000 0342                }
 _0x180:
 	__ADDWRN 20,21,1
 	RJMP _0x17E
 _0x17F:
-; 0000 0341 
-; 0000 0342                //Comprobar nombre
-; 0000 0343                if(rx_b0[pos1+1]==34)
+; 0000 0343 
+; 0000 0344                //Comprobar nombre
+; 0000 0345                if(rx_b0[pos1+1]==34)
 	CALL SUBOPT_0x47
 	LD   R26,Z
 	CPI  R26,LOW(0x22)
 	BRNE _0x182
-; 0000 0344                {
-; 0000 0345                   if( rx_b0[pos1+2] == NUM_DISP[0] &&
-; 0000 0346                       rx_b0[pos1+3] == NUM_DISP[1] &&
-; 0000 0347                       rx_b0[pos1+4] == NUM_DISP[2] &&
-; 0000 0348                       rx_b0[pos1+5] == NUM_DISP[3] )
+; 0000 0346                {
+; 0000 0347                   if( rx_b0[pos1+2] == NUM_DISP[0] &&
+; 0000 0348                       rx_b0[pos1+3] == NUM_DISP[1] &&
+; 0000 0349                       rx_b0[pos1+4] == NUM_DISP[2] &&
+; 0000 034A                       rx_b0[pos1+5] == NUM_DISP[3] )
 	LDD  R30,Y+21
 	LDD  R31,Y+21+1
 	__ADDW1MN _rx_b0,2
@@ -5559,63 +5559,63 @@ _0x17F:
 _0x184:
 	RJMP _0x183
 _0x185:
-; 0000 0349                   {
-; 0000 034A 
-; 0000 034B                   act=1;  // PANTALLA Y EQUIPO CORRECTA !!!
-	CALL SUBOPT_0x48
+; 0000 034B                   {
 ; 0000 034C 
-; 0000 034D                   }
-; 0000 034E                   else {
+; 0000 034D                   act=1;  // PANTALLA Y EQUIPO CORRECTA !!!
+	CALL SUBOPT_0x48
+; 0000 034E 
+; 0000 034F                   }
+; 0000 0350                   else {
 	RJMP _0x186
 _0x183:
-; 0000 034F 
-; 0000 0350                   act=0;  // PANTALLA INCORRECTA !!!
+; 0000 0351 
+; 0000 0352                   act=0;  // PANTALLA INCORRECTA !!!
 	LDI  R30,LOW(0)
 	STS  _act_G000,R30
 	STS  _act_G000+1,R30
-; 0000 0351                   }
+; 0000 0353                   }
 _0x186:
-; 0000 0352 
-; 0000 0353                }
-; 0000 0354             }
+; 0000 0354 
+; 0000 0355                }
+; 0000 0356             }
 _0x182:
-; 0000 0355 
-; 0000 0356             //Encabezado: GPRMC para igualar el reloj desde trama GPS
-; 0000 0357             if ( rx_b0[i+0] == 'G' &&
+; 0000 0357 
+; 0000 0358             //Encabezado: GPRMC para igualar el reloj desde trama GPS
+; 0000 0359             if ( rx_b0[i+0] == 'G' &&
 _0x17A:
-; 0000 0358                   rx_b0[i+1] == 'P' &&
-; 0000 0359                    rx_b0[i+2] == 'R' &&
-; 0000 035A                     rx_b0[i+3] == 'M' &&
-; 0000 035B                      rx_b0[i+4] == 'C')
-	CALL SUBOPT_0x35
+; 0000 035A                   rx_b0[i+1] == 'P' &&
+; 0000 035B                    rx_b0[i+2] == 'R' &&
+; 0000 035C                     rx_b0[i+3] == 'M' &&
+; 0000 035D                      rx_b0[i+4] == 'C')
+	CALL SUBOPT_0x36
 	CPI  R26,LOW(0x47)
 	BRNE _0x188
-	CALL SUBOPT_0x36
+	CALL SUBOPT_0x37
 	CPI  R26,LOW(0x50)
 	BRNE _0x188
-	CALL SUBOPT_0x37
+	CALL SUBOPT_0x38
 	CPI  R26,LOW(0x52)
 	BRNE _0x188
-	CALL SUBOPT_0x38
+	CALL SUBOPT_0x39
 	CPI  R26,LOW(0x4D)
 	BRNE _0x188
-	CALL SUBOPT_0x39
+	CALL SUBOPT_0x3A
 	CPI  R26,LOW(0x43)
 	BREQ _0x189
 _0x188:
 	RJMP _0x187
 _0x189:
-; 0000 035C             {
-; 0000 035D 
-; 0000 035E                ini=i+4;
+; 0000 035E             {
+; 0000 035F 
+; 0000 0360                ini=i+4;
 	CALL SUBOPT_0x3F
-; 0000 035F                for (n=0;n<201;n++)
+; 0000 0361                for (n=0;n<201;n++)
 	__GETWRN 20,21,0
 _0x18B:
 	__CPWRN 20,21,201
 	BRGE _0x18C
-; 0000 0360                {
-; 0000 0361                   if(rx_b0[ini+n+1]==44)
+; 0000 0362                {
+; 0000 0363                   if(rx_b0[ini+n+1]==44)
 	MOVW R30,R20
 	LDD  R26,Y+25
 	LDD  R27,Y+25+1
@@ -5625,13 +5625,13 @@ _0x18B:
 	LD   R26,Z
 	CPI  R26,LOW(0x2C)
 	BRNE _0x18D
-; 0000 0362                   {
-; 0000 0363                      coma++;
+; 0000 0364                   {
+; 0000 0365                      coma++;
 	CALL SUBOPT_0x41
-; 0000 0364                      if(coma==1) pos1=n+ini+1;
+; 0000 0366                      if(coma==1) pos1=n+ini+1;
 	BRNE _0x18E
 	CALL SUBOPT_0x42
-; 0000 0365                      if(coma==2) pos2=n+ini+1;
+; 0000 0367                      if(coma==2) pos2=n+ini+1;
 _0x18E:
 	LDD  R26,Y+23
 	LDD  R27,Y+23+1
@@ -5644,7 +5644,7 @@ _0x18E:
 	ADIW R30,1
 	STD  Y+19,R30
 	STD  Y+19+1,R31
-; 0000 0366                      if(coma==9) pos3=n+ini+1;
+; 0000 0368                      if(coma==9) pos3=n+ini+1;
 _0x18F:
 	LDD  R26,Y+23
 	LDD  R27,Y+23+1
@@ -5657,34 +5657,34 @@ _0x18F:
 	ADIW R30,1
 	STD  Y+17,R30
 	STD  Y+17+1,R31
-; 0000 0367                   }
+; 0000 0369                   }
 _0x190:
-; 0000 0368                }
+; 0000 036A                }
 _0x18D:
 	__ADDWRN 20,21,1
 	RJMP _0x18B
 _0x18C:
-; 0000 0369 
-; 0000 036A                glcd_clrln(3);
+; 0000 036B 
+; 0000 036C                glcd_clrln(3);
 	LDI  R30,LOW(3)
 	ST   -Y,R30
 	RCALL _glcd_clrln
-; 0000 036B                glcd_clrln(4);
+; 0000 036D                glcd_clrln(4);
 	LDI  R30,LOW(4)
 	ST   -Y,R30
 	RCALL _glcd_clrln
-; 0000 036C                glcd_clrln(5);
+; 0000 036E                glcd_clrln(5);
 	LDI  R30,LOW(5)
 	ST   -Y,R30
 	RCALL _glcd_clrln
-; 0000 036D 
-; 0000 036E 
-; 0000 036F                // Comprueba que las comas no esten seguidas
-; 0000 0370                // en caso de no haber senial gps.
-; 0000 0371                if( (rx_b0[ pos1+1 ]-48)>= 0 &&
-; 0000 0372                    (rx_b0[ pos1+1 ]-48)< 10 &&
-; 0000 0373                     pos2 != (pos1 +1)
-; 0000 0374                  )
+; 0000 036F 
+; 0000 0370 
+; 0000 0371                // Comprueba que las comas no esten seguidas
+; 0000 0372                // en caso de no haber senial gps.
+; 0000 0373                if( (rx_b0[ pos1+1 ]-48)>= 0 &&
+; 0000 0374                    (rx_b0[ pos1+1 ]-48)< 10 &&
+; 0000 0375                     pos2 != (pos1 +1)
+; 0000 0376                  )
 	CALL SUBOPT_0x47
 	CALL SUBOPT_0x3E
 	TST  R31
@@ -5702,14 +5702,14 @@ _0x18C:
 _0x192:
 	RJMP _0x191
 _0x193:
-; 0000 0375                {
-; 0000 0376 
-; 0000 0377                   digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
+; 0000 0377                {
+; 0000 0378 
+; 0000 0379                   digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
 	LDD  R30,Y+21
 	LDD  R31,Y+21+1
 	CALL SUBOPT_0x3B
 	STD  Y+6,R30
-; 0000 0378                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 037A                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x195
@@ -5718,18 +5718,18 @@ _0x193:
 _0x195:
 	RJMP _0x194
 _0x196:
-; 0000 0379                      seg = digito_hora_temp;
+; 0000 037B                      seg = digito_hora_temp;
 	LDD  R30,Y+6
 	LDI  R26,LOW(_seg)
 	LDI  R27,HIGH(_seg)
 	CALL __EEPROMWRB
-; 0000 037A 
-; 0000 037B                   digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
+; 0000 037C 
+; 0000 037D                   digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
 _0x194:
 	CALL SUBOPT_0x45
 	CALL SUBOPT_0x3E
 	STD  Y+6,R30
-; 0000 037C                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 037E                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x198
@@ -5738,18 +5738,18 @@ _0x194:
 _0x198:
 	RJMP _0x197
 _0x199:
-; 0000 037D                      seg1 = digito_hora_temp;
+; 0000 037F                      seg1 = digito_hora_temp;
 	LDD  R30,Y+6
 	LDI  R26,LOW(_seg1)
 	LDI  R27,HIGH(_seg1)
 	CALL __EEPROMWRB
-; 0000 037E 
-; 0000 037F                   digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
+; 0000 0380 
+; 0000 0381                   digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
 _0x197:
 	CALL SUBOPT_0x44
 	CALL SUBOPT_0x3E
 	STD  Y+6,R30
-; 0000 0380                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0382                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x19B
@@ -5758,18 +5758,18 @@ _0x197:
 _0x19B:
 	RJMP _0x19A
 _0x19C:
-; 0000 0381                      minu = digito_hora_temp;
+; 0000 0383                      minu = digito_hora_temp;
 	LDD  R30,Y+6
 	LDI  R26,LOW(_minu)
 	LDI  R27,HIGH(_minu)
 	CALL __EEPROMWRB
-; 0000 0382 
-; 0000 0383                   digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
+; 0000 0384 
+; 0000 0385                   digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
 _0x19A:
 	CALL SUBOPT_0x43
 	CALL SUBOPT_0x3E
 	STD  Y+6,R30
-; 0000 0384                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 0386                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x19E
@@ -5778,20 +5778,20 @@ _0x19A:
 _0x19E:
 	RJMP _0x19D
 _0x19F:
-; 0000 0385                      min1  = digito_hora_temp;
+; 0000 0387                      min1  = digito_hora_temp;
 	LDD  R30,Y+6
 	LDI  R26,LOW(_min1)
 	LDI  R27,HIGH(_min1)
 	CALL __EEPROMWRB
-; 0000 0386 
-; 0000 0387                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
+; 0000 0388 
+; 0000 0389                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
 _0x19D:
 	LDD  R30,Y+21
 	LDD  R31,Y+21+1
 	__ADDW1MN _rx_b0,2
 	CALL SUBOPT_0x3E
 	STD  Y+6,R30
-; 0000 0388                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 038A                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x1A1
@@ -5800,17 +5800,17 @@ _0x19D:
 _0x1A1:
 	RJMP _0x1A0
 _0x1A2:
-; 0000 0389                      n2 = digito_hora_temp;
+; 0000 038B                      n2 = digito_hora_temp;
 	CALL SUBOPT_0x8
 	STD  Y+11,R30
 	STD  Y+11+1,R31
-; 0000 038A 
-; 0000 038B                   digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
+; 0000 038C 
+; 0000 038D                   digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
 _0x1A0:
 	CALL SUBOPT_0x47
 	CALL SUBOPT_0x3E
 	STD  Y+6,R30
-; 0000 038C                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
+; 0000 038E                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
 	LDD  R26,Y+6
 	CPI  R26,0
 	BRLO _0x1A4
@@ -5819,13 +5819,13 @@ _0x1A0:
 _0x1A4:
 	RJMP _0x1A3
 _0x1A5:
-; 0000 038D                      n1  = digito_hora_temp;
+; 0000 038F                      n1  = digito_hora_temp;
 	CALL SUBOPT_0x8
 	STD  Y+13,R30
 	STD  Y+13+1,R31
-; 0000 038E 
-; 0000 038F 
-; 0000 0390                   n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
+; 0000 0390 
+; 0000 0391 
+; 0000 0392                   n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
 _0x1A3:
 	LDD  R30,Y+13
 	LDD  R31,Y+13+1
@@ -5838,38 +5838,38 @@ _0x1A3:
 	ADC  R31,R27
 	STD  Y+9,R30
 	STD  Y+9+1,R31
-; 0000 0391                   n4 = n3 - 5;  // Zona horaria
+; 0000 0393                   n4 = n3 - 5;  // Zona horaria
 	SBIW R30,5
 	STD  Y+7,R30
 	STD  Y+7+1,R31
-; 0000 0392 
-; 0000 0393                   if( n4 < 0 )
+; 0000 0394 
+; 0000 0395                   if( n4 < 0 )
 	LDD  R26,Y+8
 	TST  R26
 	BRPL _0x1A6
-; 0000 0394                   {
-; 0000 0395                      n4    = n4 + 24;
+; 0000 0396                   {
+; 0000 0397                      n4    = n4 + 24;
 	ADIW R30,24
 	STD  Y+7,R30
 	STD  Y+7+1,R31
-; 0000 0396                      hora  = n4 % 10;
+; 0000 0398                      hora  = n4 % 10;
 	CALL SUBOPT_0x49
 	CALL SUBOPT_0x4A
-; 0000 0397                      hora1 = n4 / 10;
+; 0000 0399                      hora1 = n4 / 10;
 	CALL SUBOPT_0x4B
-; 0000 0398                   }
-; 0000 0399 
-; 0000 039A                   hora = n4 % 10;
+; 0000 039A                   }
+; 0000 039B 
+; 0000 039C                   hora = n4 % 10;
 _0x1A6:
 	CALL SUBOPT_0x49
 	CALL SUBOPT_0x4A
-; 0000 039B                   hora1= n4 / 10;
+; 0000 039D                   hora1= n4 / 10;
 	CALL SUBOPT_0x4B
-; 0000 039C 
-; 0000 039D                }
 ; 0000 039E 
-; 0000 039F                // Comprueva la conexión de GPS
-; 0000 03A0                gps = rx_b0 [ pos2 + 1 ];
+; 0000 039F                }
+; 0000 03A0 
+; 0000 03A1                // Comprueva la conexión de GPS
+; 0000 03A2                gps = rx_b0 [ pos2 + 1 ];
 _0x191:
 	LDD  R30,Y+19
 	LDD  R31,Y+19+1
@@ -5878,7 +5878,7 @@ _0x191:
 	LDI  R31,0
 	STS  _gps,R30
 	STS  _gps+1,R31
-; 0000 03A1                printf( "%c", gps);  //Herramienta de DEBUG
+; 0000 03A3                printf( "%c", gps);  //Herramienta de DEBUG
 	__POINTW1FN _0x0,207
 	ST   -Y,R31
 	ST   -Y,R30
@@ -5889,10 +5889,10 @@ _0x191:
 	LDI  R24,4
 	CALL _printf
 	ADIW R28,6
-; 0000 03A2 
-; 0000 03A3                //Obtener Hora y dia
-; 0000 03A4                if( (rx_b0[pos3+1]-48) >= 0 &&
-; 0000 03A5                    (rx_b0[pos3+1]-48) < 10 )
+; 0000 03A4 
+; 0000 03A5                //Obtener Hora y dia
+; 0000 03A6                if( (rx_b0[pos3+1]-48) >= 0 &&
+; 0000 03A7                    (rx_b0[pos3+1]-48) < 10 )
 	CALL SUBOPT_0x4C
 	TST  R31
 	BRMI _0x1A8
@@ -5901,95 +5901,93 @@ _0x191:
 _0x1A8:
 	RJMP _0x1A7
 _0x1A9:
-; 0000 03A6                {
-; 0000 03A7 
-; 0000 03A8                   dia1 = rx_b0[pos3+1]-48;
+; 0000 03A8                {
+; 0000 03A9 
+; 0000 03AA                   dia1 = rx_b0[pos3+1]-48;
 	CALL SUBOPT_0x4C
 	LDI  R26,LOW(_dia1)
 	LDI  R27,HIGH(_dia1)
 	CALL SUBOPT_0x4D
-; 0000 03A9                   dia  = rx_b0[pos3+2]-48;
+; 0000 03AB                   dia  = rx_b0[pos3+2]-48;
 	__ADDW1MN _rx_b0,2
 	CALL SUBOPT_0x3E
 	LDI  R26,LOW(_dia)
 	LDI  R27,HIGH(_dia)
 	CALL SUBOPT_0x4D
-; 0000 03AA                   mes1 = rx_b0[pos3+3]-48;
+; 0000 03AC                   mes1 = rx_b0[pos3+3]-48;
 	__ADDW1MN _rx_b0,3
 	CALL SUBOPT_0x3E
 	LDI  R26,LOW(_mes1)
 	LDI  R27,HIGH(_mes1)
 	CALL SUBOPT_0x4D
-; 0000 03AB                   mes  = rx_b0[pos3+4]-48;
+; 0000 03AD                   mes  = rx_b0[pos3+4]-48;
 	__ADDW1MN _rx_b0,4
 	CALL SUBOPT_0x3E
 	LDI  R26,LOW(_mes)
 	LDI  R27,HIGH(_mes)
 	CALL SUBOPT_0x4D
-; 0000 03AC                   an1  = rx_b0[pos3+5]-48;
+; 0000 03AE                   an1  = rx_b0[pos3+5]-48;
 	__ADDW1MN _rx_b0,5
 	CALL SUBOPT_0x3E
 	LDI  R26,LOW(_an1)
 	LDI  R27,HIGH(_an1)
 	CALL SUBOPT_0x4D
-; 0000 03AD                   an   = rx_b0[pos3+6]-48;
+; 0000 03AF                   an   = rx_b0[pos3+6]-48;
 	CALL SUBOPT_0x3B
 	LDI  R26,LOW(_an)
 	LDI  R27,HIGH(_an)
 	CALL __EEPROMWRB
-; 0000 03AE 
-; 0000 03AF                   if( n4 > 18)
+; 0000 03B0 
+; 0000 03B1                   if( n4 > 18)
 	LDD  R26,Y+7
 	LDD  R27,Y+7+1
 	SBIW R26,19
 	BRLT _0x1AA
-; 0000 03B0                      dia = dia-1;  // Por la zona horaria de EC-5GTM
+; 0000 03B2                      dia = dia-1;  // Por la zona horaria de EC-5GTM
 	CALL SUBOPT_0x4E
 	LDI  R31,0
 	SBIW R30,1
 	LDI  R26,LOW(_dia)
 	LDI  R27,HIGH(_dia)
 	CALL __EEPROMWRB
-; 0000 03B1 
-; 0000 03B2                }else{
+; 0000 03B3 
+; 0000 03B4                }else{
 _0x1AA:
 _0x1A7:
-; 0000 03B3 
-; 0000 03B4                 // No actualizar la hora, continuar con la anterior
-; 0000 03B5                }
-; 0000 03B6             }
-; 0000 03B7          }
+; 0000 03B5 
+; 0000 03B6                 // No actualizar la hora, continuar con la anterior
+; 0000 03B7                }
+; 0000 03B8             }
+; 0000 03B9          }
 _0x187:
 	__ADDWRN 16,17,1
 	RJMP _0x147
 _0x148:
-; 0000 03B8 
-; 0000 03B9          rx_counter0  = 0;
+; 0000 03BA 
+; 0000 03BB          rx_counter0  = 0;
+	CLR  R8
+; 0000 03BC          rx_wr_index0 = 0;
 	CLR  R6
-; 0000 03BA          rx_wr_index0 = 0;
-	CLR  R4
-; 0000 03BB 
-; 0000 03BC          BIT_UART=1;
-	SBI  0x1E,1
 ; 0000 03BD 
-; 0000 03BE          for (j=0;j<201;j++)
-	__GETWRN 18,19,0
+; 0000 03BE          BIT_UART=1;
+	SBI  0x1E,1
+; 0000 03BF 
+; 0000 03C0          // Limpia el buffer
+; 0000 03C1          for( i=0; i<RX_BUFFER_SIZE0; i++ )
+	__GETWRN 16,17,0
 _0x1AF:
-	__CPWRN 18,19,201
+	__CPWRN 16,17,200
 	BRGE _0x1B0
-; 0000 03BF          {
-; 0000 03C0             rx_b0[j]=0;
+; 0000 03C2          {
+; 0000 03C3             rx_b0[i]=0;
 	LDI  R26,LOW(_rx_b0)
 	LDI  R27,HIGH(_rx_b0)
-	ADD  R26,R18
-	ADC  R27,R19
-	LDI  R30,LOW(0)
-	ST   X,R30
-; 0000 03C1          }
-	__ADDWRN 18,19,1
+	CALL SUBOPT_0x4F
+; 0000 03C4          }
+	__ADDWRN 16,17,1
 	RJMP _0x1AF
 _0x1B0:
-; 0000 03C2       }
+; 0000 03C5       }
 	CALL __LOADLOCR6
 	ADIW R28,27
 	RET
@@ -6002,121 +6000,124 @@ _0x1B0:
 ;//******************************************** PROGRAMA PRINCIPAL *************************************************//
 ;/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ;void main(void)
-; 0000 03CC {
+; 0000 03CF {
 _main:
-; 0000 03CD 
-; 0000 03CE    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
-; 0000 03CF       #pragma optsize-
-; 0000 03D0       CLKPR=0x80;
+; 0000 03D0 
+; 0000 03D1    int j = 0;
+; 0000 03D2    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
+; 0000 03D3       #pragma optsize-
+; 0000 03D4       CLKPR=0x80;
+;	j -> R16,R17
+	__GETWRN 16,17,0
 	LDI  R30,LOW(128)
 	STS  97,R30
-; 0000 03D1       CLKPR=0x00;
+; 0000 03D5       CLKPR=0x00;
 	LDI  R30,LOW(0)
 	STS  97,R30
-; 0000 03D2       #ifdef _OPTIMIZE_SIZE_
-; 0000 03D3          #pragma optsize+
-; 0000 03D4       #endif
-; 0000 03D5 
-; 0000 03D6       DATADDR = 0xff;
+; 0000 03D6       #ifdef _OPTIMIZE_SIZE_
+; 0000 03D7          #pragma optsize+
+; 0000 03D8       #endif
+; 0000 03D9 
+; 0000 03DA       DATADDR = 0xff;
 	LDI  R30,LOW(255)
 	OUT  0x7,R30
-; 0000 03D7 
-; 0000 03D8       PORTA=0xFF;
+; 0000 03DB 
+; 0000 03DC       PORTA=0xFF;
 	OUT  0x2,R30
-; 0000 03D9       DDRA=0xF0;
+; 0000 03DD       DDRA=0xF0;
 	LDI  R30,LOW(240)
 	OUT  0x1,R30
-; 0000 03DA 
-; 0000 03DB       PORTB=0x00;
+; 0000 03DE 
+; 0000 03DF       PORTB=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x5,R30
-; 0000 03DC       DDRB=0xFF;
+; 0000 03E0       DDRB=0xFF;
 	LDI  R30,LOW(255)
 	OUT  0x4,R30
-; 0000 03DD 
-; 0000 03DE       PORTD=0x00;
+; 0000 03E1 
+; 0000 03E2       PORTD=0x00;
 	LDI  R30,LOW(0)
 	OUT  0xB,R30
-; 0000 03DF       DDRD=0b11110000;
+; 0000 03E3       DDRD=0b11110000;
 	LDI  R30,LOW(240)
 	OUT  0xA,R30
-; 0000 03E0 
-; 0000 03E1       // USART0 initialization
-; 0000 03E2       // Communication Parameters: 8 Data, 1 Stop, No Parity
-; 0000 03E3       // USART0 Receiver: On
-; 0000 03E4       // USART0 Transmitter: On
-; 0000 03E5       // USART0 Mode: Asynchronous
-; 0000 03E6       //// USART0 Baud Rate: 9600 11.0592 MHz
-; 0000 03E7       //UCSR0A=0x00;
-; 0000 03E8       //UCSR0B=0x98;
-; 0000 03E9       //UCSR0C=0x06;
-; 0000 03EA       //UBRR0H=0x00;
-; 0000 03EB       //UBRR0L=0x47;
-; 0000 03EC 
-; 0000 03ED       // USART0 Baud Rate: 115200
-; 0000 03EE       UCSR0A=0x00;
+; 0000 03E4 
+; 0000 03E5       // USART0 initialization
+; 0000 03E6       // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 03E7       // USART0 Receiver: On
+; 0000 03E8       // USART0 Transmitter: On
+; 0000 03E9       // USART0 Mode: Asynchronous
+; 0000 03EA       //// USART0 Baud Rate: 9600 11.0592 MHz
+; 0000 03EB       //UCSR0A=0x00;
+; 0000 03EC       //UCSR0B=0x98;
+; 0000 03ED       //UCSR0C=0x06;
+; 0000 03EE       //UBRR0H=0x00;
+; 0000 03EF       //UBRR0L=0x47;
+; 0000 03F0 
+; 0000 03F1       // USART0 Baud Rate: 115200
+; 0000 03F2       UCSR0A=0x00;
 	LDI  R30,LOW(0)
 	STS  192,R30
-; 0000 03EF       UCSR0B=0x98;
+; 0000 03F3       UCSR0B=0x98;
 	LDI  R30,LOW(152)
 	STS  193,R30
-; 0000 03F0       UCSR0C=0x06;
+; 0000 03F4       UCSR0C=0x06;
 	LDI  R30,LOW(6)
 	STS  194,R30
-; 0000 03F1       UBRR0H=0x00;
+; 0000 03F5       UBRR0H=0x00;
 	LDI  R30,LOW(0)
 	STS  197,R30
-; 0000 03F2       UBRR0L=0x05;
+; 0000 03F6       UBRR0L=0x05;
 	LDI  R30,LOW(5)
 	STS  196,R30
-; 0000 03F3 
-; 0000 03F4       //USART0 Baud Rate: 9600 8 MHz
-; 0000 03F5       //UCSR0A=0x00;
-; 0000 03F6       //UCSR0B=0x18;
-; 0000 03F7       //UCSR0C=0x06;
-; 0000 03F8       //UBRR0H=0x00;
-; 0000 03F9       //UBRR0L=0x33;
-; 0000 03FA 
-; 0000 03FB       // Timer/Counter 0 initialization
-; 0000 03FC       // Clock source: System Clock
-; 0000 03FD       // Clock value: 10,800 kHz
-; 0000 03FE       // Mode: Normal top=0xFF
-; 0000 03FF       // OC0A output: Disconnected
-; 0000 0400       // OC0B output: Disconnected
-; 0000 0401       TCCR0A=0x00;
+; 0000 03F7 
+; 0000 03F8       //USART0 Baud Rate: 9600 8 MHz
+; 0000 03F9       //UCSR0A=0x00;
+; 0000 03FA       //UCSR0B=0x18;
+; 0000 03FB       //UCSR0C=0x06;
+; 0000 03FC       //UBRR0H=0x00;
+; 0000 03FD       //UBRR0L=0x33;
+; 0000 03FE 
+; 0000 03FF       // Timer/Counter 0 initialization
+; 0000 0400       // Clock source: System Clock
+; 0000 0401       // Clock value: 10,800 kHz
+; 0000 0402       // Mode: Normal top=0xFF
+; 0000 0403       // OC0A output: Disconnected
+; 0000 0404       // OC0B output: Disconnected
+; 0000 0405       TCCR0A=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x24,R30
-; 0000 0402       TCCR0B=0x05;
+; 0000 0406       TCCR0B=0x05;
 	LDI  R30,LOW(5)
 	OUT  0x25,R30
-; 0000 0403       TCNT0=0x00;
+; 0000 0407       TCNT0=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x26,R30
-; 0000 0404       OCR0A=0x00;
+; 0000 0408       OCR0A=0x00;
 	OUT  0x27,R30
-; 0000 0405       OCR0B=0x00;
+; 0000 0409       OCR0B=0x00;
 	OUT  0x28,R30
-; 0000 0406 
-; 0000 0407       // Timer/Counter 0 Interrupt(s) initialization
-; 0000 0408       TIMSK0=0x01;
+; 0000 040A 
+; 0000 040B       // Timer/Counter 0 Interrupt(s) initialization
+; 0000 040C       TIMSK0=0x01;
 	LDI  R30,LOW(1)
 	STS  110,R30
-; 0000 0409 
-; 0000 040A    // Inicilizar GLCD
-; 0000 040B       glcd_on();
+; 0000 040D 
+; 0000 040E    // Inicilizar GLCD
+; 0000 040F       glcd_on();
 	CALL _glcd_on
-; 0000 040C       delay_ms(INIT_DELAY_GLCD_MS);
+; 0000 0410       delay_ms(INIT_DELAY_GLCD_MS);
 	LDI  R30,LOW(10)
 	LDI  R31,HIGH(10)
-	CALL SUBOPT_0x4F
-; 0000 040D       glcd_clear();
-; 0000 040E 
-; 0000 040F       buzz();
 	CALL SUBOPT_0x50
-; 0000 0410       buzz();
-; 0000 0411 
-; 0000 0412       // Dibuja KRADAC
-; 0000 0413       bmp_disp(arr,0,0,127,7);
+; 0000 0411       glcd_clear();
+; 0000 0412 
+; 0000 0413       buzz();
+	CALL SUBOPT_0x51
+; 0000 0414       buzz();
+; 0000 0415 
+; 0000 0416       // Dibuja KRADAC
+; 0000 0417       bmp_disp(arr,0,0,127,7);
 	LDI  R30,LOW(_arr*2)
 	LDI  R31,HIGH(_arr*2)
 	CALL SUBOPT_0x2C
@@ -6125,14 +6126,14 @@ _main:
 	LDI  R31,HIGH(127)
 	CALL SUBOPT_0x2E
 	RCALL _bmp_disp
-; 0000 0414       delay_ms( DELAY_PANTALLA_INI );
+; 0000 0418       delay_ms( DELAY_PANTALLA_INI );
 	LDI  R30,LOW(2000)
 	LDI  R31,HIGH(2000)
-	CALL SUBOPT_0x4F
-; 0000 0415       glcd_clear();
-; 0000 0416 
-; 0000 0417       // Dibuja BUS
-; 0000 0418       bmp_disp(bus,0,0,45,7);
+	CALL SUBOPT_0x50
+; 0000 0419       glcd_clear();
+; 0000 041A 
+; 0000 041B       // Dibuja BUS
+; 0000 041C       bmp_disp(bus,0,0,45,7);
 	LDI  R30,LOW(_bus*2)
 	LDI  R31,HIGH(_bus*2)
 	CALL SUBOPT_0x2C
@@ -6141,86 +6142,86 @@ _main:
 	LDI  R31,HIGH(45)
 	CALL SUBOPT_0x2E
 	RCALL _bmp_disp
-; 0000 0419 
-; 0000 041A       // Escribe NOMBRE_PANTALLA "SITU"
-; 0000 041B       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);
+; 0000 041D 
+; 0000 041E       // Escribe NOMBRE_PANTALLA "SITU"
+; 0000 041F       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);
 	LDI  R30,LOW(_NOMBRE_DISP)
 	LDI  R31,HIGH(_NOMBRE_DISP)
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(55)
 	LDI  R31,HIGH(55)
-	CALL SUBOPT_0x51
 	CALL SUBOPT_0x52
-; 0000 041C 
-; 0000 041D       // Escribe NUMERO_PANTALLA "BUS####"
-; 0000 041E       glcd_puts("BUS",59,5,0,1,-1);
+	CALL SUBOPT_0x53
+; 0000 0420 
+; 0000 0421       // Escribe NUMERO_PANTALLA "BUS####"
+; 0000 0422       glcd_puts("BUS",59,5,0,1,-1);
 	__POINTW1MN _0x1B1,0
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(59)
 	LDI  R31,HIGH(59)
-	CALL SUBOPT_0x53
+	CALL SUBOPT_0x54
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 041F       glcd_puts(NUM_DISP,82,5,0,1,-1);
+; 0000 0423       glcd_puts(NUM_DISP,82,5,0,1,-1);
 	LDI  R30,LOW(_NUM_DISP)
 	LDI  R31,HIGH(_NUM_DISP)
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(82)
 	LDI  R31,HIGH(82)
-	CALL SUBOPT_0x53
+	CALL SUBOPT_0x54
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0420 
-; 0000 0421       //Tiempo q muestra la pantalla de inicio
-; 0000 0422       delay_ms( DELAY_PANTALLA_INI );
+; 0000 0424 
+; 0000 0425       //Tiempo q muestra la pantalla de inicio
+; 0000 0426       delay_ms( DELAY_PANTALLA_INI );
 	LDI  R30,LOW(2000)
 	LDI  R31,HIGH(2000)
-	CALL SUBOPT_0x4F
-; 0000 0423       glcd_clear();
-; 0000 0424 
-; 0000 0425 
-; 0000 0426    ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
-; 0000 0427 
-; 0000 0428       // En caso de que no haya recibido tramas del sky
-; 0000 0429       // previene que muestre valores de -1 en la hora y fecha
-; 0000 042A       if (hora1 == 0xff )
+	CALL SUBOPT_0x50
+; 0000 0427       glcd_clear();
+; 0000 0428 
+; 0000 0429 
+; 0000 042A    ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
+; 0000 042B 
+; 0000 042C       // En caso de que no haya recibido tramas del sky
+; 0000 042D       // previene que muestre valores de -1 en la hora y fecha
+; 0000 042E       if (hora1 == 0xff )
 	CALL SUBOPT_0x26
 	CPI  R30,LOW(0xFF)
 	BRNE _0x1B2
-; 0000 042B       {
-; 0000 042C          hora1 = 0; min1 = 0; seg1 = 0;
+; 0000 042F       {
+; 0000 0430          hora1 = 0; min1 = 0; seg1 = 0;
 	LDI  R26,LOW(_hora1)
 	LDI  R27,HIGH(_hora1)
 	LDI  R30,LOW(0)
 	CALL __EEPROMWRB
 	CALL SUBOPT_0x23
 	CALL SUBOPT_0x1F
-; 0000 042D            hora = 0; minu = 0;  seg = 0;
+; 0000 0431            hora = 0; minu = 0;  seg = 0;
 	CALL SUBOPT_0x25
 	CALL SUBOPT_0x21
 	CALL SUBOPT_0x1E
-; 0000 042E       }
-; 0000 042F 
-; 0000 0430       // En caso de que no haya fecha
-; 0000 0431       if (mes == 0xff && dia == 0xff && an == 0xff)
+; 0000 0432       }
+; 0000 0433 
+; 0000 0434       // En caso de que no haya fecha
+; 0000 0435       if (mes == 0xff && dia == 0xff && an == 0xff)
 _0x1B2:
-	CALL SUBOPT_0x54
+	CALL SUBOPT_0x55
 	CPI  R30,LOW(0xFF)
 	BRNE _0x1B4
 	CALL SUBOPT_0x4E
 	CPI  R30,LOW(0xFF)
 	BRNE _0x1B4
-	CALL SUBOPT_0x55
+	CALL SUBOPT_0x56
 	CPI  R30,LOW(0xFF)
 	BREQ _0x1B5
 _0x1B4:
 	RJMP _0x1B3
 _0x1B5:
-; 0000 0432       {
-; 0000 0433          dia = 0; dia1 = 0;
+; 0000 0436       {
+; 0000 0437          dia = 0; dia1 = 0;
 	LDI  R26,LOW(_dia)
 	LDI  R27,HIGH(_dia)
 	LDI  R30,LOW(0)
@@ -6228,80 +6229,90 @@ _0x1B5:
 	LDI  R26,LOW(_dia1)
 	LDI  R27,HIGH(_dia1)
 	CALL __EEPROMWRB
-; 0000 0434           mes = 0; mes1 = 0;
+; 0000 0438           mes = 0; mes1 = 0;
 	LDI  R26,LOW(_mes)
 	LDI  R27,HIGH(_mes)
 	CALL __EEPROMWRB
 	LDI  R26,LOW(_mes1)
 	LDI  R27,HIGH(_mes1)
 	CALL __EEPROMWRB
-; 0000 0435            an = 0;  an1 = 0;
+; 0000 0439            an = 0;  an1 = 0;
 	LDI  R26,LOW(_an)
 	LDI  R27,HIGH(_an)
 	CALL __EEPROMWRB
 	LDI  R26,LOW(_an1)
 	LDI  R27,HIGH(_an1)
 	CALL __EEPROMWRB
-; 0000 0436       }
-; 0000 0437 
-; 0000 0438       // Iniciala la eeprom.
-; 0000 0439       if (num_ruta  == 0xff)
+; 0000 043A       }
+; 0000 043B 
+; 0000 043C       // Iniciala la eeprom.
+; 0000 043D       if (num_ruta  == 0xff)
 _0x1B3:
 	LDI  R26,LOW(_num_ruta)
 	LDI  R27,HIGH(_num_ruta)
 	CALL __EEPROMRDB
 	CPI  R30,LOW(0xFF)
 	BRNE _0x1B6
-; 0000 043A       {
-; 0000 043B          num_ruta  = 0;
+; 0000 043E       {
+; 0000 043F          num_ruta  = 0;
 	LDI  R26,LOW(_num_ruta)
 	LDI  R27,HIGH(_num_ruta)
 	LDI  R30,LOW(0)
 	CALL __EEPROMWRB
-; 0000 043C          _num_ruta = 0;
-	RJMP _0x1E2
-; 0000 043D       }
-; 0000 043E       else
+; 0000 0440          _num_ruta = 0;
+	RJMP _0x1E8
+; 0000 0441       }
+; 0000 0442       else
 _0x1B6:
-; 0000 043F          _num_ruta = num_ruta;
+; 0000 0443          _num_ruta = num_ruta;
 	LDI  R26,LOW(_num_ruta)
 	LDI  R27,HIGH(_num_ruta)
 	CALL __EEPROMRDB
-_0x1E2:
+_0x1E8:
 	STS  __num_ruta,R30
-; 0000 0440 
-; 0000 0441       if (laborando == 0xff)
+; 0000 0444 
+; 0000 0445       if (laborando == 0xff)
 	LDI  R26,LOW(_laborando)
 	LDI  R27,HIGH(_laborando)
 	CALL __EEPROMRDB
 	CPI  R30,LOW(0xFF)
 	BRNE _0x1B8
-; 0000 0442       {
-; 0000 0443          laborando = 0;
+; 0000 0446       {
+; 0000 0447          laborando = 0;
 	LDI  R26,LOW(_laborando)
 	LDI  R27,HIGH(_laborando)
 	LDI  R30,LOW(0)
 	CALL __EEPROMWRB
-; 0000 0444          _laborando= 0;
-	RJMP _0x1E3
-; 0000 0445       }
-; 0000 0446       else
+; 0000 0448          _laborando= 0;
+	RJMP _0x1E9
+; 0000 0449       }
+; 0000 044A       else
 _0x1B8:
-; 0000 0447          _laborando = laborando;
+; 0000 044B          _laborando = laborando;
 	LDI  R26,LOW(_laborando)
 	LDI  R27,HIGH(_laborando)
 	CALL __EEPROMRDB
-_0x1E3:
+_0x1E9:
 	STS  __laborando,R30
-; 0000 0448    //------------------------------------------------------------------------//
-; 0000 0449 
-; 0000 044A 
-; 0000 044B    // Encender interrupciones
-; 0000 044C    #asm("sei")
+; 0000 044C 
+; 0000 044D       // Limpia el buffer de mensaje recibido
+; 0000 044E       for( j = 0; j < TXT_BUF_SZ; j++ )
+	__GETWRN 16,17,0
+_0x1BB:
+	__CPWRN 16,17,160
+	BRGE _0x1BC
+; 0000 044F               txt_glcd_b0[j] = 0x00;
+	LDI  R26,LOW(_txt_glcd_b0)
+	LDI  R27,HIGH(_txt_glcd_b0)
+	CALL SUBOPT_0x4F
+	__ADDWRN 16,17,1
+	RJMP _0x1BB
+_0x1BC:
+; 0000 0454 #asm("sei")
 	sei
-; 0000 044D 
-; 0000 044E    // Muestra vacio
-; 0000 044F    bmp_disp(vacio,0,5,25,7);
+; 0000 0455 
+; 0000 0456    // Muestra vacio
+; 0000 0457    bmp_disp(vacio,0,5,25,7);
 	LDI  R30,LOW(_vacio*2)
 	LDI  R31,HIGH(_vacio*2)
 	CALL SUBOPT_0x2C
@@ -6310,90 +6321,90 @@ _0x1E3:
 	LDI  R31,HIGH(25)
 	CALL SUBOPT_0x2E
 	RCALL _bmp_disp
-; 0000 0450 
-; 0000 0451    // Pide el ID del Skypatrol para verificar la pantalla
-; 0000 0452    printf("AT$TTDEVID?\n\r");
+; 0000 0458 
+; 0000 0459    // Pide el ID del Skypatrol para verificar la pantalla
+; 0000 045A    printf("AT$TTDEVID?\n\r");
 	CALL SUBOPT_0x1C
-; 0000 0453    delay_us( 500 );
+; 0000 045B    delay_us( 500 );
 	__DELAY_USW 1382
-; 0000 0454    obt();
+; 0000 045C    obt();
 	RCALL _obt
-; 0000 0455 
-; 0000 0456    // Estados iniciales de los botones
-; 0000 0457    bandera1 = 0;
-	CLR  R7
-; 0000 0458    bandera2 = 0;
-	CLR  R10
-; 0000 0459    bandera3 = 0;
-	CLR  R9
-; 0000 045A 
-; 0000 045B     // Forza la autorizacion de la pantalla
-; 0000 045C     act =1;
-	CALL SUBOPT_0x48
 ; 0000 045D 
-; 0000 045E    while (1)
-_0x1BA:
-; 0000 045F    {
-; 0000 0460 
-; 0000 0461       // Verifica la bandera de interrupcion serial
-; 0000 0462       if( BIT_UART == 0 )
-	SBIC 0x1E,1
-	RJMP _0x1BD
-; 0000 0463       {
-; 0000 0464          obt();
-	RCALL _obt
-; 0000 0465          BIT_UART=1;
-	SBI  0x1E,1
-; 0000 0466       }
-; 0000 0467 
-; 0000 0468       // GRAFICA LA RUTA ACTUAL.
-; 0000 0469       glcd_putchar(ruta_aux,79,7,0,1);
+; 0000 045E    // Estados iniciales de los botones
+; 0000 045F    bandera1 = 0;
+	CLR  R9
+; 0000 0460    bandera2 = 0;
+	CLR  R12
+; 0000 0461    bandera3 = 0;
+	CLR  R11
+; 0000 0462 
+; 0000 0463     // Forza la autorizacion de la pantalla
+; 0000 0464     act =1;
+	CALL SUBOPT_0x48
+; 0000 0465 
+; 0000 0466    while (1)
 _0x1BD:
-	ST   -Y,R8
+; 0000 0467    {
+; 0000 0468 
+; 0000 0469       // Verifica la bandera de interrupcion serial
+; 0000 046A       if( BIT_UART == 0 )
+	SBIC 0x1E,1
+	RJMP _0x1C0
+; 0000 046B       {
+; 0000 046C          obt();
+	RCALL _obt
+; 0000 046D          BIT_UART=1;
+	SBI  0x1E,1
+; 0000 046E       }
+; 0000 046F 
+; 0000 0470       // GRAFICA LA RUTA ACTUAL.
+; 0000 0471       glcd_putchar(ruta_aux,79,7,0,1);
+_0x1C0:
+	ST   -Y,R10
 	LDI  R30,LOW(79)
 	LDI  R31,HIGH(79)
 	CALL SUBOPT_0x2E
 	CALL SUBOPT_0x30
 	CALL _glcd_putchar
-; 0000 046A 
-; 0000 046B       boton1();
-	RCALL _boton1
-; 0000 046C 
-; 0000 046D       boton2();
-	RCALL _boton2
-; 0000 046E 
-; 0000 046F       boton3();
-	RCALL _boton3
-; 0000 0470 
-; 0000 0471       boton4();
-	RCALL _boton4
 ; 0000 0472 
-; 0000 0473       dibujar_senal();
-	RCALL _dibujar_senal
+; 0000 0473       boton1();
+	RCALL _boton1
 ; 0000 0474 
-; 0000 0475 
-; 0000 0476       // act = autoirzado
-; 0000 0477       if(act==1)
+; 0000 0475       boton2();
+	RCALL _boton2
+; 0000 0476 
+; 0000 0477       boton3();
+	RCALL _boton3
+; 0000 0478 
+; 0000 0479       boton4();
+	RCALL _boton4
+; 0000 047A 
+; 0000 047B       dibujar_senal();
+	RCALL _dibujar_senal
+; 0000 047C 
+; 0000 047D 
+; 0000 047E       // act = autoirzado
+; 0000 047F       if(act==1)
 	LDS  R26,_act_G000
 	LDS  R27,_act_G000+1
 	SBIW R26,1
 	BREQ PC+3
-	JMP _0x1C0
-; 0000 0478       {
-; 0000 0479          if( gsm == 1)
+	JMP _0x1C3
+; 0000 0480       {
+; 0000 0481          if( gsm == 1)
 	LDS  R26,_gsm
 	LDS  R27,_gsm+1
 	SBIW R26,1
-	BRNE _0x1C1
-; 0000 047A          {
-; 0000 047B             glcd_putchar('E',19,0,1,1);
+	BRNE _0x1C4
+; 0000 0482          {
+; 0000 0483             glcd_putchar('E',19,0,1,1);
 	LDI  R30,LOW(69)
-	RJMP _0x1E4
-; 0000 047C          }else{
-_0x1C1:
-; 0000 047D             glcd_putchar(' ',19,0,1,1);
+	RJMP _0x1EA
+; 0000 0484          }else{
+_0x1C4:
+; 0000 0485             glcd_putchar(' ',19,0,1,1);
 	LDI  R30,LOW(32)
-_0x1E4:
+_0x1EA:
 	ST   -Y,R30
 	LDI  R30,LOW(19)
 	LDI  R31,HIGH(19)
@@ -6402,17 +6413,17 @@ _0x1E4:
 	ST   -Y,R30
 	ST   -Y,R30
 	CALL _glcd_putchar
-; 0000 047E          }
-; 0000 047F 
-; 0000 0480 
-; 0000 0481          // Muestra el reloj al conductor
-; 0000 0482          if(pt==0)
+; 0000 0486          }
+; 0000 0487 
+; 0000 0488 
+; 0000 0489          // Muestra el reloj al conductor
+; 0000 048A          if(pt==0)
 	LDS  R30,_pt
 	CPI  R30,0
 	BREQ PC+3
-	JMP _0x1C3
-; 0000 0483          {
-; 0000 0484             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
+	JMP _0x1C6
+; 0000 048B          {
+; 0000 048C             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
 	LDI  R30,LOW(_reloj)
 	LDI  R31,HIGH(_reloj)
 	ST   -Y,R31
@@ -6433,99 +6444,99 @@ _0x1E4:
 	CALL SUBOPT_0x19
 	CALL SUBOPT_0x29
 	LDI  R24,24
-	RCALL _sprintf
+	CALL _sprintf
 	ADIW R28,28
-; 0000 0485             //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
-; 0000 0486 
-; 0000 0487             // pasa de la eeprom a la flash del micro
-; 0000 0488             _seg  = seg  ;
+; 0000 048D             //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
+; 0000 048E 
+; 0000 048F             // pasa de la eeprom a la flash del micro
+; 0000 0490             _seg  = seg  ;
 	CALL SUBOPT_0x19
 	STS  __seg,R30
-; 0000 0489             _seg1 = seg1 ;    // segundos en unidades y decenas
+; 0000 0491             _seg1 = seg1 ;    // segundos en unidades y decenas
 	CALL SUBOPT_0x1B
 	STS  __seg1,R30
-; 0000 048A             _minu = minu ;
+; 0000 0492             _minu = minu ;
 	CALL SUBOPT_0x20
 	STS  __minu,R30
-; 0000 048B             _min1 = min1 ;    // minutos en unidades y decenas
+; 0000 0493             _min1 = min1 ;    // minutos en unidades y decenas
 	CALL SUBOPT_0x22
 	STS  __min1,R30
-; 0000 048C             _hora = hora ;
+; 0000 0494             _hora = hora ;
 	CALL SUBOPT_0x24
 	STS  __hora,R30
-; 0000 048D             _hora1= hora1;    // hora en unidades y decenas
+; 0000 0495             _hora1= hora1;    // hora en unidades y decenas
 	CALL SUBOPT_0x26
 	STS  __hora1,R30
-; 0000 048E             _dia  = dia  ;
+; 0000 0496             _dia  = dia  ;
 	CALL SUBOPT_0x4E
 	STS  __dia,R30
-; 0000 048F             _dia1 = dia1 ;    // dias en unidades y decenas
+; 0000 0497             _dia1 = dia1 ;    // dias en unidades y decenas
 	LDI  R26,LOW(_dia1)
 	LDI  R27,HIGH(_dia1)
 	CALL __EEPROMRDB
 	STS  __dia1,R30
-; 0000 0490             _mes  = mes  ;
-	CALL SUBOPT_0x54
+; 0000 0498             _mes  = mes  ;
+	CALL SUBOPT_0x55
 	STS  __mes,R30
-; 0000 0491             _mes1 = mes1 ;    // mes en unidades y decenas
+; 0000 0499             _mes1 = mes1 ;    // mes en unidades y decenas
 	LDI  R26,LOW(_mes1)
 	LDI  R27,HIGH(_mes1)
 	CALL __EEPROMRDB
 	STS  __mes1,R30
-; 0000 0492             _an   = an   ;
-	CALL SUBOPT_0x55
+; 0000 049A             _an   = an   ;
+	CALL SUBOPT_0x56
 	STS  __an,R30
-; 0000 0493             _an1  = an1  ;     // anos en unidades y decenas
+; 0000 049B             _an1  = an1  ;     // anos en unidades y decenas
 	LDI  R26,LOW(_an1)
 	LDI  R27,HIGH(_an1)
 	CALL __EEPROMRDB
 	STS  __an1,R30
-; 0000 0494 
-; 0000 0495             num_ruta  = _num_ruta;
+; 0000 049C 
+; 0000 049D             num_ruta  = _num_ruta;
 	LDS  R30,__num_ruta
 	LDI  R26,LOW(_num_ruta)
 	LDI  R27,HIGH(_num_ruta)
 	CALL __EEPROMWRB
-; 0000 0496             laborando = _laborando;
+; 0000 049E             laborando = _laborando;
 	LDS  R30,__laborando
 	LDI  R26,LOW(_laborando)
 	LDI  R27,HIGH(_laborando)
 	CALL __EEPROMWRB
-; 0000 0497 
-; 0000 0498             glcd_puts(reloj,7,2,0,2,-1);
+; 0000 049F 
+; 0000 04A0             glcd_puts(reloj,7,2,0,2,-1);
 	LDI  R30,LOW(_reloj)
 	LDI  R31,HIGH(_reloj)
 	CALL SUBOPT_0x2E
-	CALL SUBOPT_0x56
-	CALL SUBOPT_0x52
-; 0000 0499          }
-; 0000 049A 
-; 0000 049B          //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
-; 0000 049C          else if(pt==1)
-	RJMP _0x1C4
-_0x1C3:
+	CALL SUBOPT_0x57
+	CALL SUBOPT_0x53
+; 0000 04A1          }
+; 0000 04A2 
+; 0000 04A3          //Entra a esta funcion cuando llega un punto de control, verificando por el evento 18  pt=1
+; 0000 04A4          else if(pt==1)
+	RJMP _0x1C7
+_0x1C6:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x1)
-	BRNE _0x1C5
-; 0000 049D          {
-; 0000 049E             glcd_clrln(2);
+	BRNE _0x1C8
+; 0000 04A5          {
+; 0000 04A6             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 049F             glcd_clrln(3);
-; 0000 04A0             glcd_clrln(4);
-; 0000 04A1             glcd_clrln(5);
-; 0000 04A2 
-; 0000 04A3             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 04A7             glcd_clrln(3);
+; 0000 04A8             glcd_clrln(4);
+; 0000 04A9             glcd_clrln(5);
+; 0000 04AA 
+; 0000 04AB             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 04A4 
-; 0000 04A5             glcd_puts(no_pt,48,3,0,2,1);
+; 0000 04AC 
+; 0000 04AD             glcd_puts(no_pt,48,3,0,2,1);
 	LDI  R30,LOW(_no_pt)
 	LDI  R31,HIGH(_no_pt)
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(48)
 	LDI  R31,HIGH(48)
-	CALL SUBOPT_0x57
+	CALL SUBOPT_0x58
 	LDI  R30,LOW(0)
 	ST   -Y,R30
 	LDI  R30,LOW(2)
@@ -6533,370 +6544,388 @@ _0x1C3:
 	LDI  R30,LOW(1)
 	ST   -Y,R30
 	CALL _glcd_puts
-; 0000 04A6             //glcd_puts(nombre_pt,10,2,0,1,-2);
-; 0000 04A7 
-; 0000 04A8             buzz();
-	CALL SUBOPT_0x50
-; 0000 04A9             buzz();
-; 0000 04AA 
-; 0000 04AB             delay_ms(MOSTRAR_NUM_RUTA_MS);
+; 0000 04AE             //glcd_puts(nombre_pt,10,2,0,1,-2);
+; 0000 04AF 
+; 0000 04B0             buzz();
+	CALL SUBOPT_0x51
+; 0000 04B1             buzz();
+; 0000 04B2 
+; 0000 04B3             delay_ms(MOSTRAR_NUM_RUTA_MS);
 	LDI  R30,LOW(2000)
 	LDI  R31,HIGH(2000)
-	RJMP _0x1E5
-; 0000 04AC 
-; 0000 04AD             glcd_clrln(2);
-; 0000 04AE             glcd_clrln(3);
-; 0000 04AF             glcd_clrln(4);
-; 0000 04B0             glcd_clrln(5);
-; 0000 04B1 
-; 0000 04B2             //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 04B3             pt=0;
-; 0000 04B4          }
-; 0000 04B5 
-; 0000 04B6          // CHOFER HA INICIADO SESION
-; 0000 04B7          else if (pt==2){
-_0x1C5:
+	CALL SUBOPT_0x59
+; 0000 04B4 
+; 0000 04B5             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 04B6             glcd_clrln(3);
+; 0000 04B7             glcd_clrln(4);
+; 0000 04B8             glcd_clrln(5);
+; 0000 04B9 
+; 0000 04BA             //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+; 0000 04BB             pt=0;
+	RJMP _0x1EB
+; 0000 04BC          }
+; 0000 04BD 
+; 0000 04BE          // CHOFER HA INICIADO SESION
+; 0000 04BF          else if (pt==2){
+_0x1C8:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x2)
 	BREQ PC+3
-	JMP _0x1C7
-; 0000 04B8             glcd_clrln(2);
+	JMP _0x1CA
+; 0000 04C0             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 04B9             glcd_clrln(3);
-; 0000 04BA             glcd_clrln(4);
-; 0000 04BB             glcd_clrln(5);
-; 0000 04BC 
-; 0000 04BD             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 04C1             glcd_clrln(3);
+; 0000 04C2             glcd_clrln(4);
+; 0000 04C3             glcd_clrln(5);
+; 0000 04C4 
+; 0000 04C5             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 04BE 
-; 0000 04BF             // Simulacion de un inicio de sesion
-; 0000 04C0             glcd_puts("INICIO DE SESION",5,2,0,1,-1);
+; 0000 04C6 
+; 0000 04C7             // Simulacion de un inicio de sesion
+; 0000 04C8             glcd_puts("INICIO DE SESION",5,2,0,1,-1);
 	__POINTW1MN _0x1B1,4
-	CALL SUBOPT_0x53
-	CALL SUBOPT_0x56
+	CALL SUBOPT_0x54
+	CALL SUBOPT_0x57
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 04C1             delay_ms( 500 );
-	CALL SUBOPT_0x58
-; 0000 04C2             glcd_puts("*",45,4,0,1,-1);
+; 0000 04C9             delay_ms( 500 );
+	LDI  R30,LOW(500)
+	LDI  R31,HIGH(500)
+	CALL SUBOPT_0x59
+; 0000 04CA             glcd_puts("*",45,4,0,1,-1);
 	__POINTW1MN _0x1B1,21
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(45)
 	LDI  R31,HIGH(45)
-	CALL SUBOPT_0x59
-	CALL SUBOPT_0x31
-; 0000 04C3             delay_ms( 300 );
 	CALL SUBOPT_0x5A
-; 0000 04C4             glcd_puts("*",53,4,0,1,-1);
+	CALL SUBOPT_0x31
+; 0000 04CB             delay_ms( 300 );
+	CALL SUBOPT_0x5B
+; 0000 04CC             glcd_puts("*",53,4,0,1,-1);
 	__POINTW1MN _0x1B1,23
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(53)
 	LDI  R31,HIGH(53)
-	CALL SUBOPT_0x59
-	CALL SUBOPT_0x31
-; 0000 04C5             delay_ms( 300 );
 	CALL SUBOPT_0x5A
-; 0000 04C6             glcd_puts("*",61,4,0,1,-1);
+	CALL SUBOPT_0x31
+; 0000 04CD             delay_ms( 300 );
+	CALL SUBOPT_0x5B
+; 0000 04CE             glcd_puts("*",61,4,0,1,-1);
 	__POINTW1MN _0x1B1,25
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(61)
 	LDI  R31,HIGH(61)
-	CALL SUBOPT_0x59
-	CALL SUBOPT_0x31
-; 0000 04C7             delay_ms( 300 );
 	CALL SUBOPT_0x5A
-; 0000 04C8             glcd_puts("*",69,4,0,1,-1);
+	CALL SUBOPT_0x31
+; 0000 04CF             delay_ms( 300 );
+	CALL SUBOPT_0x5B
+; 0000 04D0             glcd_puts("*",69,4,0,1,-1);
 	__POINTW1MN _0x1B1,27
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(69)
 	LDI  R31,HIGH(69)
-	CALL SUBOPT_0x59
+	CALL SUBOPT_0x5A
 	CALL SUBOPT_0x31
-; 0000 04C9             delay_ms( 500 );
-	CALL SUBOPT_0x58
-; 0000 04CA 
-; 0000 04CB             buzz();
-	CALL SUBOPT_0x50
-; 0000 04CC             buzz();
-; 0000 04CD 
-; 0000 04CE             delay_ms(MOSTRAR_MSN_ENV_MS);
-	LDI  R30,LOW(1000)
-	LDI  R31,HIGH(1000)
-	RJMP _0x1E5
-; 0000 04CF 
-; 0000 04D0             glcd_clrln(2);
-; 0000 04D1             glcd_clrln(3);
-; 0000 04D2             glcd_clrln(4);
-; 0000 04D3             glcd_clrln(5);
-; 0000 04D4 
-; 0000 04D5             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 04D6          }
+; 0000 04D1             delay_ms( 500 );
+	LDI  R30,LOW(500)
+	LDI  R31,HIGH(500)
+	CALL SUBOPT_0x59
+; 0000 04D2 
+; 0000 04D3             buzz();
+	CALL SUBOPT_0x51
+; 0000 04D4             buzz();
+; 0000 04D5 
+; 0000 04D6             delay_ms(MOSTRAR_MSN_ENV_MS);
+	CALL SUBOPT_0x5C
 ; 0000 04D7 
-; 0000 04D8          // FINALIZO LA RUTA
-; 0000 04D9          else if (pt==3){
-_0x1C7:
+; 0000 04D8             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 04D9             glcd_clrln(3);
+; 0000 04DA             glcd_clrln(4);
+; 0000 04DB             glcd_clrln(5);
+; 0000 04DC 
+; 0000 04DD             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+	RJMP _0x1EB
+; 0000 04DE          }
+; 0000 04DF 
+; 0000 04E0          // FINALIZO LA RUTA
+; 0000 04E1          else if (pt==3){
+_0x1CA:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x3)
-	BRNE _0x1C9
-; 0000 04DA 
-; 0000 04DB             glcd_clrln(2);
+	BRNE _0x1CC
+; 0000 04E2 
+; 0000 04E3             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 04DC             glcd_clrln(3);
-; 0000 04DD             glcd_clrln(4);
-; 0000 04DE             glcd_clrln(5);
-; 0000 04DF             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 04E4             glcd_clrln(3);
+; 0000 04E5             glcd_clrln(4);
+; 0000 04E6             glcd_clrln(5);
+; 0000 04E7             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 04E0 
-; 0000 04E1             glcd_puts("FIN RUTA",28,3,0,1,-1);
+; 0000 04E8 
+; 0000 04E9             glcd_puts("FIN RUTA",28,3,0,1,-1);
 	__POINTW1MN _0x1B1,29
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(28)
 	LDI  R31,HIGH(28)
-	CALL SUBOPT_0x57
+	CALL SUBOPT_0x58
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 04E2 
-; 0000 04E3             buzz();
-	CALL SUBOPT_0x50
-; 0000 04E4             buzz();
-; 0000 04E5 
-; 0000 04E6             delay_ms(1000);
-	LDI  R30,LOW(1000)
-	LDI  R31,HIGH(1000)
-	RJMP _0x1E5
-; 0000 04E7 
-; 0000 04E8             glcd_clrln(2);
-; 0000 04E9             glcd_clrln(3);
-; 0000 04EA             glcd_clrln(4);
-; 0000 04EB             glcd_clrln(5);
-; 0000 04EC             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 04ED          }
-; 0000 04EE 
-; 0000 04EF          else if (pt==4){
-_0x1C9:
+; 0000 04EA 
+; 0000 04EB             buzz();
+	CALL SUBOPT_0x51
+; 0000 04EC             buzz();
+; 0000 04ED 
+; 0000 04EE             delay_ms(1000);
+	CALL SUBOPT_0x5C
+; 0000 04EF 
+; 0000 04F0             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 04F1             glcd_clrln(3);
+; 0000 04F2             glcd_clrln(4);
+; 0000 04F3             glcd_clrln(5);
+; 0000 04F4             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+	RJMP _0x1EB
+; 0000 04F5          }
+; 0000 04F6 
+; 0000 04F7          else if (pt==4){
+_0x1CC:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x4)
-	BRNE _0x1CB
-; 0000 04F0 
-; 0000 04F1             glcd_clrln(2);
+	BRNE _0x1CE
+; 0000 04F8 
+; 0000 04F9             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 04F2             glcd_clrln(3);
-; 0000 04F3             glcd_clrln(4);
-; 0000 04F4             glcd_clrln(5);
-; 0000 04F5             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 04FA             glcd_clrln(3);
+; 0000 04FB             glcd_clrln(4);
+; 0000 04FC             glcd_clrln(5);
+; 0000 04FD             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 04F6 
-; 0000 04F7             glcd_puts("INICIO RUTA",20,3,0,1,-1);
+; 0000 04FE 
+; 0000 04FF             glcd_puts("INICIO RUTA",20,3,0,1,-1);
 	__POINTW1MN _0x1B1,38
-	CALL SUBOPT_0x5B
+	CALL SUBOPT_0x5D
 	LDI  R30,LOW(3)
 	LDI  R31,HIGH(3)
 	ST   -Y,R31
 	ST   -Y,R30
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 04F8             buzz();
-	CALL SUBOPT_0x50
-; 0000 04F9             buzz();
-; 0000 04FA             delay_ms(MOSTRAR_MSN_ENV_MS);
-	LDI  R30,LOW(1000)
-	LDI  R31,HIGH(1000)
-	RJMP _0x1E5
-; 0000 04FB 
-; 0000 04FC             glcd_clrln(2);
-; 0000 04FD             glcd_clrln(3);
-; 0000 04FE             glcd_clrln(4);
-; 0000 04FF             glcd_clrln(5);
-; 0000 0500             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 0501          }
-; 0000 0502          //  CIERRA SESION
-; 0000 0503          else if (pt==5){
-_0x1CB:
-	LDS  R26,_pt
-	CPI  R26,LOW(0x5)
-	BRNE _0x1CD
+; 0000 0500             buzz();
+	CALL SUBOPT_0x51
+; 0000 0501             buzz();
+; 0000 0502             delay_ms(MOSTRAR_MSN_ENV_MS);
+	CALL SUBOPT_0x5C
+; 0000 0503 
 ; 0000 0504             glcd_clrln(2);
 	CALL SUBOPT_0x46
 ; 0000 0505             glcd_clrln(3);
 ; 0000 0506             glcd_clrln(4);
 ; 0000 0507             glcd_clrln(5);
-; 0000 0508 
-; 0000 0509             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 0508             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+	RJMP _0x1EB
+; 0000 0509          }
+; 0000 050A          //  CIERRA SESION
+; 0000 050B          else if (pt==5){
+_0x1CE:
+	LDS  R26,_pt
+	CPI  R26,LOW(0x5)
+	BRNE _0x1D0
+; 0000 050C             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 050D             glcd_clrln(3);
+; 0000 050E             glcd_clrln(4);
+; 0000 050F             glcd_clrln(5);
+; 0000 0510 
+; 0000 0511             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 050A 
-; 0000 050B             glcd_puts(" HA SALIDO",20,2,0,1,-1);
+; 0000 0512 
+; 0000 0513             glcd_puts(" HA SALIDO",20,2,0,1,-1);
 	__POINTW1MN _0x1B1,50
-	CALL SUBOPT_0x5B
-	CALL SUBOPT_0x56
+	CALL SUBOPT_0x5D
+	CALL SUBOPT_0x57
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 050C             glcd_puts("DEL SISTEMA",20,4,0,1,-1);
+; 0000 0514             glcd_puts("DEL SISTEMA",20,4,0,1,-1);
 	__POINTW1MN _0x1B1,61
-	CALL SUBOPT_0x5B
+	CALL SUBOPT_0x5D
 	LDI  R30,LOW(4)
 	LDI  R31,HIGH(4)
 	ST   -Y,R31
 	ST   -Y,R30
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 050D 
-; 0000 050E             buzz();
-	CALL SUBOPT_0x50
-; 0000 050F             buzz();
-; 0000 0510 
-; 0000 0511             delay_ms(MOSTRAR_MSN_ENV_MS);
-	LDI  R30,LOW(1000)
-	LDI  R31,HIGH(1000)
-	RJMP _0x1E5
-; 0000 0512 
-; 0000 0513             glcd_clrln(2);
-; 0000 0514             glcd_clrln(3);
-; 0000 0515             glcd_clrln(4);
-; 0000 0516             glcd_clrln(5);
-; 0000 0517 
-; 0000 0518             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 0519 
-; 0000 051A             // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
-; 0000 051B             //pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 051C          }
-; 0000 051D 
-; 0000 051E          // Debe iniciar sesion // Aun no implementada
-; 0000 051F          else if (pt==6){
-_0x1CD:
+; 0000 0515 
+; 0000 0516             buzz();
+	CALL SUBOPT_0x51
+; 0000 0517             buzz();
+; 0000 0518 
+; 0000 0519             delay_ms(MOSTRAR_MSN_ENV_MS);
+	CALL SUBOPT_0x5C
+; 0000 051A 
+; 0000 051B             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 051C             glcd_clrln(3);
+; 0000 051D             glcd_clrln(4);
+; 0000 051E             glcd_clrln(5);
+; 0000 051F 
+; 0000 0520             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+	RJMP _0x1EB
+; 0000 0521 
+; 0000 0522             // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
+; 0000 0523             //pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+; 0000 0524          }
+; 0000 0525 
+; 0000 0526          // Debe iniciar sesion // Aun no implementada
+; 0000 0527          else if (pt==6){
+_0x1D0:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x6)
-	BRNE _0x1CF
-; 0000 0520             glcd_clrln(2);
+	BRNE _0x1D2
+; 0000 0528             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 0521             glcd_clrln(3);
-; 0000 0522             glcd_clrln(4);
-; 0000 0523             glcd_clrln(5);
-; 0000 0524 
-; 0000 0525             delay_ms(1);
-	CALL SUBOPT_0x34
+; 0000 0529             glcd_clrln(3);
+; 0000 052A             glcd_clrln(4);
+; 0000 052B             glcd_clrln(5);
+; 0000 052C 
+; 0000 052D             delay_ms(1);
+	CALL SUBOPT_0x35
 	CALL _delay_ms
-; 0000 0526 
-; 0000 0527             glcd_puts("NECESITA INICIAR JORNADA",20,2,0,1,-1);
+; 0000 052E 
+; 0000 052F             glcd_puts("NECESITA INICIAR JORNADA",20,2,0,1,-1);
 	__POINTW1MN _0x1B1,73
-	CALL SUBOPT_0x5B
-	CALL SUBOPT_0x56
+	CALL SUBOPT_0x5D
+	CALL SUBOPT_0x57
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0528 
-; 0000 0529             buzz();
-	CALL SUBOPT_0x50
-; 0000 052A             buzz();
-; 0000 052B 
-; 0000 052C             delay_ms(MOSTRAR_MSN_ENV_MS);
-	LDI  R30,LOW(1000)
-	LDI  R31,HIGH(1000)
-	RJMP _0x1E5
-; 0000 052D 
-; 0000 052E             glcd_clrln(2);
-; 0000 052F             glcd_clrln(3);
-; 0000 0530             glcd_clrln(4);
-; 0000 0531             glcd_clrln(5);
-; 0000 0532 
-; 0000 0533             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-; 0000 0534          }
+; 0000 0530 
+; 0000 0531             buzz();
+	CALL SUBOPT_0x51
+; 0000 0532             buzz();
+; 0000 0533 
+; 0000 0534             delay_ms(MOSTRAR_MSN_ENV_MS);
+	CALL SUBOPT_0x5C
 ; 0000 0535 
-; 0000 0536          // Mostrar el texto que llego desde el servidor
-; 0000 0537          else if ( pt == 7)
-_0x1CF:
+; 0000 0536             glcd_clrln(2);
+	CALL SUBOPT_0x46
+; 0000 0537             glcd_clrln(3);
+; 0000 0538             glcd_clrln(4);
+; 0000 0539             glcd_clrln(5);
+; 0000 053A 
+; 0000 053B             pt=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+	RJMP _0x1EB
+; 0000 053C          }
+; 0000 053D 
+; 0000 053E          // Mostrar el texto que llego desde el servidor
+; 0000 053F          else if ( pt == 7)
+_0x1D2:
 	LDS  R26,_pt
 	CPI  R26,LOW(0x7)
-	BRNE _0x1D1
-; 0000 0538          {
-; 0000 0539 
-; 0000 053A             glcd_clrln(2);
+	BRNE _0x1D4
+; 0000 0540          {
+; 0000 0541 
+; 0000 0542             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 053B             glcd_clrln(3);
-; 0000 053C             glcd_clrln(4);
-; 0000 053D             glcd_clrln(5);
-; 0000 053E 
-; 0000 053F             // Falta para hacer mensajes grandes
-; 0000 0540             glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
+; 0000 0543             glcd_clrln(3);
+; 0000 0544             glcd_clrln(4);
+; 0000 0545             glcd_clrln(5);
+; 0000 0546 
+; 0000 0547             // Falta para hacer mensajes grandes
+; 0000 0548             glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
 	LDI  R30,LOW(_txt_glcd_b0)
 	LDI  R31,HIGH(_txt_glcd_b0)
 	ST   -Y,R31
 	ST   -Y,R30
-	CALL SUBOPT_0x34
-	CALL SUBOPT_0x56
+	CALL SUBOPT_0x35
+	CALL SUBOPT_0x57
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0541             delay_ms( DELAY_TXT_SERVIDOR );
+; 0000 0549 
+; 0000 054A             delay_ms( DELAY_TXT_SERVIDOR );
 	LDI  R30,LOW(3000)
 	LDI  R31,HIGH(3000)
-_0x1E5:
-	ST   -Y,R31
-	ST   -Y,R30
-	CALL _delay_ms
-; 0000 0542 
-; 0000 0543             glcd_clrln(2);
+	CALL SUBOPT_0x59
+; 0000 054B 
+; 0000 054C             glcd_clrln(2);
 	CALL SUBOPT_0x46
-; 0000 0544             glcd_clrln(3);
-; 0000 0545             glcd_clrln(4);
-; 0000 0546             glcd_clrln(5);
-; 0000 0547 
-; 0000 0548             pt = 0; // Mostrar el reloj
+; 0000 054D             glcd_clrln(3);
+; 0000 054E             glcd_clrln(4);
+; 0000 054F             glcd_clrln(5);
+; 0000 0550 
+; 0000 0551             // Vacia el buffer
+; 0000 0552            for( j = 0; j < TXT_BUF_SZ; j++ )
+	__GETWRN 16,17,0
+_0x1D6:
+	__CPWRN 16,17,160
+	BRGE _0x1D7
+; 0000 0553               txt_glcd_b0[j] = 0x00;
+	LDI  R26,LOW(_txt_glcd_b0)
+	LDI  R27,HIGH(_txt_glcd_b0)
+	CALL SUBOPT_0x4F
+	__ADDWRN 16,17,1
+	RJMP _0x1D6
+_0x1D7:
+; 0000 0555 pt = 0;
+_0x1EB:
 	LDI  R30,LOW(0)
 	STS  _pt,R30
-; 0000 0549 
-; 0000 054A          }
-; 0000 054B 
-; 0000 054C          // Con senal GPS
-; 0000 054D          if( gps == 'A' )
-_0x1D1:
-_0x1C4:
-	CALL SUBOPT_0x5C
+; 0000 0556 
+; 0000 0557          }
+; 0000 0558 
+; 0000 0559          // Con senal GPS
+; 0000 055A          if( gps == 'A' )
+_0x1D4:
+_0x1C7:
+	CALL SUBOPT_0x5E
 	CPI  R26,LOW(0x41)
 	LDI  R30,HIGH(0x41)
 	CPC  R27,R30
-	BRNE _0x1D2
-; 0000 054E          {
-; 0000 054F             bmp_disp(GPS1,95,0,127,1);
+	BRNE _0x1D8
+; 0000 055B          {
+; 0000 055C             bmp_disp(GPS1,95,0,127,1);
 	LDI  R30,LOW(_GPS1*2)
 	LDI  R31,HIGH(_GPS1*2)
-	RJMP _0x1E6
-; 0000 0550 
-; 0000 0551             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-; 0000 0552             glcd_puts(fecha,34,5,0,1,-1);
-; 0000 0553 
-; 0000 0554          }
-; 0000 0555          // Sin senal GPS
-; 0000 0556          else if (gps == 'V' || gps == '9' )
-_0x1D2:
-	CALL SUBOPT_0x5C
+	RJMP _0x1EC
+; 0000 055D 
+; 0000 055E             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
+; 0000 055F             glcd_puts(fecha,34,5,0,1,-1);
+; 0000 0560 
+; 0000 0561          }
+; 0000 0562          // Sin senal GPS
+; 0000 0563          else if (gps == 'V' || gps == '9' )
+_0x1D8:
+	CALL SUBOPT_0x5E
 	CPI  R26,LOW(0x56)
 	LDI  R30,HIGH(0x56)
 	CPC  R27,R30
-	BREQ _0x1D5
-	CALL SUBOPT_0x5C
+	BREQ _0x1DB
+	CALL SUBOPT_0x5E
 	SBIW R26,57
-_0x1D5:
-; 0000 0557          {
-; 0000 0558             bmp_disp(GPS2,95,0,127,1);
-; 0000 0559 
-; 0000 055A             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-; 0000 055B             glcd_puts(fecha,34,5,0,1,-1);
-; 0000 055C 
-; 0000 055D          }
-; 0000 055E          else
-; 0000 055F          {
-; 0000 0560             bmp_disp(GPS2,95,0,127,1);
-_0x1E7:
+_0x1DB:
+; 0000 0564          {
+; 0000 0565             bmp_disp(GPS2,95,0,127,1);
+; 0000 0566 
+; 0000 0567             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
+; 0000 0568             glcd_puts(fecha,34,5,0,1,-1);
+; 0000 0569 
+; 0000 056A          }
+; 0000 056B          else
+; 0000 056C          {
+; 0000 056D             bmp_disp(GPS2,95,0,127,1);
+_0x1ED:
 	LDI  R30,LOW(_GPS2*2)
 	LDI  R31,HIGH(_GPS2*2)
-_0x1E6:
+_0x1EC:
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(95)
@@ -6906,9 +6935,9 @@ _0x1E6:
 	LDI  R31,HIGH(127)
 	ST   -Y,R31
 	ST   -Y,R30
-	CALL SUBOPT_0x34
+	CALL SUBOPT_0x35
 	CALL _bmp_disp
-; 0000 0561             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
+; 0000 056E             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
 	LDI  R30,LOW(_fecha)
 	LDI  R31,HIGH(_fecha)
 	ST   -Y,R31
@@ -6918,76 +6947,76 @@ _0x1E6:
 	ST   -Y,R30
 	LDI  R26,LOW(_an1)
 	LDI  R27,HIGH(_an1)
-	CALL SUBOPT_0x5D
-	CALL SUBOPT_0x55
+	CALL SUBOPT_0x5F
+	CALL SUBOPT_0x56
 	CALL SUBOPT_0x29
 	LDI  R26,LOW(_mes1)
 	LDI  R27,HIGH(_mes1)
-	CALL SUBOPT_0x5D
-	CALL SUBOPT_0x54
+	CALL SUBOPT_0x5F
+	CALL SUBOPT_0x55
 	CALL SUBOPT_0x29
 	LDI  R26,LOW(_dia1)
 	LDI  R27,HIGH(_dia1)
-	CALL SUBOPT_0x5D
+	CALL SUBOPT_0x5F
 	CALL SUBOPT_0x4E
 	CALL SUBOPT_0x29
 	LDI  R24,24
 	RCALL _sprintf
 	ADIW R28,28
-; 0000 0562             glcd_puts(fecha,34,5,0,1,-1);
+; 0000 056F             glcd_puts(fecha,34,5,0,1,-1);
 	LDI  R30,LOW(_fecha)
 	LDI  R31,HIGH(_fecha)
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(34)
 	LDI  R31,HIGH(34)
-	CALL SUBOPT_0x53
+	CALL SUBOPT_0x54
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0563          }
-; 0000 0564       }
-; 0000 0565 
-; 0000 0566       else
-	RJMP _0x1D8
-_0x1C0:
-; 0000 0567       {
-; 0000 0568          glcd_puts("Pantalla",30,2,0,1,-1);
+; 0000 0570          }
+; 0000 0571       }
+; 0000 0572 
+; 0000 0573       else
+	RJMP _0x1DE
+_0x1C3:
+; 0000 0574       {
+; 0000 0575          glcd_puts("Pantalla",30,2,0,1,-1);
 	__POINTW1MN _0x1B1,98
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(30)
 	LDI  R31,HIGH(30)
-	CALL SUBOPT_0x51
+	CALL SUBOPT_0x52
 	CALL SUBOPT_0x30
 	CALL SUBOPT_0x31
-; 0000 0569          glcd_puts("No Autorizada",15,4,0,1,-1);
+; 0000 0576          glcd_puts("No Autorizada",15,4,0,1,-1);
 	__POINTW1MN _0x1B1,107
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(15)
 	LDI  R31,HIGH(15)
-	CALL SUBOPT_0x59
+	CALL SUBOPT_0x5A
 	CALL SUBOPT_0x31
-; 0000 056A       }
-_0x1D8:
-; 0000 056B 
-; 0000 056C          bmp_disp(frente,105,5,127,7);
+; 0000 0577       }
+_0x1DE:
+; 0000 0578 
+; 0000 0579          bmp_disp(frente,105,5,127,7);
 	LDI  R30,LOW(_frente*2)
 	LDI  R31,HIGH(_frente*2)
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(105)
 	LDI  R31,HIGH(105)
-	CALL SUBOPT_0x53
+	CALL SUBOPT_0x54
 	LDI  R30,LOW(127)
 	LDI  R31,HIGH(127)
 	CALL SUBOPT_0x2E
 	CALL _bmp_disp
-; 0000 056D    } // Fin del While
-	RJMP _0x1BA
-; 0000 056E }
-_0x1D9:
-	RJMP _0x1D9
+; 0000 057A    } // Fin del While
+	RJMP _0x1BD
+; 0000 057B }
+_0x1DF:
+	RJMP _0x1DF
 
 	.DSEG
 _0x1B1:
@@ -7105,7 +7134,7 @@ _0x200001C:
 	LDI  R17,LOW(1)
 	RJMP _0x2000024
 _0x2000023:
-	CALL SUBOPT_0x5E
+	CALL SUBOPT_0x60
 _0x2000024:
 	RJMP _0x2000021
 _0x2000022:
@@ -7113,7 +7142,7 @@ _0x2000022:
 	BRNE _0x2000025
 	CPI  R18,37
 	BRNE _0x2000026
-	CALL SUBOPT_0x5E
+	CALL SUBOPT_0x60
 	RJMP _0x20000CF
 _0x2000026:
 	LDI  R17,LOW(2)
@@ -7170,26 +7199,26 @@ _0x200002F:
 	MOV  R30,R18
 	CPI  R30,LOW(0x63)
 	BRNE _0x2000035
-	CALL SUBOPT_0x5F
+	CALL SUBOPT_0x61
 	LDD  R30,Y+16
 	LDD  R31,Y+16+1
 	LDD  R26,Z+4
 	ST   -Y,R26
-	CALL SUBOPT_0x60
+	CALL SUBOPT_0x62
 	RJMP _0x2000036
 _0x2000035:
 	CPI  R30,LOW(0x73)
 	BRNE _0x2000038
-	CALL SUBOPT_0x5F
 	CALL SUBOPT_0x61
+	CALL SUBOPT_0x63
 	CALL _strlen
 	MOV  R17,R30
 	RJMP _0x2000039
 _0x2000038:
 	CPI  R30,LOW(0x70)
 	BRNE _0x200003B
-	CALL SUBOPT_0x5F
 	CALL SUBOPT_0x61
+	CALL SUBOPT_0x63
 	CALL _strlenf
 	MOV  R17,R30
 	ORI  R16,LOW(8)
@@ -7234,8 +7263,8 @@ _0x2000046:
 _0x2000043:
 	SBRS R16,2
 	RJMP _0x2000048
-	CALL SUBOPT_0x5F
-	CALL SUBOPT_0x62
+	CALL SUBOPT_0x61
+	CALL SUBOPT_0x64
 	LDD  R26,Y+11
 	TST  R26
 	BRPL _0x2000049
@@ -7255,8 +7284,8 @@ _0x200004A:
 _0x200004B:
 	RJMP _0x200004C
 _0x2000048:
-	CALL SUBOPT_0x5F
-	CALL SUBOPT_0x62
+	CALL SUBOPT_0x61
+	CALL SUBOPT_0x64
 _0x200004C:
 _0x200003C:
 	SBRC R16,0
@@ -7279,7 +7308,7 @@ _0x2000053:
 _0x2000051:
 	LDI  R18,LOW(32)
 _0x2000054:
-	CALL SUBOPT_0x5E
+	CALL SUBOPT_0x60
 	SUBI R21,LOW(1)
 	RJMP _0x200004E
 _0x2000050:
@@ -7305,7 +7334,7 @@ _0x2000059:
 	STD  Y+6,R26
 	STD  Y+6+1,R27
 _0x200005A:
-	CALL SUBOPT_0x5E
+	CALL SUBOPT_0x60
 	CPI  R21,0
 	BREQ _0x200005B
 	SUBI R21,LOW(1)
@@ -7384,7 +7413,7 @@ _0x20000D0:
 	RJMP _0x2000070
 	ANDI R16,LOW(251)
 	ST   -Y,R20
-	CALL SUBOPT_0x60
+	CALL SUBOPT_0x62
 	CPI  R21,0
 	BREQ _0x2000071
 	SUBI R21,LOW(1)
@@ -7392,7 +7421,7 @@ _0x2000071:
 _0x2000070:
 _0x200006F:
 _0x2000067:
-	CALL SUBOPT_0x5E
+	CALL SUBOPT_0x60
 	CPI  R21,0
 	BREQ _0x2000072
 	SUBI R21,LOW(1)
@@ -7414,7 +7443,7 @@ _0x2000074:
 	SUBI R21,LOW(1)
 	LDI  R30,LOW(32)
 	ST   -Y,R30
-	CALL SUBOPT_0x60
+	CALL SUBOPT_0x62
 	RJMP _0x2000074
 _0x2000076:
 _0x2000073:
@@ -7436,7 +7465,7 @@ _sprintf:
 	MOV  R15,R24
 	SBIW R28,6
 	CALL __SAVELOCR4
-	CALL SUBOPT_0x63
+	CALL SUBOPT_0x65
 	SBIW R30,0
 	BRNE _0x2000078
 	LDI  R30,LOW(65535)
@@ -7447,7 +7476,7 @@ _0x2000078:
 	ADIW R26,6
 	CALL __ADDW2R15
 	MOVW R16,R26
-	CALL SUBOPT_0x63
+	CALL SUBOPT_0x65
 	STD  Y+6,R30
 	STD  Y+6+1,R31
 	LDI  R30,LOW(0)
@@ -7455,7 +7484,7 @@ _0x2000078:
 	STD  Y+8+1,R30
 	MOVW R26,R28
 	ADIW R26,10
-	CALL SUBOPT_0x64
+	CALL SUBOPT_0x66
 	LDI  R30,LOW(_put_buff_G100)
 	LDI  R31,HIGH(_put_buff_G100)
 	ST   -Y,R31
@@ -7493,7 +7522,7 @@ _printf:
 	STD  Y+6+1,R30
 	MOVW R26,R28
 	ADIW R26,8
-	CALL SUBOPT_0x64
+	CALL SUBOPT_0x66
 	LDI  R30,LOW(_put_usart_G100)
 	LDI  R31,HIGH(_put_usart_G100)
 	ST   -Y,R31
@@ -7559,10 +7588,16 @@ _prevY_G000:
 	.BYTE 0x1
 _rx_b0:
 	.BYTE 0xC8
+_txt_glcd_b0:
+	.BYTE 0xA0
 _NOMBRE_DISP:
 	.BYTE 0x5
 _NUM_DISP:
 	.BYTE 0x5
+_aceptar:
+	.BYTE 0x1
+_btn1:
+	.BYTE 0x1
 _btn2:
 	.BYTE 0x1
 _btn4:
@@ -7591,12 +7626,6 @@ _decenas_ruta:
 	.BYTE 0x2
 _centenas_ruta:
 	.BYTE 0x2
-_txt_glcd_b0:
-	.BYTE 0x66
-_i_txt_glcd:
-	.BYTE 0x1
-_i_txt_overflow:
-	.BYTE 0x1
 _time_count_G000:
 	.BYTE 0x2
 _act_G000:
@@ -8172,8 +8201,15 @@ SUBOPT_0x31:
 	ST   -Y,R30
 	JMP  _glcd_puts
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
 SUBOPT_0x32:
+	LDI  R30,LOW(15)
+	STS  _btn2,R30
+	LDI  R30,LOW(0)
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+SUBOPT_0x33:
 	LDI  R30,LOW(200)
 	LDI  R31,HIGH(200)
 	ST   -Y,R31
@@ -8181,7 +8217,7 @@ SUBOPT_0x32:
 	JMP  _delay_ms
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x33:
+SUBOPT_0x34:
 	LDI  R30,LOW(20)
 	LDI  R31,HIGH(20)
 	ST   -Y,R31
@@ -8189,7 +8225,7 @@ SUBOPT_0x33:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 9 TIMES, CODE SIZE REDUCTION:13 WORDS
-SUBOPT_0x34:
+SUBOPT_0x35:
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	ST   -Y,R31
@@ -8197,46 +8233,39 @@ SUBOPT_0x34:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0x35:
+SUBOPT_0x36:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,0
 	LD   R26,Z
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0x36:
+SUBOPT_0x37:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,1
 	LD   R26,Z
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 6 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0x37:
+SUBOPT_0x38:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,2
 	LD   R26,Z
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x38:
+SUBOPT_0x39:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,3
 	LD   R26,Z
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x39:
+SUBOPT_0x3A:
 	MOVW R30,R16
 	__ADDW1MN _rx_b0,4
 	LD   R26,Z
 	RET
-
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x3A:
-	MOVW R26,R16
-	ADIW R26,7
-	LDS  R30,_i_txt_glcd
-	RJMP SUBOPT_0xC
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:7 WORDS
 SUBOPT_0x3B:
@@ -8331,7 +8360,7 @@ SUBOPT_0x45:
 	__ADDW1MN _rx_b0,5
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 9 TIMES, CODE SIZE REDUCTION:109 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 15 TIMES, CODE SIZE REDUCTION:193 WORDS
 SUBOPT_0x46:
 	LDI  R30,LOW(2)
 	ST   -Y,R30
@@ -8406,20 +8435,28 @@ SUBOPT_0x4E:
 	CALL __EEPROMRDB
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:5 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
 SUBOPT_0x4F:
+	ADD  R26,R16
+	ADC  R27,R17
+	LDI  R30,LOW(0)
+	ST   X,R30
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:5 WORDS
+SUBOPT_0x50:
 	ST   -Y,R31
 	ST   -Y,R30
 	CALL _delay_ms
 	JMP  _glcd_clear
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 7 TIMES, CODE SIZE REDUCTION:9 WORDS
-SUBOPT_0x50:
+SUBOPT_0x51:
 	CALL _buzz
 	JMP  _buzz
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x51:
+SUBOPT_0x52:
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(2)
@@ -8429,7 +8466,7 @@ SUBOPT_0x51:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x52:
+SUBOPT_0x53:
 	LDI  R30,LOW(0)
 	ST   -Y,R30
 	LDI  R30,LOW(2)
@@ -8437,27 +8474,27 @@ SUBOPT_0x52:
 	RJMP SUBOPT_0x31
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x53:
+SUBOPT_0x54:
 	ST   -Y,R31
 	ST   -Y,R30
 	RJMP SUBOPT_0x2D
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x54:
+SUBOPT_0x55:
 	LDI  R26,LOW(_mes)
 	LDI  R27,HIGH(_mes)
 	CALL __EEPROMRDB
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x55:
+SUBOPT_0x56:
 	LDI  R26,LOW(_an)
 	LDI  R27,HIGH(_an)
 	CALL __EEPROMRDB
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x56:
+SUBOPT_0x57:
 	LDI  R30,LOW(2)
 	LDI  R31,HIGH(2)
 	ST   -Y,R31
@@ -8465,7 +8502,7 @@ SUBOPT_0x56:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x57:
+SUBOPT_0x58:
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(3)
@@ -8474,16 +8511,14 @@ SUBOPT_0x57:
 	ST   -Y,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x58:
-	LDI  R30,LOW(500)
-	LDI  R31,HIGH(500)
+;OPTIMIZER ADDED SUBROUTINE, CALLED 12 TIMES, CODE SIZE REDUCTION:19 WORDS
+SUBOPT_0x59:
 	ST   -Y,R31
 	ST   -Y,R30
 	JMP  _delay_ms
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:21 WORDS
-SUBOPT_0x59:
+SUBOPT_0x5A:
 	ST   -Y,R31
 	ST   -Y,R30
 	LDI  R30,LOW(4)
@@ -8492,33 +8527,37 @@ SUBOPT_0x59:
 	ST   -Y,R30
 	RJMP SUBOPT_0x30
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:5 WORDS
-SUBOPT_0x5A:
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
+SUBOPT_0x5B:
 	LDI  R30,LOW(300)
 	LDI  R31,HIGH(300)
-	ST   -Y,R31
-	ST   -Y,R30
-	JMP  _delay_ms
+	RJMP SUBOPT_0x59
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:5 WORDS
+SUBOPT_0x5C:
+	LDI  R30,LOW(1000)
+	LDI  R31,HIGH(1000)
+	RJMP SUBOPT_0x59
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:3 WORDS
-SUBOPT_0x5B:
+SUBOPT_0x5D:
 	ST   -Y,R31
 	ST   -Y,R30
-	RJMP SUBOPT_0x33
+	RJMP SUBOPT_0x34
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x5C:
+SUBOPT_0x5E:
 	LDS  R26,_gps
 	LDS  R27,_gps+1
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x5D:
+SUBOPT_0x5F:
 	CALL __EEPROMRDB
 	RJMP SUBOPT_0x29
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:21 WORDS
-SUBOPT_0x5E:
+SUBOPT_0x60:
 	ST   -Y,R18
 	LDD  R30,Y+13
 	LDD  R31,Y+13+1
@@ -8530,7 +8569,7 @@ SUBOPT_0x5E:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:9 WORDS
-SUBOPT_0x5F:
+SUBOPT_0x61:
 	LDD  R30,Y+16
 	LDD  R31,Y+16+1
 	SBIW R30,4
@@ -8539,7 +8578,7 @@ SUBOPT_0x5F:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:7 WORDS
-SUBOPT_0x60:
+SUBOPT_0x62:
 	LDD  R30,Y+13
 	LDD  R31,Y+13+1
 	ST   -Y,R31
@@ -8550,7 +8589,7 @@ SUBOPT_0x60:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:6 WORDS
-SUBOPT_0x61:
+SUBOPT_0x63:
 	LDD  R26,Y+16
 	LDD  R27,Y+16+1
 	ADIW R26,4
@@ -8562,7 +8601,7 @@ SUBOPT_0x61:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
-SUBOPT_0x62:
+SUBOPT_0x64:
 	LDD  R26,Y+16
 	LDD  R27,Y+16+1
 	ADIW R26,4
@@ -8572,7 +8611,7 @@ SUBOPT_0x62:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x63:
+SUBOPT_0x65:
 	MOVW R26,R28
 	ADIW R26,12
 	CALL __ADDW2R15
@@ -8580,7 +8619,7 @@ SUBOPT_0x63:
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
-SUBOPT_0x64:
+SUBOPT_0x66:
 	CALL __ADDW2R15
 	CALL __GETW1P
 	ST   -Y,R31
