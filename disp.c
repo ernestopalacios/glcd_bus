@@ -5,7 +5,7 @@
  *  Programadores:  Vicente Q &&              *
  *                  Ernesto P &&              *
  *                  David Novillo             *
- *  version:        0.8.9.5                   *
+ *  version:        0.8.9.6                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
