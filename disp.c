@@ -854,7 +854,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   }
                   else {
                      
-                  act=0;  // PANTALLA INCORRECTA !!!
+                  act=1;  // PANTALLA INCORRECTA !!!
                   }
                               
                }

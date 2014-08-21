@@ -4824,7 +4824,7 @@ _0xFA:
 ;PCODE: $00000EC1 VOL: 0
 ;PCODE: $00000EC2 VOL: 0
 ; 0000 0358 
-; 0000 0359                   act=0;  // PANTALLA INCORRECTA !!!
+; 0000 0359                   act=1;  // PANTALLA INCORRECTA !!!
 ;PCODE: $00000EC3 VOL: 0
 ;PCODE: $00000EC4 VOL: 0
 ; 0000 035A                   }
