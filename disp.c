@@ -1098,13 +1098,13 @@ void main(void)
       else
          _num_ruta = num_ruta;
 
-      if (laborando == 0xff) 
+      if (laborando > 2) 
       {
          laborando = 0;
          _laborando= 0;
       }
-      else
-         _laborando = laborando;
+      //else
+      //   _laborando = laborando;
 
       // Limpia el buffer de mensaje recibido
       for( j = 0; j < TXT_BUF_SZ; j++ )
@@ -1360,7 +1360,34 @@ void main(void)
             
             delay_ms( DELAY_TXT_SERVIDOR );
 
+            while( BT1 &&
+                    BT2 &&
+                     BT3 &&
+                      BT4 &&
+                       BT5 )
+            {
+               // Espera a que se presione un boton cualquiera
+               delay_ms(DELAY_BOTONES_MS);
+            }
+
             glcd_clear(); 
+            delay_ms( DELAY_BOTONES_MS );
+
+            if ( _laborando == 1)
+            {
+               //Muestra el chofer y la ruta
+               bmp_disp(chofer,0,5,35,7); 
+               glcd_puts("RUTA:",44,7,0,1,-1);
+            }else{
+               //Muestra el bus sin chofer
+               bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+               // Borra el caracter de la carrera
+               glcd_putchar(' ',79,7,0,1); 
+               // Borra una trama de caracteres RUTA:
+               glcd_puts("      ",44,7,0,1,-1); 
+
+            }
+
 
             printf("AT+CSQ\n\r"); // Vuelve a dibujar la senal
 

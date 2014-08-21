@@ -22,7 +22,7 @@ EditorPanel0=0
 PageIndex0=0
 EditorPanel1=0
 <<<<<<< HEAD
-TimeStamp1=1159035882
+TimeStamp1=1159041373
 =======
 TimeStamp1=1159031036
 >>>>>>> mensaje_glcd
@@ -146,7 +146,7 @@ WarningUnknownPragma=1
 DebugBootLoader=0
 WatchAVR8LAutoVariables=0
 <<<<<<< HEAD
-Build=1603
+Build=1609
 =======
 Build=1612
 >>>>>>> mensaje_glcd
@@ -340,9 +340,9 @@ BK8=-1
 BK9=-1
 [Bookmarks2]
 <<<<<<< HEAD
-TimeStamp=1159035882
-Row=9
-Column=21
+TimeStamp=1159041373
+Row=0
+Column=0
 =======
 TimeStamp=1159031036
 Row=0
@@ -366,7 +366,7 @@ Column=0
 ScrollPosX=0
 ScrollPosY=0
 <<<<<<< HEAD
-TimeStamp=1159035923
+TimeStamp=1159041392
 =======
 TimeStamp=1159031047
 >>>>>>> mensaje_glcd
