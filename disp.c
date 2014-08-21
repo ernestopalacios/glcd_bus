@@ -62,7 +62,7 @@
    typedef char int8;    //sirve para definir enteros consigno de 8
 
    #define NOMBRE_PANTALLA       "SITU"
-   #define NUMERO_PANTALLA       "1697"
+   #define NUMERO_PANTALLA       "8888"
    #define DELAY_BUZZER_MS          100
    #define DELAY_BOTONES_MS         200
    #define INIT_DELAY_GLCD_MS        10

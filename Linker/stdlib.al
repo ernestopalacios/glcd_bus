@@ -104,369 +104,377 @@ __atoi0:
 ;PCODE: $0000003B VOL: 0
    	ld   r30,x
 ;PCODE: $0000003C VOL: 0
+        mov  r24,r26
 ;PCODE: $0000003D VOL: 0
 ;PCODE: $0000003E VOL: 0
 ;PCODE: $0000003F VOL: 0
 ;PCODE: $00000040 VOL: 0
-   	tst  r30
 ;PCODE: $00000041 VOL: 0
-   	breq __atoi1
+        mov  r26,r24
 ;PCODE: $00000042 VOL: 0
-   	adiw r26,1
+   	tst  r30
 ;PCODE: $00000043 VOL: 0
-   	rjmp __atoi0
+   	breq __atoi1
 ;PCODE: $00000044 VOL: 0
-__atoi1:
-;PCODE: $00000045 VOL: 0
-   	clt
-;PCODE: $00000046 VOL: 0
-   	ld   r30,x
-;PCODE: $00000047 VOL: 0
-   	cpi  r30,'-'
-;PCODE: $00000048 VOL: 0
-   	brne __atoi2
-;PCODE: $00000049 VOL: 0
-   	set
-;PCODE: $0000004A VOL: 0
-   	rjmp __atoi3
-;PCODE: $0000004B VOL: 0
-__atoi2:
-;PCODE: $0000004C VOL: 0
-   	cpi  r30,'+'
-;PCODE: $0000004D VOL: 0
-   	brne __atoi4
-;PCODE: $0000004E VOL: 0
-__atoi3:
-;PCODE: $0000004F VOL: 0
    	adiw r26,1
-;PCODE: $00000050 VOL: 0
-__atoi4:
-;PCODE: $00000051 VOL: 0
-   	clr  r22
-;PCODE: $00000052 VOL: 0
-   	clr  r23
-;PCODE: $00000053 VOL: 0
-__atoi5:
-;PCODE: $00000054 VOL: 0
+;PCODE: $00000045 VOL: 0
+   	rjmp __atoi0
+;PCODE: $00000046 VOL: 0
+__atoi1:
+;PCODE: $00000047 VOL: 0
+   	clt
+;PCODE: $00000048 VOL: 0
    	ld   r30,x
+;PCODE: $00000049 VOL: 0
+   	cpi  r30,'-'
+;PCODE: $0000004A VOL: 0
+   	brne __atoi2
+;PCODE: $0000004B VOL: 0
+   	set
+;PCODE: $0000004C VOL: 0
+   	rjmp __atoi3
+;PCODE: $0000004D VOL: 0
+__atoi2:
+;PCODE: $0000004E VOL: 0
+   	cpi  r30,'+'
+;PCODE: $0000004F VOL: 0
+   	brne __atoi4
+;PCODE: $00000050 VOL: 0
+__atoi3:
+;PCODE: $00000051 VOL: 0
+   	adiw r26,1
+;PCODE: $00000052 VOL: 0
+__atoi4:
+;PCODE: $00000053 VOL: 0
+   	clr  r22
+;PCODE: $00000054 VOL: 0
+   	clr  r23
 ;PCODE: $00000055 VOL: 0
+__atoi5:
 ;PCODE: $00000056 VOL: 0
+   	ld   r30,x
 ;PCODE: $00000057 VOL: 0
+        mov  r24,r26
 ;PCODE: $00000058 VOL: 0
 ;PCODE: $00000059 VOL: 0
-   	tst  r30
 ;PCODE: $0000005A VOL: 0
-   	breq __atoi6
 ;PCODE: $0000005B VOL: 0
-   	movw r30,r22
 ;PCODE: $0000005C VOL: 0
-   	lsl  r22
+        mov  r26,r24
 ;PCODE: $0000005D VOL: 0
-   	rol  r23
+   	tst  r30
 ;PCODE: $0000005E VOL: 0
-   	lsl  r22
+   	breq __atoi6
 ;PCODE: $0000005F VOL: 0
-   	rol  r23
+   	movw r30,r22
 ;PCODE: $00000060 VOL: 0
-   	add  r22,r30
+   	lsl  r22
 ;PCODE: $00000061 VOL: 0
-   	adc  r23,r31
+   	rol  r23
 ;PCODE: $00000062 VOL: 0
    	lsl  r22
 ;PCODE: $00000063 VOL: 0
    	rol  r23
 ;PCODE: $00000064 VOL: 0
-   	ld   r30,x+
-;PCODE: $00000065 VOL: 0
-   	clr  r31
-;PCODE: $00000066 VOL: 0
-   	subi r30,'0'
-;PCODE: $00000067 VOL: 0
    	add  r22,r30
-;PCODE: $00000068 VOL: 0
+;PCODE: $00000065 VOL: 0
    	adc  r23,r31
+;PCODE: $00000066 VOL: 0
+   	lsl  r22
+;PCODE: $00000067 VOL: 0
+   	rol  r23
+;PCODE: $00000068 VOL: 0
+   	ld   r30,x+
 ;PCODE: $00000069 VOL: 0
-   	rjmp __atoi5
+   	clr  r31
 ;PCODE: $0000006A VOL: 0
-__atoi6:
+   	subi r30,'0'
 ;PCODE: $0000006B VOL: 0
-   	movw r30,r22
+   	add  r22,r30
 ;PCODE: $0000006C VOL: 0
-   	brtc __atoi7
+   	adc  r23,r31
 ;PCODE: $0000006D VOL: 0
-   	com  r30
+   	rjmp __atoi5
 ;PCODE: $0000006E VOL: 0
-   	com  r31
+__atoi6:
 ;PCODE: $0000006F VOL: 0
-   	adiw r30,1
+   	movw r30,r22
 ;PCODE: $00000070 VOL: 0
-__atoi7:
+   	brtc __atoi7
 ;PCODE: $00000071 VOL: 0
-   	adiw r28,2
+   	com  r30
 ;PCODE: $00000072 VOL: 0
-   	ret
+   	com  r31
 ;PCODE: $00000073 VOL: 0
+   	adiw r30,1
 ;PCODE: $00000074 VOL: 0
+__atoi7:
 ;PCODE: $00000075 VOL: 0
+   	adiw r28,2
 ;PCODE: $00000076 VOL: 0
+   	ret
 ;PCODE: $00000077 VOL: 0
-    ldd  r27,y+1
 ;PCODE: $00000078 VOL: 0
-    ld   r26,y
 ;PCODE: $00000079 VOL: 0
-__atol0:
 ;PCODE: $0000007A VOL: 0
-    ld   r30,x
 ;PCODE: $0000007B VOL: 0
+    ldd  r27,y+1
 ;PCODE: $0000007C VOL: 0
+    ld   r26,y
 ;PCODE: $0000007D VOL: 0
+__atol0:
 ;PCODE: $0000007E VOL: 0
+    ld   r30,x
 ;PCODE: $0000007F VOL: 0
-    tst  r30
+    push r26
 ;PCODE: $00000080 VOL: 0
-    breq __atol1
 ;PCODE: $00000081 VOL: 0
-    adiw r26,1
 ;PCODE: $00000082 VOL: 0
-    rjmp __atol0
 ;PCODE: $00000083 VOL: 0
-__atol1:
 ;PCODE: $00000084 VOL: 0
-    clt
+    pop  r26
 ;PCODE: $00000085 VOL: 0
-    ld   r30,x
-;PCODE: $00000086 VOL: 0
-    cpi  r30,'-'
-;PCODE: $00000087 VOL: 0
-    brne __atol2
-;PCODE: $00000088 VOL: 0
-    set
-;PCODE: $00000089 VOL: 0
-    rjmp __atol3
-;PCODE: $0000008A VOL: 0
-__atol2:
-;PCODE: $0000008B VOL: 0
-    cpi  r30,'+'
-;PCODE: $0000008C VOL: 0
-    brne __atol4
-;PCODE: $0000008D VOL: 0
-__atol3:
-;PCODE: $0000008E VOL: 0
-    adiw r26,1
-;PCODE: $0000008F VOL: 0
-__atol4:
-;PCODE: $00000090 VOL: 0
-    clr  r0
-;PCODE: $00000091 VOL: 0
-    clr  r1
-;PCODE: $00000092 VOL: 0
-    clr  r24
-;PCODE: $00000093 VOL: 0
-    clr  r25
-;PCODE: $00000094 VOL: 0
-__atol5:
-;PCODE: $00000095 VOL: 0
-    ld   r30,x
-;PCODE: $00000096 VOL: 0
-;PCODE: $00000097 VOL: 0
-;PCODE: $00000098 VOL: 0
-;PCODE: $00000099 VOL: 0
-;PCODE: $0000009A VOL: 0
     tst  r30
+;PCODE: $00000086 VOL: 0
+    breq __atol1
+;PCODE: $00000087 VOL: 0
+    adiw r26,1
+;PCODE: $00000088 VOL: 0
+    rjmp __atol0
+;PCODE: $00000089 VOL: 0
+__atol1:
+;PCODE: $0000008A VOL: 0
+    clt
+;PCODE: $0000008B VOL: 0
+    ld   r30,x
+;PCODE: $0000008C VOL: 0
+    cpi  r30,'-'
+;PCODE: $0000008D VOL: 0
+    brne __atol2
+;PCODE: $0000008E VOL: 0
+    set
+;PCODE: $0000008F VOL: 0
+    rjmp __atol3
+;PCODE: $00000090 VOL: 0
+__atol2:
+;PCODE: $00000091 VOL: 0
+    cpi  r30,'+'
+;PCODE: $00000092 VOL: 0
+    brne __atol4
+;PCODE: $00000093 VOL: 0
+__atol3:
+;PCODE: $00000094 VOL: 0
+    adiw r26,1
+;PCODE: $00000095 VOL: 0
+__atol4:
+;PCODE: $00000096 VOL: 0
+    clr  r0
+;PCODE: $00000097 VOL: 0
+    clr  r1
+;PCODE: $00000098 VOL: 0
+    clr  r24
+;PCODE: $00000099 VOL: 0
+    clr  r25
+;PCODE: $0000009A VOL: 0
+__atol5:
 ;PCODE: $0000009B VOL: 0
-    breq __atol6
+    ld   r30,x
 ;PCODE: $0000009C VOL: 0
-    movw r30,r0
+    push r26
 ;PCODE: $0000009D VOL: 0
-    movw r22,r24
 ;PCODE: $0000009E VOL: 0
-    rcall __atol8
 ;PCODE: $0000009F VOL: 0
-    rcall __atol8
 ;PCODE: $000000A0 VOL: 0
-    add  r0,r30
 ;PCODE: $000000A1 VOL: 0
-    adc  r1,r31
+    pop  r26
 ;PCODE: $000000A2 VOL: 0
-    adc  r24,r22
+    tst  r30
 ;PCODE: $000000A3 VOL: 0
-    adc  r25,r23
+    breq __atol6
 ;PCODE: $000000A4 VOL: 0
-    rcall __atol8
+    movw r30,r0
 ;PCODE: $000000A5 VOL: 0
-    ld   r30,x+
+    movw r22,r24
 ;PCODE: $000000A6 VOL: 0
-    clr  r31
+    rcall __atol8
 ;PCODE: $000000A7 VOL: 0
-    subi r30,'0'
+    rcall __atol8
 ;PCODE: $000000A8 VOL: 0
     add  r0,r30
 ;PCODE: $000000A9 VOL: 0
     adc  r1,r31
 ;PCODE: $000000AA VOL: 0
-    adc  r24,r31
+    adc  r24,r22
 ;PCODE: $000000AB VOL: 0
-    adc  r25,r31
+    adc  r25,r23
 ;PCODE: $000000AC VOL: 0
-    rjmp __atol5
+    rcall __atol8
 ;PCODE: $000000AD VOL: 0
-__atol6:
+    ld   r30,x+
 ;PCODE: $000000AE VOL: 0
-    movw r30,r0
+    clr  r31
 ;PCODE: $000000AF VOL: 0
-    movw r22,r24
+    subi r30,'0'
 ;PCODE: $000000B0 VOL: 0
-    brtc __atol7
+    add  r0,r30
 ;PCODE: $000000B1 VOL: 0
-    com  r30
+    adc  r1,r31
 ;PCODE: $000000B2 VOL: 0
-    com  r31
+    adc  r24,r31
 ;PCODE: $000000B3 VOL: 0
-    com  r22
+    adc  r25,r31
 ;PCODE: $000000B4 VOL: 0
-    com  r23
+    rjmp __atol5
 ;PCODE: $000000B5 VOL: 0
-    clr  r24
+__atol6:
 ;PCODE: $000000B6 VOL: 0
-    adiw r30,1
+    movw r30,r0
 ;PCODE: $000000B7 VOL: 0
-    adc  r22,r24
+    movw r22,r24
 ;PCODE: $000000B8 VOL: 0
-    adc  r23,r24
+    brtc __atol7
 ;PCODE: $000000B9 VOL: 0
-__atol7:
-;PCODE: $000000BA VOL: 0
-    adiw r28,2
-;PCODE: $000000BB VOL: 0
-    ret
-;PCODE: $000000BC VOL: 0
-
-;PCODE: $000000BD VOL: 0
-__atol8:
-;PCODE: $000000BE VOL: 0
-    lsl  r0
-;PCODE: $000000BF VOL: 0
-    rol  r1
-;PCODE: $000000C0 VOL: 0
-    rol  r24
-;PCODE: $000000C1 VOL: 0
-    rol  r25
-;PCODE: $000000C2 VOL: 0
-    ret
-;PCODE: $000000C3 VOL: 0
-;PCODE: $000000C4 VOL: 0
-;PCODE: $000000C5 VOL: 0
-;PCODE: $000000C6 VOL: 0
-;PCODE: $000000C7 VOL: 0
-    ld   r26,y+
-;PCODE: $000000C8 VOL: 0
-    ld   r27,y+
-;PCODE: $000000C9 VOL: 0
-    ld   r30,y+
-;PCODE: $000000CA VOL: 0
-    ld   r31,y+
-;PCODE: $000000CB VOL: 0
-    adiw r30,0
-;PCODE: $000000CC VOL: 0
-    brpl __itoa0
-;PCODE: $000000CD VOL: 0
     com  r30
-;PCODE: $000000CE VOL: 0
+;PCODE: $000000BA VOL: 0
     com  r31
-;PCODE: $000000CF VOL: 0
+;PCODE: $000000BB VOL: 0
+    com  r22
+;PCODE: $000000BC VOL: 0
+    com  r23
+;PCODE: $000000BD VOL: 0
+    clr  r24
+;PCODE: $000000BE VOL: 0
     adiw r30,1
+;PCODE: $000000BF VOL: 0
+    adc  r22,r24
+;PCODE: $000000C0 VOL: 0
+    adc  r23,r24
+;PCODE: $000000C1 VOL: 0
+__atol7:
+;PCODE: $000000C2 VOL: 0
+    adiw r28,2
+;PCODE: $000000C3 VOL: 0
+    ret
+;PCODE: $000000C4 VOL: 0
+
+;PCODE: $000000C5 VOL: 0
+__atol8:
+;PCODE: $000000C6 VOL: 0
+    lsl  r0
+;PCODE: $000000C7 VOL: 0
+    rol  r1
+;PCODE: $000000C8 VOL: 0
+    rol  r24
+;PCODE: $000000C9 VOL: 0
+    rol  r25
+;PCODE: $000000CA VOL: 0
+    ret
+;PCODE: $000000CB VOL: 0
+;PCODE: $000000CC VOL: 0
+;PCODE: $000000CD VOL: 0
+;PCODE: $000000CE VOL: 0
+;PCODE: $000000CF VOL: 0
+    ld   r26,y+
 ;PCODE: $000000D0 VOL: 0
-    ldi  r22,'-'
+    ld   r27,y+
 ;PCODE: $000000D1 VOL: 0
-    st   x+,r22
+    ld   r30,y+
 ;PCODE: $000000D2 VOL: 0
-__itoa0:
+    ld   r31,y+
 ;PCODE: $000000D3 VOL: 0
-    clt
+    adiw r30,0
 ;PCODE: $000000D4 VOL: 0
-    ldi  r24,low(10000)
+    brpl __itoa0
 ;PCODE: $000000D5 VOL: 0
-    ldi  r25,high(10000)
+    com  r30
 ;PCODE: $000000D6 VOL: 0
-    rcall __itoa1
+    com  r31
 ;PCODE: $000000D7 VOL: 0
-    ldi  r24,low(1000)
+    adiw r30,1
 ;PCODE: $000000D8 VOL: 0
-    ldi  r25,high(1000)
+    ldi  r22,'-'
 ;PCODE: $000000D9 VOL: 0
-    rcall __itoa1
+    st   x+,r22
 ;PCODE: $000000DA VOL: 0
-    ldi  r24,100
+__itoa0:
 ;PCODE: $000000DB VOL: 0
-    clr  r25
+    clt
 ;PCODE: $000000DC VOL: 0
-    rcall __itoa1
+    ldi  r24,low(10000)
 ;PCODE: $000000DD VOL: 0
-    ldi  r24,10
+    ldi  r25,high(10000)
 ;PCODE: $000000DE VOL: 0
     rcall __itoa1
 ;PCODE: $000000DF VOL: 0
-    mov  r22,r30
+    ldi  r24,low(1000)
 ;PCODE: $000000E0 VOL: 0
-    rcall __itoa5
+    ldi  r25,high(1000)
 ;PCODE: $000000E1 VOL: 0
-    clr  r22
+    rcall __itoa1
 ;PCODE: $000000E2 VOL: 0
-    st   x,r22
+    ldi  r24,100
 ;PCODE: $000000E3 VOL: 0
-    ret
+    clr  r25
 ;PCODE: $000000E4 VOL: 0
-
+    rcall __itoa1
 ;PCODE: $000000E5 VOL: 0
-__itoa1:
+    ldi  r24,10
 ;PCODE: $000000E6 VOL: 0
-    clr	 r22
+    rcall __itoa1
 ;PCODE: $000000E7 VOL: 0
-__itoa2:
+    mov  r22,r30
 ;PCODE: $000000E8 VOL: 0
-    cp   r30,r24
+    rcall __itoa5
 ;PCODE: $000000E9 VOL: 0
-    cpc  r31,r25
+    clr  r22
 ;PCODE: $000000EA VOL: 0
-    brlo __itoa3
+    st   x,r22
 ;PCODE: $000000EB VOL: 0
-    inc  r22
+    ret
 ;PCODE: $000000EC VOL: 0
-    sub  r30,r24
+
 ;PCODE: $000000ED VOL: 0
-    sbc  r31,r25
+__itoa1:
 ;PCODE: $000000EE VOL: 0
-    brne __itoa2
+    clr	 r22
 ;PCODE: $000000EF VOL: 0
-__itoa3:
+__itoa2:
 ;PCODE: $000000F0 VOL: 0
-    tst  r22
+    cp   r30,r24
 ;PCODE: $000000F1 VOL: 0
-    brne __itoa4
+    cpc  r31,r25
 ;PCODE: $000000F2 VOL: 0
-    brts __itoa5
+    brlo __itoa3
 ;PCODE: $000000F3 VOL: 0
-    ret
+    inc  r22
 ;PCODE: $000000F4 VOL: 0
-__itoa4:
+    sub  r30,r24
 ;PCODE: $000000F5 VOL: 0
-    set
+    sbc  r31,r25
 ;PCODE: $000000F6 VOL: 0
-__itoa5:
+    brne __itoa2
 ;PCODE: $000000F7 VOL: 0
-    subi r22,-0x30
+__itoa3:
 ;PCODE: $000000F8 VOL: 0
-    st   x+,r22
+    tst  r22
 ;PCODE: $000000F9 VOL: 0
-    ret
+    brne __itoa4
 ;PCODE: $000000FA VOL: 0
+    brts __itoa5
 ;PCODE: $000000FB VOL: 0
+    ret
 ;PCODE: $000000FC VOL: 0
+__itoa4:
 ;PCODE: $000000FD VOL: 0
+    set
 ;PCODE: $000000FE VOL: 0
+__itoa5:
 ;PCODE: $000000FF VOL: 0
+    subi r22,-0x30
 ;PCODE: $00000100 VOL: 0
+    st   x+,r22
 ;PCODE: $00000101 VOL: 0
+    ret
 ;PCODE: $00000102 VOL: 0
 ;PCODE: $00000103 VOL: 0
 ;PCODE: $00000104 VOL: 0
@@ -1217,10 +1225,6 @@ __itoa5:
 ;PCODE: $000003ED VOL: 0
 ;PCODE: $000003EE VOL: 0
 ;PCODE: $000003EF VOL: 0
-
-	.DSEG
-
-	.CSEG
 ;PCODE: $000003F0 VOL: 0
 ;PCODE: $000003F1 VOL: 0
 ;PCODE: $000003F2 VOL: 0
@@ -1237,9 +1241,7 @@ __itoa5:
 ;PCODE: $000003FD VOL: 0
 ;PCODE: $000003FE VOL: 0
 ;PCODE: $000003FF VOL: 0
-	movw r30,r22
 ;PCODE: $00000400 VOL: 0
-	andi r31,0x7F
 ;PCODE: $00000401 VOL: 0
 ;PCODE: $00000402 VOL: 0
 ;PCODE: $00000403 VOL: 0
@@ -1248,6 +1250,10 @@ __itoa5:
 ;PCODE: $00000406 VOL: 0
 ;PCODE: $00000407 VOL: 0
 ;PCODE: $00000408 VOL: 0
+
+	.DSEG
+
+	.CSEG
 ;PCODE: $00000409 VOL: 0
 ;PCODE: $0000040A VOL: 0
 ;PCODE: $0000040B VOL: 0
@@ -1264,7 +1270,9 @@ __itoa5:
 ;PCODE: $00000416 VOL: 0
 ;PCODE: $00000417 VOL: 0
 ;PCODE: $00000418 VOL: 0
+	movw r30,r22
 ;PCODE: $00000419 VOL: 0
+	andi r31,0x7F
 ;PCODE: $0000041A VOL: 0
 ;PCODE: $0000041B VOL: 0
 ;PCODE: $0000041C VOL: 0
@@ -1367,3 +1375,28 @@ __itoa5:
 ;PCODE: $0000047D VOL: 0
 ;PCODE: $0000047E VOL: 0
 ;PCODE: $0000047F VOL: 0
+;PCODE: $00000480 VOL: 0
+;PCODE: $00000481 VOL: 0
+;PCODE: $00000482 VOL: 0
+;PCODE: $00000483 VOL: 0
+;PCODE: $00000484 VOL: 0
+;PCODE: $00000485 VOL: 0
+;PCODE: $00000486 VOL: 0
+;PCODE: $00000487 VOL: 0
+;PCODE: $00000488 VOL: 0
+;PCODE: $00000489 VOL: 0
+;PCODE: $0000048A VOL: 0
+;PCODE: $0000048B VOL: 0
+;PCODE: $0000048C VOL: 0
+;PCODE: $0000048D VOL: 0
+;PCODE: $0000048E VOL: 0
+;PCODE: $0000048F VOL: 0
+;PCODE: $00000490 VOL: 0
+;PCODE: $00000491 VOL: 0
+;PCODE: $00000492 VOL: 0
+;PCODE: $00000493 VOL: 0
+;PCODE: $00000494 VOL: 0
+;PCODE: $00000495 VOL: 0
+;PCODE: $00000496 VOL: 0
+;PCODE: $00000497 VOL: 0
+;PCODE: $00000498 VOL: 0
