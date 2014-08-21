@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.8.9.5                   *
+ *  version:        0.9.0.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -676,10 +676,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
                do
                {
-                  if (i_txt_glcd <= 100)
+                  if (i_txt_glcd <= TXT_BUF_SZ )
                   {
 
-                     txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+7 + i_txt_glcd ]; 
+                     txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+6 + i_txt_glcd ]; 
                      i_txt_glcd++;
                      
                   }
@@ -688,11 +688,11 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
 
                      //Obliga a salir del while:
-                     rx_b0[ i+7 + i_txt_glcd ] = '"';
+                     rx_b0[ i+7 + i_txt_glcd ] = ',';
                      //break;  // Se sale del while?
                   }
 
-               }while( rx_b0[ i+7 + i_txt_glcd ] != '"' ); // Mientras el caracter no sea com
+               }while( rx_b0[ i+7 + i_txt_glcd ] != ',' ); // Mientras el caracter no sea com
 
                pt = 7;          // Muestra en mensaje en main()
             }
@@ -1344,20 +1344,17 @@ void main(void)
          else if ( pt == 7)
          {
             
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
+            glcd_clear(); 
 
+            glcd_puts( "MENSAJE:",30,0,0,1,-1 );  // Muestra el mensaje
+            
             // Falta para hacer mensajes grandes
-            glcd_puts( txt_glcd_b0,1,2,0,1,-1 );  // Muestra el mensaje
+            glcd_puts( txt_glcd_b0,0,1,0,1,-1 );  // Muestra el mensaje
             
             delay_ms( DELAY_TXT_SERVIDOR );
 
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
+            glcd_clear(); 
+
 
             // Vacia el buffer
            for( j = 0; j < TXT_BUF_SZ; j++ )
