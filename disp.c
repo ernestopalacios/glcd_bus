@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.0.0                   *
+ *  version:        0.9.0.1                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -352,7 +352,6 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
          // Primera presion del botòn
          if( BT1 == 0 && bandera1==0)
          {
-            pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
             btn1++;                          // Aumenta el contador del boton
             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
             
@@ -365,6 +364,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                case 1:
                   
                   // Envia Inicio de sesion al servidor
+                  pt=2;                             // Para q muestre en la glcd MENSAJE ENVIADO
                   _laborando = 1;                  // INICIA SESION  ***
                   envia_estado_login();
                   // DEBE HABILITAR EL BOTON 4
@@ -384,27 +384,33 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                //solamente quita la ruta de la pantalla
                //no cierra sesion de la ruta actual
                case 2:
-                  bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
-                  btn2 = 15;                       // Carrera Vacia
-                  
-                  _laborando = 0;     // No se encuentra en laborando.
-                  pt=5;             // Muestra mensaje de FIN JORNADA  ***
-                  envia_estado_login();
 
-                  btn2 = 15;         // Borra el caracter de ruta
-                  aceptar = 0;      // Finalizar la Ruta
-                  
-                  if( ruta != ' ' ) 
-                     enviar_estado_ruta();
-                  ruta = ' ';      // Fin de la ruta
+                  // Si esta en ruta no puede salir,
+                  // Primero debe terminar la jornada
+                  if( aceptar == 1)
+                  {
+                     btn1--;  // Como si aún no lo hubiera presionado
+                     break;
 
-                  // Borra el caracter de la carrera
-                  glcd_putchar(' ',79,7,0,1); 
-                  // Borra una trama de caracteres RUTA:
-                  glcd_puts("      ",44,7,0,1,-1); 
+                     // Muestra mensaje que primero termine la carrera
 
-                  // Reiniciliza el contador, siguiente presion btn = 1;
-                  btn1 = 0;
+                  }else{
+
+                     bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+                     
+                     _laborando = 0;     // No se encuentra en laborando.
+                     pt=5;             // Muestra mensaje de FIN JORNADA  ***
+                     envia_estado_login();
+
+                     
+                     // Borra el caracter de la carrera
+                     glcd_putchar(' ',79,7,0,1); 
+                     // Borra una trama de caracteres RUTA:
+                     glcd_puts("      ",44,7,0,1,-1); 
+
+                     // Reiniciliza el contador, siguiente presion btn = 1;
+                     btn1 = 0;
+                  }
                         
                break; 
 
