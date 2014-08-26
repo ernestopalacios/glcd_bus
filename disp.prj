@@ -8,7 +8,7 @@ D=03/01/2013 2:31:50
 Files=1
 OpenedFiles=4
 OF1=disp.c
-Active1=0
+Active1=1
 OutputListFilesDirectory=List
 OutputObjectFilesDirectory=Obj
 OutputExecutableFilesDirectory=Exe
@@ -24,7 +24,7 @@ EditorPanel1=0
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
-TimeStamp1=1159364690
+TimeStamp1=1159366310
 =======
 >>>>>>> borrar_sms_boton
 TimeStamp1=1159031036
@@ -40,9 +40,9 @@ EditorPanel3=0
 TimeStamp3=1159030511
 PageIndex3=3
 OF4=Includes\font.h
-Active4=1
+Active4=0
 EditorPanel4=0
-TimeStamp4=1158586903
+TimeStamp4=1159366310
 PageIndex4=4
 F1=disp.c
 TimeStamp0=1150794674
@@ -150,7 +150,7 @@ WatchAVR8LAutoVariables=0
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
-Build=1640
+Build=1641
 =======
 >>>>>>> borrar_sms_boton
 Build=1612
@@ -346,9 +346,9 @@ BK9=-1
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
-TimeStamp=1159364690
-Row=0
-Column=0
+TimeStamp=1159366310
+Row=18
+Column=65
 =======
 >>>>>>> borrar_sms_boton
 TimeStamp=1159031036
@@ -375,7 +375,7 @@ ScrollPosY=0
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
-TimeStamp=1159365431
+TimeStamp=1159366452
 =======
 >>>>>>> borrar_sms_boton
 TimeStamp=1159031047
@@ -430,9 +430,9 @@ BK7=-1
 BK8=-1
 BK9=-1
 [Bookmarks6]
-TimeStamp=1158586903
-Row=17
-Column=82
+TimeStamp=1159366310
+Row=0
+Column=0
 ScrollPosX=0
 ScrollPosY=0
 BK0=-1
