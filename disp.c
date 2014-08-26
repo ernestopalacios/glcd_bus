@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.1.0                   *
+ *  version:        0.9.2.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -62,9 +62,10 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "VER_0.9.1"
+   #define VERSION               "VER_0.9.2"
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"
+   #define NUM_RUTAS_ACTIVAS         12
    #define DELAY_BUZZER_MS          100
    #define DELAY_BOTONES_MS         200
    #define INIT_DELAY_GLCD_MS        10
@@ -124,7 +125,7 @@
    char num_ruta_sel = 0;     // Cuentra entre 1 y 12 =  Ruta seleccionada. Boton 2 aumenta el contador
    char btn3=0;                          // No se usa, Boton 3 disminuye el contador num_ruta_sel
    char btn4=0;                         // Cuenta entre 1 y 2 = 1 Acepta Ruta, 2 Cancela Carrera
-   char btn5=0;                        // Cuenta entre 1 y 5 = Cambia los estados mecanicos del bus.
+   char btn5=0;                        // Cuenta entre 0 y 11 = Cambia los estados mecanicos del bus.
 
    int gsm, gps, ind_sen;     //indicadores de señal
    char reloj[8], fecha[8];  //vectores para imprmir GLCD
@@ -135,6 +136,10 @@
    int unidades_ruta, decenas_ruta, centenas_ruta;
    
    char _laborando = 0;
+
+   // Estado mecanico
+
+   char bnd_cambio_mecanico = 0;
    
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
@@ -381,6 +386,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   }else{
 
                      _laborando = 0;     // No se encuentra en laborando.
+                     num_ruta_sel = 0;
                      pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
                      envia_estado_login();
 
@@ -413,8 +419,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             buzz();
             bandera2 = 1;  
 
-            if( num_ruta_sel > 12 ) 
+            if( num_ruta_sel > NUM_RUTAS_ACTIVAS ) 
                num_ruta_sel = 1;
+
+            pantalla = 8; // Muestra la pantalla de escoger ruta
 
             delay_ms(DELAY_BOTONES_MS);
          }  
@@ -439,8 +447,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             buzz();
             bandera3=1;  
             
-            if(num_ruta_sel <= 0 ) 
-               num_ruta_sel=12;
+            if(num_ruta_sel <= 0 || num_ruta_sel > NUM_RUTAS_ACTIVAS) 
+               num_ruta_sel=NUM_RUTAS_ACTIVAS;
+            
+            pantalla = 8;
             
             delay_ms( DELAY_BOTONES_MS );
          }  
@@ -468,9 +478,14 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             switch(btn4){
 
                case 1:
-                  aceptar  = 1;         //Ha aceptado la Ruta
-                  pantalla = 4;         // Muestra RUTA ACPETADA
-                  enviar_estado_ruta();
+                  if ( num_ruta_sel != 0)
+                  {
+                     aceptar  = 1;         //Ha aceptado la Ruta
+                     pantalla = 4;         // Muestra RUTA ACPETADA
+                     enviar_estado_ruta();
+                  }else{
+                     btn4 --;
+                  }
                   
                break;
 
@@ -502,59 +517,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
          if( btn5 > 11 ) 
          {
-            btn5 = 1;
+            btn5 = 0;
          }
          
-         buzz();
          delay_ms( DELAY_BOTONES_MS );
-
-         switch( btn5 ){
-
-            case 1:
-               //envia estado mecanico 1:
-            break;
-
-            case 2:
-               //envia estado mecanico 1:
-            break;
-
-            case 3:
-               //envia estado mecanico 1:
-            break;
-
-            case 4:
-               //envia estado mecanico 1:
-            break;
-
-            case 5:
-               //envia estado mecanico 1:
-            break;
-
-            case 6:
-               //envia estado mecanico 1:
-            break;
-
-            case 7:
-               //envia estado mecanico 1:
-            break;
-
-            case 8:
-               //envia estado mecanico 1:
-            break;
-
-            case 9:
-               //envia estado mecanico 1:
-            break;
-
-            case 10:
-               //envia estado mecanico 1:
-            break;
-
-            case 11:
-               //envia estado mecanico 1:
-            break;
-         }
-
       }
    //---------------------------------------------------------------------------//
 
@@ -1081,7 +1047,7 @@ void main(void)
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
             glcd_puts(reloj,7,2,0,2,-1);
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,36,5,0,1,-1); 
+            glcd_puts(fecha,35,5,0,1,-2); 
 
             // pasa de la eeprom a la flash del micro
             _seg  = seg  ;
@@ -1324,14 +1290,10 @@ void main(void)
             glcd_clrln(4); 
             glcd_clrln(5); 
 
-            delay_ms(1);
-            
             // Simulacion de un inicio de sesion
             //glcd_puts("  POR FAVOR",0,2,0,1,-1);
             glcd_puts("ESCOJA SU RUTA",0,3,0,1,-1);
             
-            buzz();  
-            buzz();
             
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
             glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
