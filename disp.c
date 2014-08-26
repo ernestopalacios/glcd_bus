@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.0.1                   *
+ *  version:        0.9.1.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -62,7 +62,7 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "VER_0.9.0"
+   #define VERSION               "VER_0.9.1"
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"
    #define DELAY_BUZZER_MS          100
@@ -300,7 +300,6 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
        */
       void enviar_estado_ruta(){
          
-         num_ruta_sel = calcuar_ruta( ruta );
          printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
                                           NUM_DISP, 
                                                _dia1,_dia,
@@ -476,13 +475,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                break;
 
                case 2:
-                  num_ruta_sel = 0;     // Borra el caracter de ruta
-                  aceptar  = 0;     // Fin de la ruta
-                  pantalla = 3;           // Muestra FIN RUTA 
+                  aceptar  = 0;        // Fin de la ruta
                   enviar_estado_ruta();
-                  ruta=' ';      // Cambia la ruta a Vacia
-
-                  
+                  num_ruta_sel = 0;     // Borra el caracter de ruta
+                  pantalla = 3;       // Muestra FIN RUTA 
                   btn4 = 0;     // Reinicializa el cntador
                break;
             }
@@ -1079,8 +1075,10 @@ void main(void)
          if( pantalla == 0 ) 
          {
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
-            //printf("%d%d:%d%d:%d%d\n\r",hora1, hora, min1, minu, seg1, seg);
-            
+            glcd_puts(reloj,7,2,0,2,-1);
+            sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
+            glcd_puts(fecha,34,5,0,1,-1); 
+
             // pasa de la eeprom a la flash del micro
             _seg  = seg  ;
             _seg1 = seg1 ;    // segundos en unidades y decenas
@@ -1095,20 +1093,21 @@ void main(void)
             _an   = an   ;
             _an1  = an1  ;     // anos en unidades y decenas
 
-            glcd_puts(reloj,7,2,0,2,-1);
             
             if ( num_ruta_sel == 0 )
             {
                glcd_puts("SIN RUTA",35,7,0,1,-1);
                
+            }else{
+               glcd_puts("  RUTA:   ",30,7,0,1,-1);
+               glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
+
             }
 
             if ( _laborando == 1 )
             {
                //Muestra el chofer y la ruta
                bmp_disp(chofer,0,5,35,7); 
-               glcd_puts("  RUTA:   ",30,7,0,1,-1);
-               glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
             }else{
                //Muestra el bus sin chofer
                bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
@@ -1339,25 +1338,15 @@ void main(void)
          if( gps == 'A' )
          {     
             bmp_disp(GPS1,95,0,127,1);   
-
-            sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,34,5,0,1,-1); 
-         
          }
          // Sin senal GPS
          else if (gps == 'V' || gps == '9' )
          {
             bmp_disp(GPS2,95,0,127,1);
-            
-            sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,34,5,0,1,-1); 
-            
          }
          else
          { 
             bmp_disp(GPS2,95,0,127,1);
-            sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,34,5,0,1,-1);
          }
       }
       
