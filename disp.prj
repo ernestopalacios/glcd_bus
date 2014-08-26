@@ -150,7 +150,7 @@ WatchAVR8LAutoVariables=0
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
-Build=1633
+Build=1634
 =======
 >>>>>>> borrar_sms_boton
 Build=1612
@@ -707,9 +707,17 @@ L35=EEPROM usage: 0 byte(s), 0.0% of EEPROM
 Lines=33
 [BuildInfoAssembler]
 Lines=0
+[FoldedCode2]
+Blocks=0
+[FoldedCode6]
+Blocks=0
+[FoldedCode11]
+Blocks=0
+[FoldedCode10]
+Blocks=0
 [HeadersList]
 Files=1
-F1=C:\Users\Ernesto\GIT\glcd_bus\disp.c
+F1=C:\Users\DELL\GIT\glcd_bus\disp.c
 [Header1]
 Files=11
 F1=C:\Program Files\CVAVR2\inc\mega324.h
@@ -723,11 +731,3 @@ F8=C:\Program Files\CVAVR2\inc\math.h
 F9=C:\Program Files\CVAVR2\inc\string.h
 F10=Includes\font.h
 F11=Includes\bus.h
-[FoldedCode2]
-Blocks=0
-[FoldedCode6]
-Blocks=0
-[FoldedCode11]
-Blocks=0
-[FoldedCode10]
-Blocks=0

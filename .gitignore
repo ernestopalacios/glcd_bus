@@ -36,3 +36,9 @@
 *.cwp
 *.fct
 *.hci
+*.cof
+*.hex
+*.asm
+*.lst
+*.sym?
+*.rom

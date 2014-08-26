@@ -499,6 +499,11 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
          btn5++;
          bandera5++;
+
+         if( btn5 > 11 ) 
+         {
+            btn5 = 1;
+         }
          
          buzz();
          delay_ms( DELAY_BOTONES_MS );
@@ -547,7 +552,6 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
             case 11:
                //envia estado mecanico 1:
-               btn5 = 0;
             break;
          }
 
@@ -1077,7 +1081,7 @@ void main(void)
             sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
             glcd_puts(reloj,7,2,0,2,-1);
             sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,34,5,0,1,-1); 
+            glcd_puts(fecha,36,5,0,1,-1); 
 
             // pasa de la eeprom a la flash del micro
             _seg  = seg  ;
@@ -1295,10 +1299,11 @@ void main(void)
             
             // Espera a que se presione un boton cualquiera
             while( BT1 && BT2 && BT3 && BT4 && BT5 )
-            {
-               // Espera hasta que suelte el boton
-               while( !( BT1 && BT2 && BT3 && BT4 && BT5) ) { }
-            }
+            {}
+            
+            // Espera hasta que suelte el boton
+            while( !( BT1 && BT2 && BT3 && BT4 && BT5) ) 
+            {}
 
             
             glcd_clear(); 

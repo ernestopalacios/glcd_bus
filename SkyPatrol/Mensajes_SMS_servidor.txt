@@ -1,0 +1,4 @@
+$$Txt,El sistema de controles de acceso SOYAL brinda una solucion de facil instalacion administracion y escalabilidad,:XX##
+
+
+$$Txt,Este es un mensaje simple de prueba,:XX##
