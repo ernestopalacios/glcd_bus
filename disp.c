@@ -1330,9 +1330,6 @@ void main(void)
             //glcd_puts("  POR FAVOR",0,2,0,1,-1);
             glcd_puts("ESCOJA SU RUTA",0,3,0,1,-1);
             
-            buzz();  
-            buzz();
-            
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
             glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
             
