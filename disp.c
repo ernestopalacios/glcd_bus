@@ -1035,9 +1035,9 @@ void main(void)
 
          if( gsm == 1)
          {
-            glcd_putchar('E',19,0,1,1);
+            glcd_putchar('E',20,0,1,1);
          }else{
-            glcd_putchar(' ',19,0,1,1);
+            glcd_putchar(' ',20,0,1,1);
          } 
       
 
