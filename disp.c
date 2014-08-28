@@ -344,7 +344,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       void boton1()
       {  
          // Primera presion del botòn
-         if( BT1 == 0 && bandera1 == 0 )
+         if( BT1 == 0 && bandera1 == 0 && aceptar == 0 )
          {
             btn1++;                          // Aumenta el contador del boton
             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
@@ -373,27 +373,15 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                //solamente quita la ruta de la pantalla
                //no cierra sesion de la ruta actual
                case 2:
+                  
+                  _laborando = 0;     // No se encuentra en laborando.
+                  num_ruta_sel = 0;
+                  pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
+                  envia_estado_login();
 
-                  // Si esta en ruta no puede salir,
-                  // Primero debe terminar la jornada
-                  if( aceptar == 1)
-                  {
-                     btn1--;  // Como si aún no lo hubiera presionado
-                     break;
-
-                     // Muestra mensaje que primero termine la carrera
-
-                  }else{
-
-                     _laborando = 0;     // No se encuentra en laborando.
-                     num_ruta_sel = 0;
-                     pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
-                     envia_estado_login();
-
-                     // Reiniciliza el contador, siguiente presion btn = 1;
-                     btn1 = 0;
-                  }
-                        
+                  // Reiniciliza el contador, siguiente presion btn = 1;
+                  btn1 = 0;
+                  
                break; 
 
             }  
@@ -1080,14 +1068,18 @@ void main(void)
             {
                glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
                bmp_disp( vacio, 0, 6, 25, 7);   // Borra el chofer
+               glcd_puts("          ",30,7,0,1,-1);
 
             }
             
-            if ( num_ruta_sel == 0 )
+            if ( num_ruta_sel == 0 && _laborando == 1 )
             {
                glcd_puts("SIN RUTA",35,7,0,1,-1);
                
-            }else{
+            }
+            
+            else if( num_ruta_sel != 0 && _laborando == 1 )
+            {
                glcd_puts("  RUTA:   ",30,7,0,1,-1);
                glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
 
