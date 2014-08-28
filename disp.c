@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.2.0                   *
+ *  version:        0.9.2.1                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -216,37 +216,37 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    
    if ( time_count == 43 )
    {
-      seg++; 
+      _seg++; 
       time_count = 0;  //reiniciar contador
       
       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-         if(seg==1 && seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
-         if(seg==1 && seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
+         if(_seg==1 && _seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+         if(_seg==1 && _seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
       //Envio pra ver antenas, igualar hora y fecha...
          // Envio cada 20 segundos
-         if (seg==1 && seg1==3) printf("AT$TTNETIP?\n\r");
-         if (seg==1 && seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
+         if (_seg==1 && _seg1==3) printf("AT$TTNETIP?\n\r");
+         if (_seg==1 && _seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
                     
           
-      if (seg>9)
+      if (_seg>9)
       {
-         seg=0; seg1++;
+         _seg=0; _seg1++;
            
-         if(seg1>5)  // Cambio de minuto
+         if(_seg1>5)  // Cambio de minuto
          {
-            seg1=0; minu++;
-            if(minu>9)
+            _seg1=0; _minu++;
+            if(_minu>9)
             {
-               minu=0; min1++;
-               if(min1>5)
+               _minu=0; _min1++;
+               if(_min1>5)
                {
-                  min1=0; hora++;
+                  _min1=0; _hora++;
                   if(hora>9)
                   {
-                     hora=0; hora1++;
-                     if((hora1==2 && hora==3)&&(min1==5 && minu==9)&&(seg1==5 && seg==9))
+                     _hora=0; _hora1++;
+                     if((_hora1==2 && _hora==3)&&(_min1==5 && _minu==9)&&(_seg1==5 && _seg==9))
                      {
-                        hora1=0; hora=0; min1=0; minu=0;seg1=0;seg=0;    
+                        _hora1=0; _hora=0; _min1=0; _minu=0;_seg1=0;_seg=0;    
                      }
                   }
                }
@@ -310,9 +310,9 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                                                _dia1,_dia,
                                                _mes1,_mes,
                                                _an1,_an,
-                                                   _hora1,hora,
-                                                   _min1 ,minu,
-                                                   _seg1 ,seg, 
+                                                   _hora1,_hora,
+                                                   _min1 ,_minu,
+                                                   _seg1 ,_seg, 
                                                       num_ruta_sel,aceptar  );
       }
    //---------------------------------------------------------------------------//
@@ -331,9 +331,9 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                                             _dia1,_dia,
                                             _mes1,_mes,
                                             _an1,_an,
-                                                _hora1,hora,
-                                                _min1 ,minu,
-                                                _seg1 ,seg, 
+                                                _hora1,_hora,
+                                                _min1 ,_minu,
+                                                _seg1 ,_seg, 
                                                   // id_conductor, 1234 temporalmente
                                                      _laborando  );
       }
@@ -344,7 +344,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       void boton1()
       {  
          // Primera presion del botòn
-         if( BT1 == 0 && bandera1==0)
+         if( BT1 == 0 && bandera1 == 0 )
          {
             btn1++;                          // Aumenta el contador del boton
             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
@@ -779,19 +779,19 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
            
                   digito_hora_temp = rx_b0[pos1 + 6 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     seg = digito_hora_temp;
+                     _seg = digito_hora_temp;
 
                   digito_hora_temp = rx_b0[pos1 + 5 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     seg1 = digito_hora_temp;
+                     _seg1 = digito_hora_temp;
 
                   digito_hora_temp = rx_b0[pos1 + 4 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     minu = digito_hora_temp;
+                     _minu = digito_hora_temp;
 
                   digito_hora_temp = rx_b0[pos1 + 3 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     min1  = digito_hora_temp;
+                     _min1  = digito_hora_temp;
 
                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
@@ -808,12 +808,12 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   if( n4 < 0 )
                   {
                      n4    = n4 + 24;
-                     hora  = n4 % 10;
-                     hora1 = n4 / 10;
+                     _hora  = n4 % 10;
+                     _hora1 = n4 / 10;
                   }  
                   
-                  hora = n4 % 10;
-                  hora1= n4 / 10;
+                  _hora = n4 % 10;
+                  _hora1= n4 / 10;
                
                }
           
@@ -825,15 +825,15 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                     (rx_b0[pos3+1]-48) < 10 )
                {
               
-                  dia1 = rx_b0[pos3+1]-48;
-                  dia  = rx_b0[pos3+2]-48;
-                  mes1 = rx_b0[pos3+3]-48;
-                  mes  = rx_b0[pos3+4]-48;
-                  an1  = rx_b0[pos3+5]-48;
-                  an   = rx_b0[pos3+6]-48;  
+                  _dia1 = rx_b0[pos3+1]-48;
+                  _dia  = rx_b0[pos3+2]-48;
+                  _mes1 = rx_b0[pos3+3]-48;
+                  _mes  = rx_b0[pos3+4]-48;
+                  _an1  = rx_b0[pos3+5]-48;
+                  _an   = rx_b0[pos3+6]-48;  
 
                   if( n4 > 18)
-                     dia = dia-1;  // Por la zona horaria de EC-5GTM
+                     _dia = _dia-1;  // Por la zona horaria de EC-5GTM
                   
                }else{
 
@@ -1035,33 +1035,47 @@ void main(void)
 
          if( gsm == 1)
          {
-            glcd_putchar('E',20,0,1,1);
+            glcd_putchar('E',21,0,1,1);
          }else{
-            glcd_putchar(' ',20,0,1,1);
+            glcd_putchar(' ',21,0,1,1);
          } 
       
 
          // Muestra el reloj al conductor
          if( pantalla == 0 ) 
          {
-            sprintf(reloj,"%d%d:%d%d:%d%d",hora1, hora, min1, minu, seg1, seg);
-            glcd_puts(reloj,7,2,0,2,-1);
-            sprintf(fecha,"20%d%d-%d%d-%d%d",an1, an, mes1, mes, dia1, dia);
-            glcd_puts(fecha,35,5,0,1,-2); 
+            
+            // Arma la trama de la  hora
+            sprintf(reloj,"%d%d:%d%d:%d%d",
+                             _hora1, _hora, 
+                              _min1, _minu, 
+                               _seg1, _seg);
 
-            // pasa de la eeprom a la flash del micro
-            _seg  = seg  ;
-            _seg1 = seg1 ;    // segundos en unidades y decenas
-            _minu = minu ;   
-            _min1 = min1 ;    // minutos en unidades y decenas
-            _hora = hora ;  
-            _hora1= hora1;    // hora en unidades y decenas
-            _dia  = dia  ;   
-            _dia1 = dia1 ;    // dias en unidades y decenas
-            _mes  = mes  ;   
-            _mes1 = mes1 ;    // mes en unidades y decenas
-            _an   = an   ;
-            _an1  = an1  ;     // anos en unidades y decenas
+            glcd_puts(reloj,7,2,0,2,-1);
+
+            
+
+            // Arma la trama de la  fecha
+            sprintf(fecha,"20%d%d-%d%d-%d%d",
+                              _an1, _an, 
+                               _mes1, _mes, 
+                                _dia1, _dia);
+
+            glcd_puts(fecha,30,5,0,1,-1); 
+
+            // pasa de la flash a la eeprom
+            seg  = _seg  ;
+            seg1 = _seg1 ;    // segundos en unidades y decenas
+            minu = _minu ;   
+            min1 = _min1 ;    // minutos en unidades y decenas
+            hora = _hora ;  
+            hora1= _hora1;    // hora en unidades y decenas
+            dia  = _dia  ;   
+            dia1 = _dia1 ;    // dias en unidades y decenas
+            mes  = _mes  ;   
+            mes1 = _mes1 ;    // mes en unidades y decenas
+            an   = _an   ;
+            an1  = _an1  ;     // anos en unidades y decenas
 
             
             if ( num_ruta_sel == 0 )
@@ -1294,9 +1308,18 @@ void main(void)
             //glcd_puts("  POR FAVOR",0,2,0,1,-1);
             glcd_puts("ESCOJA SU RUTA",0,10,0,1,-1);
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
-            glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
+
+            pantalla = 9;
+         }
+
+         else if ( pantalla == 9 )
+         {
             
-            pantalla = 8;// Se mantiene en esta pantalla hasta que acepte la ruta
+            // GRAFICA LA RUTA ACTUAL.
+            glcd_putchar(ruta,79,7,0,1);  
+            
+            // Se mantiene en esta pantalla hasta que acepte la ruta
+            pantalla = 9;
          }
 
          // Con senal GPS
@@ -1321,7 +1344,7 @@ void main(void)
          glcd_puts("No Autorizada",15,4,0,1,-1);
       }  
          
-         bmp_disp(frente,105,5,127,7);  
+       bmp_disp(frente,110,5,127,7);  
    } // Fin del While
 }
 //---------------------------------------- FIN DEL PROGRAMA PRINCIPAL ---------------------------------------------//
