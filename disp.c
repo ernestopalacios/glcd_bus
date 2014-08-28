@@ -1070,8 +1070,30 @@ void main(void)
                                _mes1, _mes, 
                                 _dia1, _dia);
 
-            glcd_puts(fecha,30,5,0,1,-1); 
+            if (_laborando == 1 )
+            {
+               glcd_puts(fecha,30,5,0,1,-1); 
+               bmp_disp(chofer,0,6,25,7); 
+               // bmp_disp(vacio,0,5,25,7);
+            }
+            else
+            {
+               glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
+               bmp_disp( vacio, 0, 6, 25, 7);   // Borra el chofer
 
+            }
+            
+            if ( num_ruta_sel == 0 )
+            {
+               glcd_puts("SIN RUTA",35,7,0,1,-1);
+               
+            }else{
+               glcd_puts("  RUTA:   ",30,7,0,1,-1);
+               glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
+
+            }
+
+                        
             // pasa de la flash a la eeprom
             seg  = _seg  ;
             seg1 = _seg1 ;    // segundos en unidades y decenas
@@ -1087,26 +1109,6 @@ void main(void)
             an1  = _an1  ;     // anos en unidades y decenas
 
             
-            if ( num_ruta_sel == 0 )
-            {
-               glcd_puts("SIN RUTA",35,7,0,1,-1);
-               
-            }else{
-               glcd_puts("  RUTA:   ",30,7,0,1,-1);
-               glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
-
-            }
-
-            if ( _laborando == 1 )
-            {
-               //Muestra el chofer y la ruta
-               bmp_disp(chofer,0,5,25,7); 
-               // bmp_disp(vacio,0,5,25,7);
-            }else{
-               //Muestra el bus sin chofer
-               bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
-
-            }
             
          } 
          
@@ -1354,7 +1356,7 @@ void main(void)
          glcd_puts("No Autorizada",15,4,0,1,-1);
       }  
          
-       bmp_disp(frente,110,5,127,7);  
+       bmp_disp(frente,105,6,127,7);  
    } // Fin del While
 }
 //------------------- FIN DEL PROGRAMA PRINCIPAL ------------------------//
