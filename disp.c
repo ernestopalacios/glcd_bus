@@ -422,7 +422,13 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             if( num_ruta_sel > NUM_RUTAS_ACTIVAS ) 
                num_ruta_sel = 1;
 
-            pantalla = 8; // Muestra la pantalla de escoger ruta
+            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
+               pantalla = 9;
+            else
+               pantalla = 8; // Muestra la pantalla de escoger ruta
+               
+            
+
 
             delay_ms(DELAY_BOTONES_MS);
          }  
@@ -450,7 +456,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             if(num_ruta_sel <= 0 || num_ruta_sel > NUM_RUTAS_ACTIVAS) 
                num_ruta_sel=NUM_RUTAS_ACTIVAS;
             
-            pantalla = 8;
+            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
+               pantalla = 9;
+            else
+               pantalla = 8; // Muestra la pantalla de escoger ruta
             
             delay_ms( DELAY_BOTONES_MS );
          }  
@@ -1091,7 +1100,8 @@ void main(void)
             if ( _laborando == 1 )
             {
                //Muestra el chofer y la ruta
-               bmp_disp(chofer,0,5,35,7); 
+               bmp_disp(chofer,0,5,25,7); 
+               // bmp_disp(vacio,0,5,25,7);
             }else{
                //Muestra el bus sin chofer
                bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
@@ -1306,7 +1316,7 @@ void main(void)
 
             // Simulacion de un inicio de sesion
             //glcd_puts("  POR FAVOR",0,2,0,1,-1);
-            glcd_puts("ESCOJA SU RUTA",0,10,0,1,-1);
+            glcd_puts("ESCOJA SU RUTA",20,12,0,1,-1);
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
 
             pantalla = 9;
@@ -1347,4 +1357,4 @@ void main(void)
        bmp_disp(frente,110,5,127,7);  
    } // Fin del While
 }
-//---------------------------------------- FIN DEL PROGRAMA PRINCIPAL ---------------------------------------------//
+//------------------- FIN DEL PROGRAMA PRINCIPAL ------------------------//
