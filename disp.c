@@ -900,12 +900,6 @@ void main(void)
       UBRR0H=0x00;
       UBRR0L=0x05;
 
-      //USART0 Baud Rate: 9600 8 MHz
-      //UCSR0A=0x00;
-      //UCSR0B=0x18;
-      //UCSR0C=0x06;
-      //UBRR0H=0x00;
-      //UBRR0L=0x33;
 
       // Timer/Counter 0 initialization
       // Clock source: System Clock
@@ -959,6 +953,14 @@ void main(void)
       {
          hora1 = 0; min1 = 0; seg1 = 0;
            hora = 0; minu = 0;  seg = 0;
+      } else{
+
+         _seg = seg;
+         _seg1 = seg1;
+         _minu = minu;
+         _min1 = min1;
+         _hora = hora;
+         _hora1 = hora1;
       }
 
       // En caso de que no haya fecha
@@ -967,6 +969,15 @@ void main(void)
          dia = 0; dia1 = 0; 
           mes = 0; mes1 = 0;
            an = 0;  an1 = 0; 
+      } else{
+
+         _dia = dia;
+         _dia1 = dia1;
+         _mes = mes;
+         _mes1 = mes1;
+         _an = an;
+         _an1 = an1;
+
       }
 
       // Limpia el buffer de mensaje recibido
