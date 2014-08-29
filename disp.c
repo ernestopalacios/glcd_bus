@@ -699,7 +699,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                       (rx_b0[pos1+8] - 48) == 0 && 
                       (rx_b0[pos1+9] - 48) == 0)
                   { 
-                     gsm=0;   // Sin señal GSM
+                     gsm=0;   // Sin senal GSM
                   
                   }else
                      gsm=1;
@@ -1044,8 +1044,8 @@ void main(void)
             glcd_putchar('E',21,0,1,1);
          }else{
             
-            glcd_putchar(129,21,0,1,1);
-            glcd_puts("GSM",30,0,0,1,-2);
+            glcd_putchar(128,21,0,1,1);
+            // glcd_puts("GSM",30,0,0,1,-2);
          } 
       
 
