@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.2.2                   *
+ *  version:        0.9.3.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -62,9 +62,9 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "VER_0.9.2"
+   #define VERSION               "VER_0.9.3"
    #define NOMBRE_PANTALLA       "SITU"
-   #define NUMERO_PANTALLA       "8888"
+   #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
    #define NUM_RUTAS_ACTIVAS         12
    #define DELAY_BUZZER_MS          100
    #define DELAY_BOTONES_MS         100
@@ -517,20 +517,26 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    ////////////////// DIBUJAR BARRAS DE SENAL GPRS //////////////////////////
       void dibujar_senal(void)
       {
-          switch (ind_sen){
-          case 1:
-          bmp_disp(GSM3,0,0,20,1);
-          break;
-          case 2:
-          bmp_disp(GSM2,0,0,20,1);
-          break;
-          case 3:
-          bmp_disp(GSM1,0,0,20,1);
-          break;
-          case 4:
-          bmp_disp(GSM4,0,0,20,1);
-          break;
-          }; 
+         switch (ind_sen){
+            case 0:
+               glcd_puts("___",0,0,0,1,-1);
+            break;
+            case 1:
+               bmp_disp(GSM3,0,0,20,1);
+            break;
+            case 2:
+               bmp_disp(GSM2,0,0,20,1);
+            break;
+            case 3:
+               bmp_disp(GSM1,0,0,20,1);
+            break;
+            case 4:
+               bmp_disp(GSM4,0,0,20,1);
+            break;
+            default:
+               glcd_puts("___",0,0,0,1,-1);
+            break;
+         } 
 
       }
    //---------------------------------------------------------------------------//
@@ -928,8 +934,8 @@ void main(void)
       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);    
 
       // Escribe NUMERO_PANTALLA "BUS####"
-      glcd_puts("BUS",59,5,0,1,-1);
-      glcd_puts(NUM_DISP,82,5,0,1,-1);
+      glcd_puts("BUS SITU",59,5,0,1,-1);
+      // glcd_puts(NUM_DISP,82,5,0,1,-1);
       glcd_puts(VERSION,40,7,0,1,-1);
 
       //Tiempo q muestra la pantalla de inicio
@@ -1037,7 +1043,9 @@ void main(void)
          {
             glcd_putchar('E',21,0,1,1);
          }else{
-            glcd_putchar(' ',21,0,1,1);
+            
+            glcd_putchar(129,21,0,1,1);
+            glcd_puts("GSM",30,0,0,1,-2);
          } 
       
 
@@ -1155,12 +1163,11 @@ void main(void)
             glcd_puts("*",61,4,0,1,-1);
             delay_ms( 200 );
             glcd_puts("*",69,4,0,1,-1);
-            delay_ms( 200 );
+            delay_ms( 50 );
                          
             buzz();  
             buzz();
             
-            delay_ms( MOSTRAR_MSN_ENV_MS );   
             
             glcd_clrln(2); 
             glcd_clrln(3); 
