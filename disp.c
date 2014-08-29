@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.2.1                   *
+ *  version:        0.9.2.2                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -1306,14 +1306,8 @@ void main(void)
          // CHOFER HA INICIADO SESION
          else if ( pantalla == 8 )
          {
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
-
-            // Simulacion de un inicio de sesion
-            //glcd_puts("  POR FAVOR",0,2,0,1,-1);
-            glcd_puts("ESCOJA SU RUTA",20,12,0,1,-1);
+            
+            glcd_puts("ESCOJA SU RUTA",20,5,0,1,-1);
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
 
             pantalla = 9;
@@ -1322,6 +1316,14 @@ void main(void)
          else if ( pantalla == 9 )
          {
             
+            // Arma la trama de la  hora
+            sprintf(reloj,"%d%d:%d%d:%d%d",
+                             _hora1, _hora, 
+                              _min1, _minu, 
+                               _seg1, _seg);
+
+            glcd_puts(reloj,7,2,0,2,-1);
+
             // GRAFICA LA RUTA ACTUAL.
             glcd_putchar(ruta,79,7,0,1);  
             
