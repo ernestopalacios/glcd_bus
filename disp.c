@@ -67,7 +67,7 @@
    #define NUMERO_PANTALLA       "8888"
    #define NUM_RUTAS_ACTIVAS         12
    #define DELAY_BUZZER_MS          100
-   #define DELAY_BOTONES_MS         200
+   #define DELAY_BOTONES_MS         100
    #define INIT_DELAY_GLCD_MS        10
    #define DELAY_PANTALLA_INI      2000
    #define DELAY_TXT_SERVIDOR      3000
@@ -509,15 +509,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
       void boton5(){     
 
-         btn5++;
-         bandera5++;
-
-         if( btn5 > 11 ) 
-         {
-            btn5 = 0;
-         }
          
-         delay_ms( DELAY_BOTONES_MS );
       }
    //---------------------------------------------------------------------------//
 
