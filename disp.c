@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.2.1                   *
+ *  version:        0.9.3.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -62,12 +62,12 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "VER_0.9.2"
+   #define VERSION               "VER_0.9.3"
    #define NOMBRE_PANTALLA       "SITU"
-   #define NUMERO_PANTALLA       "8888"
+   #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
    #define NUM_RUTAS_ACTIVAS         12
    #define DELAY_BUZZER_MS          100
-   #define DELAY_BOTONES_MS         200
+   #define DELAY_BOTONES_MS         100
    #define INIT_DELAY_GLCD_MS        10
    #define DELAY_PANTALLA_INI      2000
    #define DELAY_TXT_SERVIDOR      3000
@@ -344,7 +344,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       void boton1()
       {  
          // Primera presion del botÚn
-         if( BT1 == 0 && bandera1 == 0 )
+         if( BT1 == 0 && bandera1 == 0 && aceptar == 0 )
          {
             btn1++;                          // Aumenta el contador del boton
             bandera1=1;                     // Evita que vuelva a entrar al mismo boton
@@ -373,27 +373,15 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                //solamente quita la ruta de la pantalla
                //no cierra sesion de la ruta actual
                case 2:
+                  
+                  _laborando = 0;     // No se encuentra en laborando.
+                  num_ruta_sel = 0;
+                  pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
+                  envia_estado_login();
 
-                  // Si esta en ruta no puede salir,
-                  // Primero debe terminar la jornada
-                  if( aceptar == 1)
-                  {
-                     btn1--;  // Como si a˙n no lo hubiera presionado
-                     break;
-
-                     // Muestra mensaje que primero termine la carrera
-
-                  }else{
-
-                     _laborando = 0;     // No se encuentra en laborando.
-                     num_ruta_sel = 0;
-                     pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
-                     envia_estado_login();
-
-                     // Reiniciliza el contador, siguiente presion btn = 1;
-                     btn1 = 0;
-                  }
-                        
+                  // Reiniciliza el contador, siguiente presion btn = 1;
+                  btn1 = 0;
+                  
                break; 
 
             }  
@@ -422,7 +410,13 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             if( num_ruta_sel > NUM_RUTAS_ACTIVAS ) 
                num_ruta_sel = 1;
 
-            pantalla = 8; // Muestra la pantalla de escoger ruta
+            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
+               pantalla = 9;
+            else
+               pantalla = 8; // Muestra la pantalla de escoger ruta
+               
+            
+
 
             delay_ms(DELAY_BOTONES_MS);
          }  
@@ -450,7 +444,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
             if(num_ruta_sel <= 0 || num_ruta_sel > NUM_RUTAS_ACTIVAS) 
                num_ruta_sel=NUM_RUTAS_ACTIVAS;
             
-            pantalla = 8;
+            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
+               pantalla = 9;
+            else
+               pantalla = 8; // Muestra la pantalla de escoger ruta
             
             delay_ms( DELAY_BOTONES_MS );
          }  
@@ -512,15 +509,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
       void boton5(){     
 
-         btn5++;
-         bandera5++;
-
-         if( btn5 > 11 ) 
-         {
-            btn5 = 0;
-         }
          
-         delay_ms( DELAY_BOTONES_MS );
       }
    //---------------------------------------------------------------------------//
 
@@ -528,20 +517,26 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    ////////////////// DIBUJAR BARRAS DE SENAL GPRS //////////////////////////
       void dibujar_senal(void)
       {
-          switch (ind_sen){
-          case 1:
-          bmp_disp(GSM3,0,0,20,1);
-          break;
-          case 2:
-          bmp_disp(GSM2,0,0,20,1);
-          break;
-          case 3:
-          bmp_disp(GSM1,0,0,20,1);
-          break;
-          case 4:
-          bmp_disp(GSM4,0,0,20,1);
-          break;
-          }; 
+         switch (ind_sen){
+            case 0:
+               glcd_puts("___",0,0,0,1,-1);
+            break;
+            case 1:
+               bmp_disp(GSM3,0,0,20,1);
+            break;
+            case 2:
+               bmp_disp(GSM2,0,0,20,1);
+            break;
+            case 3:
+               bmp_disp(GSM1,0,0,20,1);
+            break;
+            case 4:
+               bmp_disp(GSM4,0,0,20,1);
+            break;
+            default:
+               glcd_puts("___",0,0,0,1,-1);
+            break;
+         } 
 
       }
    //---------------------------------------------------------------------------//
@@ -704,7 +699,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                       (rx_b0[pos1+8] - 48) == 0 && 
                       (rx_b0[pos1+9] - 48) == 0)
                   { 
-                     gsm=0;   // Sin se√±al GSM
+                     gsm=0;   // Sin senal GSM
                   
                   }else
                      gsm=1;
@@ -903,12 +898,6 @@ void main(void)
       UBRR0H=0x00;
       UBRR0L=0x05;
 
-      //USART0 Baud Rate: 9600 8 MHz
-      //UCSR0A=0x00;
-      //UCSR0B=0x18;
-      //UCSR0C=0x06;
-      //UBRR0H=0x00;
-      //UBRR0L=0x33;
 
       // Timer/Counter 0 initialization
       // Clock source: System Clock
@@ -945,8 +934,8 @@ void main(void)
       glcd_puts(NOMBRE_DISP,55,2,0,2,-1);    
 
       // Escribe NUMERO_PANTALLA "BUS####"
-      glcd_puts("BUS",59,5,0,1,-1);
-      glcd_puts(NUM_DISP,82,5,0,1,-1);
+      glcd_puts("BUS SITU",59,5,0,1,-1);
+      // glcd_puts(NUM_DISP,82,5,0,1,-1);
       glcd_puts(VERSION,40,7,0,1,-1);
 
       //Tiempo q muestra la pantalla de inicio
@@ -962,6 +951,14 @@ void main(void)
       {
          hora1 = 0; min1 = 0; seg1 = 0;
            hora = 0; minu = 0;  seg = 0;
+      } else{
+
+         _seg = seg;
+         _seg1 = seg1;
+         _minu = minu;
+         _min1 = min1;
+         _hora = hora;
+         _hora1 = hora1;
       }
 
       // En caso de que no haya fecha
@@ -970,6 +967,15 @@ void main(void)
          dia = 0; dia1 = 0; 
           mes = 0; mes1 = 0;
            an = 0;  an1 = 0; 
+      } else{
+
+         _dia = dia;
+         _dia1 = dia1;
+         _mes = mes;
+         _mes1 = mes1;
+         _an = an;
+         _an1 = an1;
+
       }
 
       // Limpia el buffer de mensaje recibido
@@ -1037,7 +1043,9 @@ void main(void)
          {
             glcd_putchar('E',21,0,1,1);
          }else{
-            glcd_putchar(' ',21,0,1,1);
+            
+            glcd_putchar(128,21,0,1,1);
+            // glcd_puts("GSM",30,0,0,1,-2);
          } 
       
 
@@ -1087,6 +1095,7 @@ void main(void)
                glcd_clrln(3); 
                glcd_clrln(4); 
 
+<<<<<<< HEAD
                
                //Muestra el bus sin chofer
                bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
@@ -1102,6 +1111,57 @@ void main(void)
                glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
 
             }
+=======
+            // Arma la trama de la  fecha
+            sprintf(fecha,"20%d%d-%d%d-%d%d",
+                              _an1, _an, 
+                               _mes1, _mes, 
+                                _dia1, _dia);
+
+            if (_laborando == 1 )
+            {
+               glcd_puts(fecha,30,5,0,1,-1); 
+               bmp_disp(chofer,0,6,25,7); 
+               // bmp_disp(vacio,0,5,25,7);
+            }
+            else
+            {
+               glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
+               bmp_disp( vacio, 0, 6, 25, 7);   // Borra el chofer
+               glcd_puts("          ",30,7,0,1,-1);
+
+            }
+            
+            if ( num_ruta_sel == 0 && _laborando == 1 )
+            {
+               glcd_puts("SIN RUTA",35,7,0,1,-1);
+               
+            }
+            
+            else if( num_ruta_sel != 0 && _laborando == 1 )
+            {
+               glcd_puts("  RUTA:   ",30,7,0,1,-1);
+               glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
+
+            }
+
+                        
+            // pasa de la flash a la eeprom
+            seg  = _seg  ;
+            seg1 = _seg1 ;    // segundos en unidades y decenas
+            minu = _minu ;   
+            min1 = _min1 ;    // minutos en unidades y decenas
+            hora = _hora ;  
+            hora1= _hora1;    // hora en unidades y decenas
+            dia  = _dia  ;   
+            dia1 = _dia1 ;    // dias en unidades y decenas
+            mes  = _mes  ;   
+            mes1 = _mes1 ;    // mes en unidades y decenas
+            an   = _an   ;
+            an1  = _an1  ;     // anos en unidades y decenas
+
+            
+>>>>>>> e6fb9829dd27a8486002d5365efb514d89d818f3
             
          } 
          
@@ -1153,12 +1213,11 @@ void main(void)
             glcd_puts("*",61,4,0,1,-1);
             delay_ms( 200 );
             glcd_puts("*",69,4,0,1,-1);
-            delay_ms( 200 );
+            delay_ms( 50 );
                          
             buzz();  
             buzz();
             
-            delay_ms( MOSTRAR_MSN_ENV_MS );   
             
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -1304,14 +1363,8 @@ void main(void)
          // CHOFER HA INICIADO SESION
          else if ( pantalla == 8 )
          {
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5); 
-
-            // Simulacion de un inicio de sesion
-            //glcd_puts("  POR FAVOR",0,2,0,1,-1);
-            glcd_puts("ESCOJA SU RUTA",0,10,0,1,-1);
+            
+            glcd_puts("ESCOJA SU RUTA",20,5,0,1,-1);
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
 
             pantalla = 9;
@@ -1320,6 +1373,14 @@ void main(void)
          else if ( pantalla == 9 )
          {
             
+            // Arma la trama de la  hora
+            sprintf(reloj,"%d%d:%d%d:%d%d",
+                             _hora1, _hora, 
+                              _min1, _minu, 
+                               _seg1, _seg);
+
+            glcd_puts(reloj,7,2,0,2,-1);
+
             // GRAFICA LA RUTA ACTUAL.
             glcd_putchar(ruta,79,7,0,1);  
             
@@ -1349,7 +1410,7 @@ void main(void)
          glcd_puts("No Autorizada",15,4,0,1,-1);
       }  
          
-       bmp_disp(frente,110,5,127,7);  
+       bmp_disp(frente,105,6,127,7);  
    } // Fin del While
 }
-//---------------------------------------- FIN DEL PROGRAMA PRINCIPAL ---------------------------------------------//
+//------------------- FIN DEL PROGRAMA PRINCIPAL ------------------------//
