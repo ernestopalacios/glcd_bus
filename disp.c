@@ -1044,38 +1044,53 @@ void main(void)
          // Muestra el reloj al conductor
          if( pantalla == 0 ) 
          {
+            // SE MUESTRA EL RELOJ CUANDO ESTA LABORANDO
+            if (_laborando == 1 )
+            {
+               
+               // Arma la trama de la  hora
+               sprintf(reloj,"%d%d:%d%d:%d%d",
+                                _hora1, _hora, 
+                                 _min1, _minu, 
+                                  _seg1, _seg);
+
+               glcd_puts(reloj,7,2,0,2,-1);
+
+               
+
+               // Arma la trama de la  fecha
+               sprintf(fecha,"20%d%d-%d%d-%d%d",
+                                 _an1, _an, 
+                                  _mes1, _mes, 
+                                   _dia1, _dia);
+
+               glcd_puts(fecha,30,5,0,1,-1); 
+
+               // pasa de la flash a la eeprom
+               seg  = _seg  ;
+               seg1 = _seg1 ;    // segundos en unidades y decenas
+               minu = _minu ;   
+               min1 = _min1 ;    // minutos en unidades y decenas
+               hora = _hora ;  
+               hora1= _hora1;    // hora en unidades y decenas
+               dia  = _dia  ;   
+               dia1 = _dia1 ;    // dias en unidades y decenas
+               mes  = _mes  ;   
+               mes1 = _mes1 ;    // mes en unidades y decenas
+               an   = _an   ;
+               an1  = _an1  ;     // anos en unidades y decenas
             
-            // Arma la trama de la  hora
-            sprintf(reloj,"%d%d:%d%d:%d%d",
-                             _hora1, _hora, 
-                              _min1, _minu, 
-                               _seg1, _seg);
+               bmp_disp(chofer,0,5,35,7); 
+            }else{
 
-            glcd_puts(reloj,7,2,0,2,-1);
+               glcd_clrln(2); 
+               glcd_clrln(3); 
+               glcd_clrln(4); 
 
-            
-
-            // Arma la trama de la  fecha
-            sprintf(fecha,"20%d%d-%d%d-%d%d",
-                              _an1, _an, 
-                               _mes1, _mes, 
-                                _dia1, _dia);
-
-            glcd_puts(fecha,30,5,0,1,-1); 
-
-            // pasa de la flash a la eeprom
-            seg  = _seg  ;
-            seg1 = _seg1 ;    // segundos en unidades y decenas
-            minu = _minu ;   
-            min1 = _min1 ;    // minutos en unidades y decenas
-            hora = _hora ;  
-            hora1= _hora1;    // hora en unidades y decenas
-            dia  = _dia  ;   
-            dia1 = _dia1 ;    // dias en unidades y decenas
-            mes  = _mes  ;   
-            mes1 = _mes1 ;    // mes en unidades y decenas
-            an   = _an   ;
-            an1  = _an1  ;     // anos en unidades y decenas
+               
+               //Muestra el bus sin chofer
+               bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
+            }
 
             
             if ( num_ruta_sel == 0 )
@@ -1085,16 +1100,6 @@ void main(void)
             }else{
                glcd_puts("  RUTA:   ",30,7,0,1,-1);
                glcd_putchar(ruta,79,7,0,1);  // GRAFICA LA RUTA ACTUAL.
-
-            }
-
-            if ( _laborando == 1 )
-            {
-               //Muestra el chofer y la ruta
-               bmp_disp(chofer,0,5,35,7); 
-            }else{
-               //Muestra el bus sin chofer
-               bmp_disp( vacio, 0, 5, 25, 7);   // Borra el chofer
 
             }
             
