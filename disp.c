@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.3.1                   *
+ *  version:        0.9.5.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -62,7 +62,7 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "ver 0.9.3"
+   #define VERSION               "ver 0.9.5"
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
    #define NUM_RUTAS_ACTIVAS         12
@@ -122,7 +122,7 @@
 
    // Contadores de las presiones de botones
    char btn1=0;                            //  Cuenta entre 1 y 2 = 1 Inicia Sesion, 2 Cierra sesion 
-   char num_ruta_sel = 0;     // Cuentra entre 1 y 12 =  Ruta seleccionada. Boton 2 aumenta el contador
+   char num_ruta_sel = 0;                 // Cuentra entre 1 y 12 =  Ruta seleccionada. Boton 2 aumenta el contador
    char btn3=0;                          // No se usa, Boton 3 disminuye el contador num_ruta_sel
    char btn4=0;                         // Cuenta entre 1 y 2 = 1 Acepta Ruta, 2 Cancela Carrera
    char btn5=0;                        // Cuenta entre 0 y 11 = Cambia los estados mecanicos del bus.
@@ -268,7 +268,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
        *
        * El tiempo que suena depende del Macro: DELAY BUZZER
        */
-      void buzz()
+      inline void buzz()
       {       //Sonido de Buzzer
          buzzer=1; delay_ms( DELAY_BUZZER_MS );
          buzzer=0; delay_ms( DELAY_BUZZER_MS );
