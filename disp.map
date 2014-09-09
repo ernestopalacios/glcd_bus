@@ -24,21 +24,22 @@ unidades_ruta                                                     0580h        2
 decenas_ruta                                                      0582h        2
 centenas_ruta                                                     0584h        2
 _laborando                                                        0586h        1
-time_count                                                        0587h        2
-act                                                               0589h        2
-_seg                                                              058Bh        1
-_seg1                                                             058Ch        1
-_minu                                                             058Dh        1
-_min1                                                             058Eh        1
-_hora                                                             058Fh        1
-_hora1                                                            0590h        1
-_dia                                                              0591h        1
-_dia1                                                             0592h        1
-_mes                                                              0593h        1
-_mes1                                                             0594h        1
-_an                                                               0595h        1
-_an1                                                              0596h        1
-_seed                                                             0597h        4
+i_timer_1                                                         0587h        1
+time_count                                                        0588h        2
+act                                                               058Ah        2
+_seg                                                              058Ch        1
+_seg1                                                             058Dh        1
+_minu                                                             058Eh        1
+_min1                                                             058Fh        1
+_hora                                                             0590h        1
+_hora1                                                            0591h        1
+_dia                                                              0592h        1
+_dia1                                                             0593h        1
+_mes                                                              0594h        1
+_mes1                                                             0595h        1
+_an                                                               0596h        1
+_an1                                                              0597h        1
+_seed                                                             0598h        4
 
 EEPROM Allocation
 Variable                                                          Address   Size

@@ -75,6 +75,8 @@
    #define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
    #define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
 
+   #define DESCONEXION_SKYPATROL     30  // Overflow Timer cada 6seg:  180/6 = 30   
+
    #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
    char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
 
@@ -138,8 +140,9 @@
    char _laborando = 0;
 
    // Estado mecanico
-
    char bnd_cambio_mecanico = 0;
+
+   int8 i_timer_1 = 0;
    
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
@@ -257,7 +260,22 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------//
 
+/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
+interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+{
+   i_timer_1++;                     // Una interrupcion cada 6.06 seg.
 
+   if (i_timer_1 >= DESCONEXION_SKYPATROL) // Asume que perdio comunicacion con el SkyPatrol
+   {                             // Si no responde dentro de 3 min. Esta variable se refresca
+      i_timer_1 = 0;            // a traves de la funcion obt(), la cual procesa tramas desde el SkyPatrol
+
+      // QUITAR LOS INDICADORES
+      ind_sen = 0;             // Quitar las barras de la senal celular
+      gsm = 0;
+      gps = 0;
+   }
+
+}
 
 //***********************************************************************************************************************************//
 //////////////////////////////////////////////////////////// FUNCIONES ////////////////////////////////////////////////////////////////
@@ -479,7 +497,8 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   {
                      aceptar  = 1;         //Ha aceptado la Ruta
                      pantalla = 4;         // Muestra RUTA ACPETADA
-                     enviar_estado_ruta();
+                     printf("AT$TTTRGEV=14,%d,32\r\n",num_ruta_sel );
+                     //enviar_estado_ruta();
                   }else{
                      btn4 --;
                   }
@@ -488,7 +507,8 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
                case 2:
                   aceptar  = 0;        // Fin de la ruta
-                  enviar_estado_ruta();
+                  printf("AT$TTTRGEV=14,20,32\r\n");
+                  //enviar_estado_ruta();
                   num_ruta_sel = 0;     // Borra el caracter de ruta
                   pantalla = 3;       // Muestra FIN RUTA 
                   btn4 = 0;     // Reinicializa el cntador
@@ -557,6 +577,9 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
          int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
 
          char digito_hora_temp; //Variable temporal para la hora y fecha
+
+         i_timer_1 = 0;  // Resetea el contador del SkyPatrol al haber recibido
+                        // Tramas seriales.
          
          for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
          {     
@@ -575,7 +598,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
                do
                {
-                  if (i_txt_glcd <= TXT_BUF_SZ )
+                  if (i_txt_glcd < TXT_BUF_SZ )
                   {
 
                      txt_glcd_b0[ i_txt_glcd ] = rx_b0[ i+6 + i_txt_glcd ]; 
@@ -584,7 +607,6 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                   }else{  // Mas de 100 caracteres recibidos. Romper el while
 
                      i_txt_overflow = 1;  //Legaron mas de 100 Caracteres
-
                      rx_b0[ i+6 + i_txt_glcd ] = ',';//Obliga a salir del while:
                   }
 
@@ -600,37 +622,39 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
                     rx_b0[i+3]== 'Q' &&   //81d
                      rx_b0[i+4]== ':')    //58d
             { 
-              // Valor decimal de la intensidad de la señal
-              barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
+               // Valor decimal de la intensidad de la señal
+               barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 
-              // Dibuja las barras en la panalla de acuerdo a la intensidad
-              // de la señal
-              if( barras > 10 && barras < 15 ){
-              ind_sen=1;
-              }
+               // Dibuja las barras en la panalla de acuerdo a la intensidad
+               // de la senal
+               if( barras > 10 && barras < 15 ){
+                  ind_sen=1;
+               }
 
-              else if( barras >= 15 && barras < 18){
-              ind_sen=2;
-              } 
+               else if( barras >= 15 && barras < 18){
+                  ind_sen=2;
+               } 
 
-              else if( barras >= 18 && barras < 31){
-              ind_sen=3;
-              }
+               else if( barras >= 18 && barras < 31){
+                  ind_sen=3;
+               }
 
-              else if( barras > 31 && barras < 50){
-              ind_sen=4;
-              }
+               else if( barras > 31 && barras < 50){
+                  ind_sen=4;
+               }
 
-              // En caso de que el valor en barras
-              // no sea ninguno de los anteriores, es posible
-              // que la trama recibida no sea valida.
-              else{   }
+               // En caso de que el valor en barras
+               // no sea ninguno de los anteriores, es posible
+               // que la trama recibida no sea valida.
+               else{  
+                  ind_sen = 0;
+               }
 
             }
            
            
-                //________________________
-           //PARA PUNTO DE CONTROL: 
+              //________________________
+             //PARA PUNTO DE CONTROL: 
             //por ahora detecto el encabezado "BUS" para tener de referencia en las posiciones del vector
             if ( rx_b0[i+0]== 'B' &&    
                   rx_b0[i+1]== 'U' &&     
@@ -912,6 +936,35 @@ void main(void)
       OCR0B=0x00;
 
       // Timer/Counter 0 Interrupt(s) initialization
+      TIMSK0=0x01;
+
+      // Timer/Counter 1 initialization
+      // Clock source: System Clock
+      // Clock value: 11059.200 kHz
+      // Mode: Normal top=FFFFh
+      // OC1A output: Discon.
+      // OC1B output: Discon.
+      // Noise Canceler: Off
+      // Input Capture on Falling Edge
+      // Timer1 Overflow Interrupt: On
+      // Input Capture Interrupt: Off
+      // Compare A Match Interrupt: Off
+      // Compare B Match Interrupt: Off
+      
+      // 110592 / 1024(pr) = 10800 = / 65535 = 0.16479...
+      // Overflow = 6.06805  segundos
+      TCCR1A=0x00;
+      TCCR1B=0x05;    // Prescaler de 1024
+      TCNT1H=0x00;
+      TCNT1L=0x00;
+      ICR1H=0x00;
+      ICR1L=0x00;
+      OCR1AH=0x00;
+      OCR1AL=0x00;
+      OCR1BH=0x00;
+      OCR1BL=0x00;
+
+      // Timer/Counter 1 Interrupt(s) initialization
       TIMSK0=0x01;
 
    // Inicilizar GLCD
