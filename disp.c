@@ -143,6 +143,7 @@
    char bnd_cambio_mecanico = 0;
 
    int8 i_timer_1 = 0;
+   int8 conexion_skypatrol = 1;  // Espera 3min antes de declarar que no hay conexion con SkyPatrol = 0;
    
 //-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
 
@@ -273,9 +274,13 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
       ind_sen = 0;             // Quitar las barras de la senal celular
       gsm = 0;
       gps = 0;
+
+      // Mostrar SIN CONEXIÓN EN LA PARTE SUPERIOR
+      conexion_skypatrol = 0;
    }
 
 }
+
 
 //***********************************************************************************************************************************//
 //////////////////////////////////////////////////////////// FUNCIONES ////////////////////////////////////////////////////////////////
@@ -578,8 +583,8 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 
          char digito_hora_temp; //Variable temporal para la hora y fecha
 
-         i_timer_1 = 0;  // Resetea el contador del SkyPatrol al haber recibido
-                        // Tramas seriales.
+         
+         
          
          for (i=0; i<RX_BUFFER_SIZE0 ;i++) 
          {     
@@ -595,6 +600,12 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                // Guarda lo que hay entre las comillas en el 
                // buffer txt_glcd
                i_txt_glcd = 0;
+
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+
 
                do
                {
@@ -622,6 +633,13 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                     rx_b0[i+3]== 'Q' &&   //81d
                      rx_b0[i+4]== ':')    //58d
             { 
+               
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+               
+
                // Valor decimal de la intensidad de la seÃ±al
                barras = ((rx_b0[i+6]-48)*10)+(rx_b0[i+7]-48);
 
@@ -660,6 +678,13 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   rx_b0[i+1]== 'U' &&     
                    rx_b0[i+2]== 'S')    
             { 
+               
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+               
+
               // Datos de punto de control, en cada posicion del vector guardo una letra, luego hay que procesar para obtener el numero correcto. 
                                        //010A
                punto[0] = rx_b0[i+16]-48;  //   1 
@@ -701,6 +726,12 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                     rx_b0[i+3]== 'I' && 
                      rx_b0[i+4]== 'P')
             { 
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+               
+
                ini = i + 4; 
 
                for (n=0; n<201; n++) 
@@ -737,6 +768,13 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                     rx_b0[i+3] == 'I' && 
                      rx_b0[i+4] == 'D')
             { 
+               
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+               
+
                ini = i+4; 
                
                for (n=0;n<201;n++)
@@ -776,6 +814,11 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                      rx_b0[i+4] == 'C')
             { 
             
+               // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
+               // las banderas de desconexion
+               conexion_skypatrol = 1;
+               i_timer_1 = 0;  
+               
                ini=i+4;
                for (n=0;n<201;n++) 
                {
@@ -965,7 +1008,7 @@ void main(void)
       OCR1BL=0x00;
 
       // Timer/Counter 1 Interrupt(s) initialization
-      TIMSK0=0x01;
+      TIMSK1=0x01;
 
    // Inicilizar GLCD
       glcd_on();
@@ -1091,16 +1134,34 @@ void main(void)
       if(act==1)
       {
          
-
+         // COMPRUEBA SI TIENE CONEXION AL SERVIDOR
          if( gsm == 1)
          {
             glcd_putchar('E',21,0,1,1);
-         }else{
+         
+         }else if ( gsm == 0 ){
             
-            glcd_putchar(128,21,0,1,1);
-            // glcd_puts("GSM",30,0,0,1,-2);
-         } 
+            glcd_putchar(128,21,0,1,1);          // Grafica el simbolo de desconexin
+         }
+
       
+         // COMPRUEBA SI TIENE CONEXION CON EL gps
+         if( gps == 'A' )
+         {     
+            bmp_disp(GPS1,95,0,127,1);   
+         }
+         // Sin senal GPS
+         else
+         { 
+            bmp_disp(GPS2,95,0,127,1);
+         }
+
+         
+         // SI HA PERDIDO CONEXION CON EL SKYPATROL 
+         // POR MAS DE TRES MINUTOS
+         if ( conexion_skypatrol == 0 ){
+            glcd_puts( "SIN CONEXION",22,0,0,1,-1); 
+         }
 
          // Muestra el reloj al conductor
          if( pantalla == 0 ) 
@@ -1153,6 +1214,10 @@ void main(void)
 
             }
             
+            if ( conexion_skypatrol == 0 )
+            {
+               // Muestra mensaje de desconexión con SkyPatrol
+            }
                                     
             // pasa de la flash a la eeprom
             seg  = _seg  ;
@@ -1393,20 +1458,6 @@ void main(void)
             pantalla = 9;
          }
 
-         // Con senal GPS
-         if( gps == 'A' )
-         {     
-            bmp_disp(GPS1,95,0,127,1);   
-         }
-         // Sin senal GPS
-         else if (gps == 'V' || gps == '9' )
-         {
-            bmp_disp(GPS2,95,0,127,1);
-         }
-         else
-         { 
-            bmp_disp(GPS2,95,0,127,1);
-         }
       }
       
       else 
