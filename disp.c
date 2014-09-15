@@ -383,7 +383,8 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   // Envia Inicio de sesion al servidor
                   pantalla = 2;                     // Para q muestre en la glcd MENSAJE ENVIADO
                   _laborando = 1;                  // INICIA SESION  ***
-                  envia_estado_login();
+                  printf("AT$TTTRGEV=42,1,24\r\n");
+                  //envia_estado_login();
                   // DEBE HABILITAR EL BOTON 4
 
                   // Muestra la RUTA A: primero y por defecto
@@ -400,7 +401,8 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   _laborando = 0;     // No se encuentra en laborando.
                   num_ruta_sel = 0;
                   pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
-                  envia_estado_login();
+                  printf("AT$TTTRGEV=42,1,25\r\n");
+                  //envia_estado_login();
 
                   // Reiniciliza el contador, siguiente presion btn = 1;
                   btn1 = 0;
@@ -502,7 +504,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   {
                      aceptar  = 1;         //Ha aceptado la Ruta
                      pantalla = 4;         // Muestra RUTA ACPETADA
-                     printf("AT$TTTRGEV=14,%d,32\r\n",num_ruta_sel );
+                     printf("AT$TTTRGEV=42,1,%d\r\n",num_ruta_sel );
                      //enviar_estado_ruta();
                   }else{
                      btn4 --;
@@ -512,7 +514,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 
                case 2:
                   aceptar  = 0;        // Fin de la ruta
-                  printf("AT$TTTRGEV=14,20,32\r\n");
+                  printf("AT$TTTRGEV=42,1,23\r\n");
                   //enviar_estado_ruta();
                   num_ruta_sel = 0;     // Borra el caracter de ruta
                   pantalla = 3;       // Muestra FIN RUTA 
