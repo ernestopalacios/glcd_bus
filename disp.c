@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.5.1                   *
+ *  version:        0.9.6.0                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include "Includes/GLCD.h"
 #include "Includes/bus.h"
+#include "Includes/reloj_display.h"
 
 
 //////////////////////////////// INTERRUPCION SERIAL //////////////////////////////////
@@ -62,7 +63,7 @@
 
    typedef char int8;    //sirve para definir enteros consigno de 8
 
-   #define VERSION               "ver 0.9.5"
+   #define VERSION               "ver 0.9.6"
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
    #define NUM_RUTAS_ACTIVAS         12
@@ -1085,6 +1086,7 @@ void main(void)
    // Encender interrupciones
    #asm("sei")
 
+   
    // Muestra vacio
    bmp_disp(vacio,0,6,25,7);
 
