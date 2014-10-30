@@ -43,18 +43,27 @@ int esHoraValida( int hora, int minu, int seg );
  */
 int esTiempoValido( Tiempo Reloj );
 
-/**@brief: 
- * Esta funcion devuelve 1, si la fecha es valida, caso contrario 
- * devuelve 0, por ejemplo:
- *
- * Mes Febrero: 02
- * día        : 29
- * Anio       : 2013      Retorna 0
- *
- * Tambien toma en cuenta si es anio bisiesto.
- *
+
+/**
+ * @brief Esta funcion devuelve 1 si la fecha es valida, 0 si no lo es
+ * @details Verifica si la fecha es correcta, tomando en cuenta los dias de Feberero y el anio bisiesto
+ * 
+ * @param mes Mes del anio entre 01 y 12
+ * @param dia dia del mes entre 01 y 31
+ * @param anio Anio contando los miles, es decir 2013 
+ * @return 1 si es valida la fecha, 0 si no lo es
  */
-int esFechaValida(int mes, int dia, unsigned long an);
+int esFechaValida(int mes, int dia, unsigned long anio);
+
+
+/**
+ * @brief Verifica que la fecha sea valida para una estructura Tiempo
+ * @details Utilizando las variables de la estructura comprueba que contenga una fecha valida
+ * 
+ * @param Fecha Estructura de Tiempo a comprobar
+ * @return 1 Si la fecha es valida 0 si no lo es
+ */
+int esDiaValido( Tiempo Fecha);
 
 
 /**

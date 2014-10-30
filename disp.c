@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.6.0                   *
+ *  version:        0.9.6.1                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -154,6 +154,7 @@
    
 
    Tiempo Reloj;
+   Tiempo RelojGPS;
 
    int8 _seg  = 0;
    int8 _seg1 = 0;    // segundos en unidades y decenas
@@ -228,7 +229,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
          {
             Reloj.minu = 0; Reloj.hora++;
                
-            if( Reloj.hora > 23 && Reloj.minu == 59 && Reloj.segu == 59)
+            if( Reloj.hora == 24 && Reloj.minu == 00 && Reloj.segu == 00)
             {
                Reloj.hora = 0; Reloj.minu = 0; Reloj.segu = 0;
             }
@@ -836,10 +837,10 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
                      _hora1  = digito_hora_temp;
                    
-                  Reloj.segu = _seg + (10 * _seg1 );
-                  Reloj.minu = _minu + (10 * _min1 );
-                  Reloj.hora = _hora + (10 * _hora1 );
-                  
+                  RelojGPS.segu = _seg + (10 * _seg1 );
+                  RelojGPS.minu = _minu + (10 * _min1 );
+                  RelojGPS.hora = _hora + (10 * _hora1 );
+
                }
           
                // Comprueva la conexión de GPS
@@ -857,10 +858,14 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   _an1  = rx_b0[pos3+5]-48;
                   _an   = rx_b0[pos3+6]-48;  
 
-                  Reloj.dia = _dia + (10*_dia1);
-                  Reloj.mes = _mes + (10*_mes1);
-                  Reloj.dia = _an  + (10*_an1);
+                  RelojGPS.dia = _dia + (10*_dia1);
+                  RelojGPS.mes = _mes + (10*_mes1);
+                  RelojGPS.an = _an  + (10*_an1);
                   
+                  // Solo asigna la hora al display si es
+                  if( esDiaValido( RelojGPS ) && esTiempoValido( RelojGPS ) )
+                     Reloj = RelojGPS;
+
                   
                }else{
 
@@ -1109,6 +1114,8 @@ void main(void)
          // SI HA PERDIDO CONEXION CON EL SKYPATROL 
          // POR MAS DE TRES MINUTOS
          if ( conexion_skypatrol == 0 ){
+
+            glcd_puts( "                 ",00,0,0,1,-1); 
             glcd_puts( "SIN CONEXION",22,0,0,1,-1); 
          }
 

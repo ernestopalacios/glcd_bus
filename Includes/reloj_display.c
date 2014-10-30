@@ -36,11 +36,11 @@
 /// Valida las horas
 int esHoraValida( int hora, int minu, int seg )
 {
-	if ( hora >= 0 && hora < 23)
+	if ( hora >= 0 && hora <= 23)
 	{
-		if (minu >= 0 && minu < 59)
+		if (minu >= 0 && minu <= 59)
 		{
-			if ( seg >= 0 && seg	< 59 )
+			if ( seg >= 0 && seg <= 59 )
 			{
 				return 1;
 			
@@ -59,11 +59,11 @@ int esHoraValida( int hora, int minu, int seg )
 /// Valida la hora en una estructura de tiempo.
 int esTiempoValido( Tiempo Reloj )
 {
-	if ( Reloj.hora >= 0 && Reloj.hora < 23)
+	if ( Reloj.hora >= 0 && Reloj.hora <= 23)
 	{
-		if ( Reloj.minu >= 0 && Reloj.minu < 59)
+		if ( Reloj.minu >= 0 && Reloj.minu <= 59)
 		{
-			if ( Reloj.segu >= 0 && Reloj.segu	< 59 )
+			if ( Reloj.segu >= 0 && Reloj.segu	<= 59 )
 			{
 				return 1;
 			
@@ -81,7 +81,7 @@ int esTiempoValido( Tiempo Reloj )
 //
 //   Comprueba que la fecha sea correcta, devuleve 1 si lo es 0 si no
 //
-int esFechaValida(int mes, int dia, unsigned long an)
+int esFechaValida(int mes, int dia, unsigned long anio)
 {
   if (dia <= 0) return 0 ;
   switch( mes )
@@ -100,11 +100,39 @@ int esFechaValida(int mes, int dia, unsigned long an)
      case 2  : 
        if ( dia > 29 ) return 0 ;
        if ( dia < 29 ) return 1 ;
-       if (isleapyear(an)) return 1 ;   // anio bisiesto
+       if (isleapyear(anio)) return 1 ;   // anio bisiesto
     else return 0 ;
    }
   return 0 ;
 }
+
+
+/// Comprueba la fecha valida en  Una estructura de Tiempo
+int esDiaValido( Tiempo Fecha)
+{
+  if ( Fecha.dia <= 0) return 0 ;
+  switch( Fecha.mes )
+   {
+     case 1  :
+     case 3  :
+     case 5  :
+     case 7  :
+     case 8  :
+     case 10 :
+     case 12 : if ( Fecha.dia > 31) return 0 ; else return 1 ;
+     case 4  :
+     case 6  :
+     case 9  :
+     case 11 : if ( Fecha.dia > 30) return 0 ; else return 1 ;
+     case 2  : 
+       if ( Fecha.dia > 29 ) return 0 ;
+       if ( Fecha.dia < 29 ) return 1 ;
+       if (isleapyear(Fecha.anio)) return 1 ;   // anio bisiesto
+    else return 0 ;
+   }
+  return 0 ;
+}
+
 
 /*
 int descontarUTC( int* _hora, int* _dia, int* _mes, int* _an )
