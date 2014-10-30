@@ -131,7 +131,7 @@
    char btn5=0;                        // Cuenta entre 0 y 11 = Cambia los estados mecanicos del bus.
 
    int gsm, gps, ind_sen;     //indicadores de señal
-   char reloj[8], fecha[8];  //vectores para imprmir GLCD
+   char reloj_c[8], fecha[8];  //vectores para imprmir GLCD
 
    char punto[4];          // Punto de control
    char pantalla = 0;       // Numero de pantalla a mostrar en la GLCD
@@ -146,26 +146,15 @@
    int8 i_timer_1 = 0;
    int8 conexion_skypatrol = 1;  // Espera 3min antes de declarar que no hay conexion con SkyPatrol = 0;
    
-//-----------------------------------------     VARIABLES EEPROM     --------------------------------------//
-
    static unsigned int time_count;    // Contador del timer para los segundos
    static unsigned int act;           // Variable que guarda si la pantalla es autorizada
 
-   eeprom int8 seg   @0x80;
-   eeprom int8 seg1  @0x82;           // segundos en unidades y decenas
-   eeprom int8 minu  @0x84;          
-   eeprom int8 min1  @0x86;           // minutos en unidades y decenas
-   eeprom int8 hora  @0x88;         
-   eeprom int8 hora1 @0x8A;           // hora en unidades y decenas
-   eeprom int8 dia   @0x8C;          
-   eeprom int8 dia1  @0x8E;           // dias en unidades y decenas
-   eeprom int8 mes   @0x90;          
-   eeprom int8 mes1  @0x92;           // mes en unidades y decenas
-   eeprom int8 an    @0x94;       
-   eeprom int8 an1   @0x96;           // anos en unidades y decenas
      
-   //----------------------------------   VARIABLES EERPOM EN LA FLASH  ------------------------------------//
+   //----------------------------------   VARIABLES TIEMPO  ------------------------------------//
    
+
+   Tiempo Reloj;
+
    int8 _seg  = 0;
    int8 _seg1 = 0;    // segundos en unidades y decenas
    int8 _minu = 0;   
@@ -178,8 +167,6 @@
    int8 _mes1 = 0;    // mes en unidades y decenas
    int8 _an   = 0;
    int8 _an1  = 0;    // anos en unidades y decenas
-
-   
 
 ////////////////////////////  RUTINA DE INTERRUPCION SERIAL   ////////////////////////////
 /** \brief USART0 Receiver interrupt service routine
@@ -219,44 +206,35 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    TCNT0 = 6; 
    ++time_count; 
    
-   if ( time_count == 43 )
+   if ( time_count == 43 )  
    {
-      _seg++; 
+      Reloj.segu++;
       time_count = 0;  //reiniciar contador
       
       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-         if(_seg==1 && _seg1==1) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
-         if(_seg==1 && _seg1==2) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
+
+         if( Reloj.segu == 10 ) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
+         if( Reloj.segu == 15 ) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
       //Envio pra ver antenas, igualar hora y fecha...
          // Envio cada 20 segundos
-         if (_seg==1 && _seg1==3) printf("AT$TTNETIP?\n\r");
-         if (_seg==1 && _seg1==4) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
+         if ( Reloj.segu == 20 ) printf("AT$TTNETIP?\n\r");
+         if ( Reloj.segu == 5 ) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
                     
-          
-      if (_seg>9)
+      if ( Reloj.segu > 59)
       {
-         _seg=0; _seg1++;
-           
-         if(_seg1>5)  // Cambio de minuto
+         Reloj.segu = 0; Reloj.minu++;
+            
+         if( Reloj.minu > 59)
          {
-            _seg1=0; _minu++;
-            if(_minu>9)
+            Reloj.minu = 0; Reloj.hora++;
+               
+            if( Reloj.hora > 23 && Reloj.minu == 59 && Reloj.segu == 59)
             {
-               _minu=0; _min1++;
-               if(_min1>5)
-               {
-                  _min1=0; _hora++;
-                  if(hora>9)
-                  {
-                     _hora=0; _hora1++;
-                     if((_hora1==2 && _hora==3)&&(_min1==5 && _minu==9)&&(_seg1==5 && _seg==9))
-                     {
-                        _hora1=0; _hora=0; _min1=0; _minu=0;_seg1=0;_seg=0;    
-                     }
-                  }
-               }
+               Reloj.hora = 0; Reloj.minu = 0; Reloj.segu = 0;
             }
+            
          }
+         
       }
    }
 }
@@ -329,15 +307,11 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
        */
       void enviar_estado_ruta(){
          
-         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,R2,%d,%d:XX##\"\r\n", 
+         printf("AT$TTSNDMG=4,\"$$BL%s,%02d%02d20%02d,%02d%02d%02d,R2,%d,%d:XX##\"\r\n", 
                                           NUM_DISP, 
-                                               _dia1,_dia,
-                                               _mes1,_mes,
-                                               _an1,_an,
-                                                   _hora1,_hora,
-                                                   _min1 ,_minu,
-                                                   _seg1 ,_seg, 
-                                                      num_ruta_sel,aceptar  );
+                                             Reloj.dia, Reloj.mes, Reloj.an,
+                                               Reloj.hora, Reloj.minu, Reloj.segu,
+                                                      num_ruta_sel, aceptar  );
       }
    //---------------------------------------------------------------------------//
 
@@ -350,15 +324,11 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
        * 
        */
       void envia_estado_login(){
-         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,1234,%d:XX##\"\r\n", 
+         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,12345,%d:XX##\"\r\n", 
                                        NUM_DISP, 
-                                            _dia1,_dia,
-                                            _mes1,_mes,
-                                            _an1,_an,
-                                                _hora1,_hora,
-                                                _min1 ,_minu,
-                                                _seg1 ,_seg, 
-                                                  // id_conductor, 1234 temporalmente
+                                            Reloj.dia, Reloj.mes, Reloj.an,
+                                               Reloj.hora, Reloj.minu, Reloj.segu, 
+                                                  // id_conductor, 12345 temporalmente
                                                      _laborando  );
       }
    //---------------------------------------------------------------------------//
@@ -582,7 +552,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
          int pos2=0;
          int pos3=0;
          int barras;
-         int n1,n2,n3,n4; // Variables para Hora, sirven para -5 UTC de Ecuador
+         
 
          char digito_hora_temp; //Variable temporal para la hora y fecha
 
@@ -860,26 +830,16 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 
                   digito_hora_temp = rx_b0[pos1 + 2 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     n2 = digito_hora_temp;
+                     _hora = digito_hora_temp;
 
                   digito_hora_temp = rx_b0[pos1 + 1 ] - 48;
                   if ( digito_hora_temp >= 0 && digito_hora_temp <= 9)
-                     n1  = digito_hora_temp;
+                     _hora1  = digito_hora_temp;
                    
-                        
-                  n3 = ( n1*10 ) + n2;   // Hora total suma unidades y decenas
-                  n4 = n3 - 5;  // Zona horaria
-
-                  if( n4 < 0 )
-                  {
-                     n4    = n4 + 24;
-                     _hora  = n4 % 10;
-                     _hora1 = n4 / 10;
-                  }  
+                  Reloj.segu = _seg + (10 * _seg1 );
+                  Reloj.minu = _minu + (10 * _min1 );
+                  Reloj.hora = _hora + (10 * _hora1 );
                   
-                  _hora = n4 % 10;
-                  _hora1= n4 / 10;
-               
                }
           
                // Comprueva la conexión de GPS
@@ -897,8 +857,10 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   _an1  = rx_b0[pos3+5]-48;
                   _an   = rx_b0[pos3+6]-48;  
 
-                  if( n4 > 18)
-                     _dia = _dia-1;  // Por la zona horaria de EC-5GTM
+                  Reloj.dia = _dia + (10*_dia1);
+                  Reloj.mes = _mes + (10*_mes1);
+                  Reloj.dia = _an  + (10*_an1);
+                  
                   
                }else{
 
@@ -1042,45 +1004,28 @@ void main(void)
       glcd_clear();             
 
    
-   ////////////  VALORES INICIALES PARA VARIABLES DE LA EEPROM ///////////
+   ////////////  VALORES INICIALES PARA VARIABLES HORA ///////////
 
-      // En caso de que no haya recibido tramas del sky
-      // previene que muestre valores de -1 en la hora y fecha
-      if (hora1 == 0xff )
-      {
-         hora1 = 0; min1 = 0; seg1 = 0;
-           hora = 0; minu = 0;  seg = 0;
-      } else{
+      _seg   = 0;
+      _seg1  = 0;
+      _minu  = 0;
+      _min1  = 0;
+      _hora  = 0;
+      _hora1 = 0;
 
-         _seg = seg;
-         _seg1 = seg1;
-         _minu = minu;
-         _min1 = min1;
-         _hora = hora;
-         _hora1 = hora1;
-      }
+      _dia   = 0;
+      _dia1  = 0;
+      _mes   = 0;
+      _mes1  = 0;
+      _an    = 0;
+      _an1   = 0;
 
-      // En caso de que no haya fecha
-      if (mes == 0xff && dia == 0xff && an == 0xff)
-      {
-         dia = 0; dia1 = 0; 
-          mes = 0; mes1 = 0;
-           an = 0;  an1 = 0; 
-      } else{
+   //------------------------------------------------------------------------//
 
-         _dia = dia;
-         _dia1 = dia1;
-         _mes = mes;
-         _mes1 = mes1;
-         _an = an;
-         _an1 = an1;
-
-      }
-
-      // Limpia el buffer de mensaje recibido
+   // Limpia el buffer de mensaje recibido
       for( j = 0; j < TXT_BUF_SZ; j++ )
               txt_glcd_b0[j] = 0x00;
-   //------------------------------------------------------------------------//
+   
    
 
    // Encender interrupciones
@@ -1175,20 +1120,14 @@ void main(void)
             {
                
                // Arma la trama de la  hora
-               sprintf(reloj,"%d%d:%d%d:%d%d",
-                                _hora1, _hora, 
-                                 _min1, _minu, 
-                                  _seg1, _seg);
+               sprintf(reloj_c,"%02d:%02d:%02d", Reloj.hora, Reloj.minu, Reloj.segu);
 
-               glcd_puts(reloj,7,2,0,2,-1);
+               glcd_puts(reloj_c,7,2,0,2,-1);
 
                
 
                // Arma la trama de la  fecha
-               sprintf(fecha,"20%d%d-%d%d-%d%d",
-                                 _an1, _an, 
-                                  _mes1, _mes, 
-                                   _dia1, _dia);
+               sprintf(fecha,"20%02d-%02d-%02d", Reloj.an, Reloj.mes, Reloj.dia);
 
                glcd_puts(fecha,30,5,0,1,-1); 
                bmp_disp(chofer,0,6,35,7); // Pone el chofer
@@ -1223,20 +1162,7 @@ void main(void)
                // Muestra mensaje de desconexión con SkyPatrol
             }
                                     
-            // pasa de la flash a la eeprom
-            seg  = _seg  ;
-            seg1 = _seg1 ;    // segundos en unidades y decenas
-            minu = _minu ;   
-            min1 = _min1 ;    // minutos en unidades y decenas
-            hora = _hora ;  
-            hora1= _hora1;    // hora en unidades y decenas
-            dia  = _dia  ;   
-            dia1 = _dia1 ;    // dias en unidades y decenas
-            mes  = _mes  ;   
-            mes1 = _mes1 ;    // mes en unidades y decenas
-            an   = _an   ;
-            an1  = _an1  ;     // anos en unidades y decenas
-            
+                        
          } 
          
          //Entra a esta funcion cuando llega un punto de control, 
@@ -1448,12 +1374,9 @@ void main(void)
          {
             
             // Arma la trama de la  hora
-            sprintf(reloj,"%d%d:%d%d:%d%d",
-                             _hora1, _hora, 
-                              _min1, _minu, 
-                               _seg1, _seg);
+            sprintf(reloj_c,"%02d:%02d:%02d", Reloj.hora, Reloj.minu, Reloj.segu);
 
-            glcd_puts(reloj,7,2,0,2,-1);
+            glcd_puts(reloj_c,7,2,0,2,-1);
 
             // GRAFICA LA RUTA ACTUAL.
             glcd_putchar(ruta,79,7,0,1);  

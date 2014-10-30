@@ -15,7 +15,7 @@ btn4                                                              056Dh        1
 gsm                                                               056Eh        2
 gps                                                               0570h        2
 ind_sen                                                           0572h        2
-reloj                                                             0574h        8
+reloj_c                                                           0574h        8
 fecha                                                             057Ch        8
 punto                                                             0584h        4
 pantalla                                                          0588h        1
@@ -28,35 +28,24 @@ i_timer_1                                                         0594h        1
 conexion_skypatrol                                                0595h        1
 time_count                                                        0596h        2
 act                                                               0598h        2
-_seg                                                              059Ah        1
-_seg1                                                             059Bh        1
-_minu                                                             059Ch        1
-_min1                                                             059Dh        1
-_hora                                                             059Eh        1
-_hora1                                                            059Fh        1
-_dia                                                              05A0h        1
-_dia1                                                             05A1h        1
-_mes                                                              05A2h        1
-_mes1                                                             05A3h        1
-_an                                                               05A4h        1
-_an1                                                              05A5h        1
-_seed                                                             05A6h        4
+Reloj                                                             059Ah       18
+_seg                                                              05ACh        1
+_seg1                                                             05ADh        1
+_minu                                                             05AEh        1
+_min1                                                             05AFh        1
+_hora                                                             05B0h        1
+_hora1                                                            05B1h        1
+_dia                                                              05B2h        1
+_dia1                                                             05B3h        1
+_mes                                                              05B4h        1
+_mes1                                                             05B5h        1
+_an                                                               05B6h        1
+_an1                                                              05B7h        1
+_seed                                                             05B8h        4
 
 EEPROM Allocation
 Variable                                                          Address   Size
 --------------------------------------------------------------------------------
-seg                                                               0080h        1
-seg1                                                              0082h        1
-minu                                                              0084h        1
-min1                                                              0086h        1
-hora                                                              0088h        1
-hora1                                                             008Ah        1
-dia                                                               008Ch        1
-dia1                                                              008Eh        1
-mes                                                               0090h        1
-mes1                                                              0092h        1
-an                                                                0094h        1
-an1                                                               0096h        1
 
 Register Allocation
 Variable                                                          Register  Size
