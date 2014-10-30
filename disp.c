@@ -76,7 +76,8 @@
    #define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
    #define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
 
-   #define DESCONEXION_SKYPATROL     30  // Overflow Timer cada 6seg:  180/6 = 30   
+   #define DESCONEXION_SKYPATROL    180  // Segundos antes que asuma que no tiene conectado un 
+                                         // SkyPatrol, si llega trama serial desde Sky se resetea el contador
 
    #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
    char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
@@ -122,6 +123,9 @@
    char bandera4 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
    char bandera5 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
    char aceptar  = 0;                          // variable que permite enviar ruta de trabajo al servidor
+   
+   char bnd_sin_sesion = 0;                    // variable para que muestre sin sesion solamente una vez
+   char bnd_sin_conexion = 0;
 
    // Contadores de las presiones de botones
    char btn1=0;                            //  Cuenta entre 1 y 2 = 1 Inicia Sesion, 2 Cierra sesion 
@@ -144,7 +148,7 @@
    char bnd_cambio_mecanico = 0;
 
    int8 i_timer_1 = 0;
-   int8 conexion_skypatrol = 1;  // Espera 3min antes de declarar que no hay conexion con SkyPatrol = 0;
+   int8 conexion_skypatrol = 0;  // Espera 3min antes de declarar que no hay conexion con SkyPatrol = 0;
    
    static unsigned int time_count;    // Contador del timer para los segundos
    static unsigned int act;           // Variable que guarda si la pantalla es autorizada
@@ -155,6 +159,8 @@
 
    Tiempo Reloj;
    Tiempo RelojGPS;
+
+   int timer_sin_conexion = 0;  // Cuenta los segundos que pasa sin conexion
 
    int8 _seg  = 0;
    int8 _seg1 = 0;    // segundos en unidades y decenas
@@ -209,9 +215,12 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    
    if ( time_count == 43 )  
    {
-      Reloj.segu++;
       time_count = 0;  //reiniciar contador
       
+      Reloj.segu++;              // Aumenta Segundos
+      timer_sin_conexion++;      // Aumenta Segundos Sin que llegue tramas del SkyPatrol
+      
+
       //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
 
          if( Reloj.segu == 10 ) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
@@ -245,19 +254,6 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 {
    i_timer_1++;                     // Una interrupcion cada 6.06 seg.
-
-   if (i_timer_1 >= DESCONEXION_SKYPATROL) // Asume que perdio comunicacion con el SkyPatrol
-   {                             // Si no responde dentro de 3 min. Esta variable se refresca
-      i_timer_1 = 0;            // a traves de la funcion obt(), la cual procesa tramas desde el SkyPatrol
-
-      // QUITAR LOS INDICADORES
-      ind_sen = 0;             // Quitar las barras de la senal celular
-      gsm = 0;
-      gps = 0;
-
-      // Mostrar SIN CONEXIÓN EN LA PARTE SUPERIOR
-      conexion_skypatrol = 0;
-   }
 
 }
 
@@ -577,7 +573,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
 
 
@@ -610,7 +606,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
                
 
@@ -655,7 +651,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
                
 
@@ -702,7 +698,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
             { 
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
                
 
@@ -745,7 +741,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
                
 
@@ -790,7 +786,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
             
                // Se ha recibido una trama desde el SkyPatrol, se deben refrescar los
                // las banderas de desconexion
-               conexion_skypatrol = 1;
+               conexion_skypatrol = 1; timer_sin_conexion = 0;
                i_timer_1 = 0;  
                
                ini=i+4;
@@ -861,10 +857,14 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   RelojGPS.dia = _dia + (10*_dia1);
                   RelojGPS.mes = _mes + (10*_mes1);
                   RelojGPS.an = _an  + (10*_an1);
+                  RelojGPS.anio = RelojGPS.an + 2000;
                   
                   // Solo asigna la hora al display si es
                   if( esDiaValido( RelojGPS ) && esTiempoValido( RelojGPS ) )
-                     Reloj = RelojGPS;
+                  {
+                     Reloj = TiempoEcuador(RelojGPS);
+                     //Reloj = RelojGPS;
+                  }
 
                   
                }else{
@@ -1070,7 +1070,18 @@ void main(void)
       else
          ruta = num_ruta_sel + 0x40; // pone el caracter 1 = A, 2 = B,
 
-      dibujar_senal();
+      if ( timer_sin_conexion >= DESCONEXION_SKYPATROL )
+      {
+         timer_sin_conexion = DESCONEXION_SKYPATROL;
+         conexion_skypatrol = 0;
+      }
+      
+      if( conexion_skypatrol == 1 )
+      {  
+         bnd_sin_conexion = 0;   
+         glcd_clrln( 0 ); 
+         dibujar_senal();
+      }
                    
       boton1();
 
@@ -1089,23 +1100,25 @@ void main(void)
       {
          
          // COMPRUEBA SI TIENE CONEXION AL SERVIDOR
-         if( gsm == 1)
+         if( gsm == 1 && conexion_skypatrol == 1 )
          {
             glcd_putchar('E',21,0,1,1);
          
-         }else if ( gsm == 0 ){
+         }else if ( gsm == 0 && conexion_skypatrol == 1 ){
             
-            glcd_putchar(128,21,0,1,1);          // Grafica el simbolo de desconexin
+            // Grafica el simbolo de desconexion
+            glcd_putchar(128,21,0,1,1);          
          }
 
       
          // COMPRUEBA SI TIENE CONEXION CON EL gps
-         if( gps == 'A' )
+         if( gps == 'A' && conexion_skypatrol == 1 )
          {     
             bmp_disp(GPS1,95,0,127,1);   
          }
-         // Sin senal GPS
-         else
+         
+         // Sin senal GPS y conectado Sky
+         else if ( conexion_skypatrol == 1)
          { 
             bmp_disp(GPS2,95,0,127,1);
          }
@@ -1113,10 +1126,12 @@ void main(void)
          
          // SI HA PERDIDO CONEXION CON EL SKYPATROL 
          // POR MAS DE TRES MINUTOS
-         if ( conexion_skypatrol == 0 ){
+         if ( conexion_skypatrol == 0 && bnd_sin_conexion == 0 ){
 
-            glcd_puts( "                 ",00,0,0,1,-1); 
+            glcd_clrln( 0 ); 
+            glcd_clrln( 1 ); 
             glcd_puts( "SIN CONEXION",22,0,0,1,-1); 
+            bnd_sin_conexion = 1;
          }
 
          // Muestra el reloj al conductor
@@ -1139,15 +1154,18 @@ void main(void)
                glcd_puts(fecha,30,5,0,1,-1); 
                bmp_disp(chofer,0,6,35,7); // Pone el chofer
             
-            }else{
-
+            }
+            else if( _laborando == 0 && bnd_sin_sesion == 0  )
+            {
+               bnd_sin_sesion = 1;
                glcd_clrln(2); 
                glcd_clrln(3); 
                glcd_clrln(4); 
+               glcd_clrln(7); 
 
-               glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
                bmp_disp( vacio, 0, 6, 25, 7);   // Borra el chofer
-               glcd_puts("          ",30,7,0,1,-1);
+               glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
+               
                
             }
             
@@ -1304,6 +1322,7 @@ void main(void)
             glcd_clrln(5);    
             
             pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            bnd_sin_sesion = 0; // Vuelve a mostrar NO HA INICIADO SESION
 
             // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
             //pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj

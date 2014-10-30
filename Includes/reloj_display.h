@@ -78,7 +78,16 @@ int esDiaValido( Tiempo Fecha);
  * @param an Puntero al anio en formato 20xx, solo dos ultimos digitos	
  * @return 1 Operacion valida 0 Sin cambios.
  */
-int descontarUTC( int* hora, int* minu, int* seg, int* dia, int* mes, int* an );
+int descontarUTC( int _hora, int _dia, int _mes, int _an );
 
+
+/**
+ * @brief Desceunta las cinco horas de Ecuador en una estructura de Tiempo
+ * @details Resta las cinco horas tomando en cuenta Fecha y Hora.
+ * 
+ * @param GPS Estrucutra de TIempo
+ * @return Regresa una nueva estructura de tiempo corregida la fecha
+ */
+Tiempo TiempoEcuador( Tiempo GPS );
 
 #endif  

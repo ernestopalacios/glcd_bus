@@ -10,7 +10,7 @@
  *
  *  
  *  LIBRERIA PARA EL MANEJO DE TIEMPO
- *  
+ *                                            
  *  Compilador:   Compilador C Generico
  *  
  *
@@ -18,8 +18,8 @@
 
 
 // determina si un año es bisiesto
-#define isleapyear(year) ((!(year % 4) && (year % 100)) || (!(year % 400) && (year % 1000)))
-
+#define isleapyear( year ) (( year % 4 == 0) && !(year % 100 == 0 && year % 400 != 0) )
+		
 // Estructira de datos para la Hora y Fecha del PLC
    typedef struct {
       int  dia;       
@@ -134,47 +134,61 @@ int esDiaValido( Tiempo Fecha)
 }
 
 
-/*
-int descontarUTC( int* _hora, int* _dia, int* _mes, int* _an )
+// Restar Horas del UTC
+int descontarUTC( int _hora, int _dia, int _mes, int _an )
 {
 	
 	if ( _hora <= 5 )   // Las primeras cuatro horas del dia
 	{
-	  _hora += 24;   // Agregarle un dia
-	  _hora -=  5;  // Restarle las 5 horas de ECU-UTC
+	  	_hora += 24;   // Agregarle un dia
+	  	_hora -=  5;  // Restarle las 5 horas de ECU-UTC
 
-	  if ( _dia == 1) // Si tambien es el primer dia del mes
-	  {
-	     if ( _mes == 1 )  //Ajuste para el 01 Enero de cualquier año
-	     {
-	        _an--; // Regresar al anio anterior por las siguientes 5 horas
-	        _mes = 12;   //Diciembre
-	        _dia = 31;   //31
-	     }
-	     else if ( _mes == 3 ) // Si es marzo y debe volver a febrero // Fuck Leap Year!
-	     {
-	        _dia = 28;
-	        _mes = 2;
-	     }
-	     else if ( _mes % 2 == 1 )  // Es un mes impar
-	     {  
-	        _dia = 30;   // Pasa al dia anterior
-	        _mes--;     // Regresa un mes
-	     
-	     }else{           // Es un mes par
-	        _dia = 31;
-	        _mes--;
-	     }
+		if ( _dia == 1) // Si tambien es el primer dia del mes
+		{
+		 	if ( _mes == 1 )  //Ajuste para el 01 Enero de cualquier anio
+		 	{
+		 	   _an--; // Regresar al anio anterior por las siguientes 5 horas
+		 	   _mes = 12;   //Diciembre
+		 	   _dia = 31;   //31
+		 	}
+		 	else if ( _mes == 3 ) // Si es marzo y debe volver a febrero
+		 	{
+		 	   
+		 		if ( isleapyear( _an + 2000 ) ) // SI es anio bisiesto
+		 			_dia = 29;
+		 		else
+		 	   		_dia = 28;
+		 	   
+		 	   _mes = 2;
+		 	}
+		 	
+		 	else 
+		 	{
+		 		_mes--;     // Regresa un mes
+		 		
+		 		// Diferencia si el dia anterior es 30 o 31
+		 		switch( _mes )
+		 		{
+		 		 	case 1  :
+		 		 	case 3  :
+    				case 5  :
+    				case 7  :
+    				case 8  :
+    				case 10 : _dia = 31;
+    				case 4  :
+    				case 6  :
+    				case 9  :
+    				case 11 : _dia = 30;
+		 		}
+		    }
 
-	  }else{ // Cualquier otro dia del mes
-	     _dia--;
-	  }
-	}else{
-	  _hora -= 5;
-	}
+		}else _dia--; // Cualquier otro dia del mes
+	  	
+	
+	}else _hora -= 5; // Si no necesita regresarse un dia simplemente resta cinco horas
 
 	// Comprueba que la hora sea la adecuada
-	if (_hora < 24 && _min < 60 && _seg < 60 && _dia < 32 && _mes < 13)
+	if ( _hora < 24 && esFechaValida( _mes, _dia, _an+2000 ) )
 	{
 		return 1;
 	  
@@ -183,4 +197,72 @@ int descontarUTC( int* _hora, int* _dia, int* _mes, int* _an )
 	  	return 0;
 	}
 }
-*/
+
+// Restar Horas del UTC
+Tiempo TiempoEcuador( Tiempo GPS )
+{
+	Tiempo Original;
+
+	if ( GPS.hora <= 5 )   // Las primeras cuatro horas del dia
+	{
+	  	GPS.hora += 24;   // Agregarle un dia
+	  	GPS.hora -=  5;  // Restarle las 5 horas de ECU-UTC
+
+		if ( GPS.dia == 1) // Si tambien es el primer dia del mes
+		{
+		 	if ( GPS.mes == 1 )  //Ajuste para el 01 Enero de cualquier anio
+		 	{
+		 	   GPS.an--; // Regresar al anio anterior por las siguientes 5 horas
+		 	   GPS.mes = 12;   //Diciembre
+		 	   GPS.dia = 31;   //31
+		 	}
+		 	else if ( GPS.mes == 3 ) // Si es marzo y debe volver a febrero
+		 	{
+		 	   
+		 		if ( isleapyear( GPS.anio ) ) // SI es anio bisiesto
+		 			GPS.dia = 29;
+		 		else
+		 			GPS.dia = 28;
+		 	   	
+		 	    GPS.mes = 2;
+		 	}
+
+		 	else 
+		 	{
+		 		GPS.mes--;     // Regresa un mes
+		 		
+		 		// Diferencia si el dia anterior es 30 o 31
+		 		switch( GPS.mes )
+		 		{
+		 		 	case 1  :
+		 		 	case 3  :
+    				case 5  :
+    				case 7  :
+    				case 8  :
+    				case 10 : 
+    					GPS.dia = 31;
+    				break;
+
+    				case 4  :
+    				case 6  :
+    				case 9  :
+    				case 11 : 
+    					GPS.dia = 30;
+    				break;
+		 		}
+		    }
+
+		}else GPS.dia--; // Cualquier otro dia del mes
+	  	
+	
+	}else GPS.hora -= 5; // Si no necesita regresarse un dia simplemente resta cinco horas
+	
+
+	// Comprueba que la hora sea la adecuada
+	if ( esTiempoValido( GPS ) && esDiaValido( GPS ))
+	
+		return GPS;
+	else
+	  	return Original; //Devulve sin alterar
+	
+}
