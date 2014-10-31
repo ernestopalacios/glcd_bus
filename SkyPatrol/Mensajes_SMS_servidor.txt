@@ -4,3 +4,20 @@ $$Txt,El sistema de controles de acceso SOYAL brinda una solucion de facil insta
 $$Txt,Este es un mensaje simple de prueba,:XX##
 
 
+203  14 GPRMC,235300.00,A,0358.08772,S,07912.29718,W,0.000,0.0,110814,,,D*56     5516060
+
+Hora Valida
+123 GPRMC,115930.00,A,0357.69422,S,07912.60617,W,0.000,0.0,010314,,,D*5E
+
+Punto de Control:
+BUS1593     459 0801  18 GPRMC,115244.00,A,0400.09616,S,07912.36789,W,8.788,85.96,110814,,,D*51]
+
+
+
+                  _laborando = 1;                  // INICIA SESION  ***
+                  printf("AT$TTTRGEV=42,1,24\r\n");
+                  //envia_estado_login();
+                  // DEBE HABILITAR EL BOTON 4
+
+                  // Muestra la RUTA A: primero y por defecto
+                  num_ruta_sel = 1;

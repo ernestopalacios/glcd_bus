@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.6.1                   *
+ *  version:        0.9.6.2                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -17,7 +17,7 @@
  *  Cryst:          11.092 MHz
  *  
  *
- */
+ */               
 
 //////////////////  SE AGREGAN LAS LIBRERIAS QUE SE VAN A UTILIZAR ////////////////////
 #include <mega324.h>
@@ -27,153 +27,10 @@
 #include "Includes/GLCD.h"
 #include "Includes/bus.h"
 #include "Includes/reloj_display.h"
+#include "Includes/GLCD_CONFIG.c"
+#include "Includes/SkyPatrol_TT8750_plus.c"
 
-
-//////////////////////////////// INTERRUPCION SERIAL //////////////////////////////////
-   #ifndef RXB8
-   #define RXB8 1
-   #endif
-   #ifndef TXB8
-   #define TXB8 0
-   #endif
-   #ifndef UPE
-   #define UPE 2
-   #endif
-   #ifndef DOR
-   #define DOR 3
-   #endif
-   #ifndef FE
-   #define FE 4
-   #endif
-   #ifndef UDRE
-   #define UDRE 5
-   #endif
-   #ifndef RXC
-   #define RXC 7
-   #endif
-
-   #define FRAMING_ERROR (1<<FE)
-   #define PARITY_ERROR (1<<UPE)
-   #define DATA_OVERRUN (1<<DOR)
-   #define DATA_REGISTER_EMPTY (1<<UDRE)
-   #define RX_COMPLETE (1<<RXC)
-//---------------------------------------------------------------------------------------
-
-/////////////////////////  CONFIGURACIONES GLOBALES DEL PROGRAMA //////////////////////
-
-   typedef char int8;    //sirve para definir enteros consigno de 8
-
-   #define VERSION               "ver 0.9.6"
-   #define NOMBRE_PANTALLA       "SITU"
-   #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
-   #define NUM_RUTAS_ACTIVAS         12
-   #define DELAY_BUZZER_MS          100
-   #define DELAY_BOTONES_MS         100
-   #define INIT_DELAY_GLCD_MS        10
-   #define DELAY_PANTALLA_INI      2000
-   #define DELAY_TXT_SERVIDOR      3000
-   #define TOTAL_RUTAS              100  //Número total de rutas
-   #define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
-   #define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
-
-   #define DESCONEXION_SKYPATROL    180  // Segundos antes que asuma que no tiene conectado un 
-                                         // SkyPatrol, si llega trama serial desde Sky se resetea el contador
-
-   #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
-   char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
-
-   # define TXT_BUF_SZ 160
-   char txt_glcd_b0[ TXT_BUF_SZ ];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
-   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
-   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
-   
-   /////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
-   #define BT5 PINA.0
-   #define BT4 PINA.1
-   #define BT3 PINA.2
-   #define BT2 PINA.3
-   #define BT1 PINA.4
-   #define buzzer PORTD.4
-//----------------------------------------------------------------------------------------
-
-/////////////////////////////// DEFINICIONES DE PUERTO SERIAL   //////////////////////////
-
-   #if RX_BUFFER_SIZE0 <= 256
-   unsigned char rx_wr_index0,rx_rd_index0,rx_counter0;
-   #else
-   unsigned int rx_wr_index0,rx_rd_index0,rx_counter0;
-   #endif
-
-   // This flag is set on USART0 Receiver buffer overflow
-   bit rx_buffer_overflow0;
-   bit BIT_UART;
-//----------------------------------------------------------------------------------------
-
-
-
-
-///////////////////////////////////////////////// VARIABLES  GLOBALES   /////////////////////////////////////////
-
-   char NOMBRE_DISP[] = NOMBRE_PANTALLA;       // variable 
-   char NUM_DISP[] = NUMERO_PANTALLA;          // variable
-   char ruta= ' ';                             // variable donde se almacena la ruta que se enviarA al servidor
-   char bandera1 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 1
-   char bandera2 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 2
-   char bandera3 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 3
-   char bandera4 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
-   char bandera5 = 0;                          // variable auxiliar para evitar el rebote al oprimir el boton 4
-   char aceptar  = 0;                          // variable que permite enviar ruta de trabajo al servidor
-   
-   char bnd_sin_sesion = 0;                    // variable para que muestre sin sesion solamente una vez
-   char bnd_sin_conexion = 0;
-
-   // Contadores de las presiones de botones
-   char btn1=0;                            //  Cuenta entre 1 y 2 = 1 Inicia Sesion, 2 Cierra sesion 
-   char num_ruta_sel = 0;                 // Cuentra entre 1 y 12 =  Ruta seleccionada. Boton 2 aumenta el contador
-   char btn3=0;                          // No se usa, Boton 3 disminuye el contador num_ruta_sel
-   char btn4=0;                         // Cuenta entre 1 y 2 = 1 Acepta Ruta, 2 Cancela Carrera
-   char btn5=0;                        // Cuenta entre 0 y 11 = Cambia los estados mecanicos del bus.
-
-   int gsm, gps, ind_sen;     //indicadores de señal
-   char reloj_c[8], fecha[8];  //vectores para imprmir GLCD
-
-   char punto[4];          // Punto de control
-   char pantalla = 0;       // Numero de pantalla a mostrar en la GLCD
-   char no_pt[4];        // variables para reconocer geocercas
-   int unidades_ruta, decenas_ruta, centenas_ruta;
-   
-   char _laborando = 0;
-
-   // Estado mecanico
-   char bnd_cambio_mecanico = 0;
-
-   int8 i_timer_1 = 0;
-   int8 conexion_skypatrol = 0;  // Espera 3min antes de declarar que no hay conexion con SkyPatrol = 0;
-   
-   static unsigned int time_count;    // Contador del timer para los segundos
-   static unsigned int act;           // Variable que guarda si la pantalla es autorizada
-
-     
-   //----------------------------------   VARIABLES TIEMPO  ------------------------------------//
-   
-
-   Tiempo Reloj;
-   Tiempo RelojGPS;
-
-   int timer_sin_conexion = 0;  // Cuenta los segundos que pasa sin conexion
-
-   int8 _seg  = 0;
-   int8 _seg1 = 0;    // segundos en unidades y decenas
-   int8 _minu = 0;   
-   int8 _min1 = 0;    // minutos en unidades y decenas
-   int8 _hora = 0;  
-   int8 _hora1= 0;    // hora en unidades y decenas
-   int8 _dia  = 0;   
-   int8 _dia1 = 0;    // dias en unidades y decenas
-   int8 _mes  = 0;   
-   int8 _mes1 = 0;    // mes en unidades y decenas
-   int8 _an   = 0;
-   int8 _an1  = 0;    // anos en unidades y decenas
+ 
 
 ////////////////////////////  RUTINA DE INTERRUPCION SERIAL   ////////////////////////////
 /** \brief USART0 Receiver interrupt service routine
@@ -258,283 +115,6 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 }
 
 
-//***********************************************************************************************************************************//
-//////////////////////////////////////////////////////////// FUNCIONES ////////////////////////////////////////////////////////////////
-//***********************************************************************************************************************************//
-
-   ////////////////// FUNCIÓN PARA EL SONIDO DEL BUZZER /////////////////////
-      /** \brief Genera el sonido del buffer
-       *
-       * El tiempo que suena depende del Macro: DELAY BUZZER
-       */
-      inline void buzz()
-      {       //Sonido de Buzzer
-         buzzer=1; delay_ms( DELAY_BUZZER_MS );
-         buzzer=0; delay_ms( DELAY_BUZZER_MS );
-      }
-   //---------------------------------------------------------------------------//
-
-   ////////////////// FUNCIÓN PARA CALCULAR NUMERO DE RUTA //////////////////
-      /** \brief Transforma el caracter de ruta a un número
-       *
-       * Cambia de A -> 1; B->2 ...  etc, en caso de que el caracter pasado no 
-       * Corresponda a una letra devolvera -1
-       * 
-       * Solo soporta un carcater, máximo se puede tener 35 rutas.
-       */
-      int8 calcuar_ruta( char ruta )
-      {
-         int8 numero_ruta = ruta - 0x40;
-
-         // Verificar que la letra corresponde a un número de ruta
-         if ( numero_ruta > 0 && numero_ruta <= TOTAL_RUTAS )
-            return numero_ruta;
-         else
-            return 0; // El caracter no corresponde a una ruta.
-
-      }
-   //---------------------------------------------------------------------------//
-
-   ////////////////// FUNCION PARA ENVIAR RUTA AL SERVIDOR //////////////////
-      /** \brief Envia inicio o fin de ruta para el calulo del recorrido
-       *
-       * Para el inicio de trama envia un numero que representa la ruta y luego
-       * envia el estado de esa ruta: ej R2,2,0. Fin de Ruta dos
-       * 
-       */
-      void enviar_estado_ruta(){
-         
-         printf("AT$TTSNDMG=4,\"$$BL%s,%02d%02d20%02d,%02d%02d%02d,R2,%d,%d:XX##\"\r\n", 
-                                          NUM_DISP, 
-                                             Reloj.dia, Reloj.mes, Reloj.an,
-                                               Reloj.hora, Reloj.minu, Reloj.segu,
-                                                      num_ruta_sel, aceptar  );
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION PARA ENVIAR LOGIN AL SERVIDOR /////////////////
-      /** \brief Envia inicio o fin de LOGIN del chofer para el calulo del recorrido
-       *
-       * Para el inicio de trama envia un numero que representa el ID del chofer
-       * luego el estado. LOGIN/LOGOUT
-       * 
-       */
-      void envia_estado_login(){
-         printf("AT$TTSNDMG=4,\"$$BL%s,%d%d%d%d20%d%d,%d%d%d%d%d%d,S2,12345,%d:XX##\"\r\n", 
-                                       NUM_DISP, 
-                                            Reloj.dia, Reloj.mes, Reloj.an,
-                                               Reloj.hora, Reloj.minu, Reloj.segu, 
-                                                  // id_conductor, 12345 temporalmente
-                                                     _laborando  );
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION DEL BOTON 1 (INICIO/FIN DE JORNADA) ///////////
-      void boton1()
-      {  
-         // Primera presion del botòn
-         if( BT1 == 0 && bandera1 == 0 && aceptar == 0 )
-         {
-            btn1++;                          // Aumenta el contador del boton
-            bandera1=1;                     // Evita que vuelva a entrar al mismo boton
-            
-            buzz();
-            delay_ms( DELAY_BOTONES_MS );
-
-            switch (btn1) 
-            {
-               // PRIMERA PRESION DEL BOTON
-               case 1:
-                  
-                  // Envia Inicio de sesion al servidor
-                  pantalla = 2;                     // Para q muestre en la glcd MENSAJE ENVIADO
-                  _laborando = 1;                  // INICIA SESION  ***
-                  printf("AT$TTTRGEV=42,1,24\r\n");
-                  //envia_estado_login();
-                  // DEBE HABILITAR EL BOTON 4
-
-                  // Muestra la RUTA A: primero y por defecto
-                  num_ruta_sel = 1;
-                  
-                  
-               break;
-               
-               // SEGUNDA PRESION DEL BOTON
-               //solamente quita la ruta de la pantalla
-               //no cierra sesion de la ruta actual
-               case 2:
-                  
-                  _laborando = 0;     // No se encuentra en laborando.
-                  num_ruta_sel = 0;
-                  pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
-                  printf("AT$TTTRGEV=42,1,25\r\n");
-                  //envia_estado_login();
-
-                  // Reiniciliza el contador, siguiente presion btn = 1;
-                  btn1 = 0;
-                  
-               break; 
-
-            }  
-         } 
-
-         // Cuando se levanta el boton del dedo levant la bandera
-         else if( BT1 == 1 && bandera1 == 1 )
-         {
-            bandera1=0;
-         }
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION DEL BOTON 2 (ESCOGER RUTA AUMENTAR LETRA) /////
-      void boton2(){     
-         
-         // Si se presiona el boton dos, luego de haber presionado el boton
-         // uno, una vez. Y aún no se ha aceptado carrera
-         if( BT2 == 0 && bandera2==0 && aceptar == 0 && _laborando == 1 )
-         {
-            num_ruta_sel++; 
-            buzz();
-            bandera2 = 1;  
-
-            if( num_ruta_sel > NUM_RUTAS_ACTIVAS ) 
-               num_ruta_sel = 1;
-
-            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
-               pantalla = 9;
-            else
-               pantalla = 8; // Muestra la pantalla de escoger ruta
-               
-            
-
-
-            delay_ms(DELAY_BOTONES_MS);
-         }  
-         
-
-         // Luego de presionar el boton, puede volver a presionarlo.
-         else if(BT2==1 && bandera2==1)
-         {
-            bandera2=0;
-         }
-
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION DEL BOTON 3 (ESCOGER RUTA DECREMENTAR LETRA) //
-      void boton3()
-      {     //Boton 3
-         if( BT3 == 0 && bandera3 == 0 && aceptar == 0 && _laborando == 1)
-         {
-            num_ruta_sel--; 
-            buzz();
-            bandera3=1;  
-            
-            if(num_ruta_sel <= 0 || num_ruta_sel > NUM_RUTAS_ACTIVAS) 
-               num_ruta_sel=NUM_RUTAS_ACTIVAS;
-            
-            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
-               pantalla = 9;
-            else
-               pantalla = 8; // Muestra la pantalla de escoger ruta
-            
-            delay_ms( DELAY_BOTONES_MS );
-         }  
-
-         else if(BT3==1 && bandera3==1){
-            bandera3=0;
-         }
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION DEL BOTON 4 (INICIO/FIN DE RUTA) //////////////
-      void boton4()
-      {     //Boton 4
-         
-         // Primera presiónn del boton 4. Acepta la carrera. 
-         if ( BT4 == 0 && bandera4 == 0 && _laborando == 1  )
-         { 
-            bandera4++;           // Evita reentrada
-            btn4++;              // Incrementa conteo de presiones del boton
-            
-            buzz();
-            delay_ms(200);
-
-            switch(btn4){
-
-               case 1:
-                  if ( num_ruta_sel != 0)
-                  {
-                     aceptar  = 1;         //Ha aceptado la Ruta
-                     pantalla = 4;         // Muestra RUTA ACPETADA
-                     printf("AT$TTTRGEV=42,1,%d\r\n",num_ruta_sel );
-                     //enviar_estado_ruta();
-                  }else{
-                     btn4 --;
-                  }
-                  
-               break;
-
-               case 2:
-                  aceptar  = 0;        // Fin de la ruta
-                  printf("AT$TTTRGEV=42,1,23\r\n");
-                  //enviar_estado_ruta();
-                  num_ruta_sel = 0;     // Borra el caracter de ruta
-                  pantalla = 3;       // Muestra FIN RUTA 
-                  btn4 = 0;     // Reinicializa el cntador
-               break;
-            }
-         }
-
-         
-         // si se ha presionado el boton cuatro por tercera vez
-         else if(BT4 == 1 && bandera4 == 1)
-         {
-            bandera4 = 0;
-         }
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// FUNCION DEL BOTON 5 (ESTADO MECANICO) /////////////////
-      void boton5(){     
-
-         
-      }
-   //---------------------------------------------------------------------------//
-
-
-   ////////////////// DIBUJAR BARRAS DE SENAL GPRS //////////////////////////
-      void dibujar_senal(void)
-      {
-         switch (ind_sen){
-            case 0:
-               glcd_puts("___",0,0,0,1,-1);
-            break;
-            case 1:
-               bmp_disp(GSM3,0,0,20,1);
-            break;
-            case 2:
-               bmp_disp(GSM2,0,0,20,1);
-            break;
-            case 3:
-               bmp_disp(GSM1,0,0,20,1);
-            break;
-            case 4:
-               bmp_disp(GSM4,0,0,20,1);
-            break;
-            default:
-               glcd_puts("___",0,0,0,1,-1);
-            break;
-         } 
-
-      }
-   //---------------------------------------------------------------------------//
 
 
    //////////////// FUNCION PARA OBTENER LA TRAMA DEL GPS SKYPATROL+ ///////////////////////////
@@ -857,7 +437,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
                   RelojGPS.dia = _dia + (10*_dia1);
                   RelojGPS.mes = _mes + (10*_mes1);
                   RelojGPS.an = _an  + (10*_an1);
-                  RelojGPS.anio = RelojGPS.an + 2000;
+                  RelojGPS.anio = (long)RelojGPS.an + 2000;
                   
                   // Solo asigna la hora al display si es
                   if( esDiaValido( RelojGPS ) && esTiempoValido( RelojGPS ) )
@@ -905,80 +485,69 @@ void main(void)
          #pragma optsize+
       #endif
 
-      DATADDR = 0xff;
+      // COnfiguraciones PINES - TIMERS - UART 
+         DATADDR = 0xff;
 
-      PORTA=0xFF;
-      DDRA=0xF0;
+         PORTA=0xFF;
+         DDRA=0xF0;
 
-      PORTB=0x00;
-      DDRB=0xFF;
+         PORTB=0x00;
+         DDRB=0xFF;
 
-      PORTD=0x00;
-      DDRD=0b11110000;
+         PORTD=0x00;
+         DDRD=0b11110000;
 
-      // USART0 initialization
-      // Communication Parameters: 8 Data, 1 Stop, No Parity
-      // USART0 Receiver: On
-      // USART0 Transmitter: On
-      // USART0 Mode: Asynchronous
-      //// USART0 Baud Rate: 9600 11.0592 MHz
-      //UCSR0A=0x00;
-      //UCSR0B=0x98;
-      //UCSR0C=0x06;
-      //UBRR0H=0x00;
-      //UBRR0L=0x47;
-
-      // USART0 Baud Rate: 115200
-      UCSR0A=0x00;
-      UCSR0B=0x98;
-      UCSR0C=0x06;
-      UBRR0H=0x00;
-      UBRR0L=0x05;
+         // USART0 Baud Rate: 115200
+         UCSR0A=0x00;
+         UCSR0B=0x98;
+         UCSR0C=0x06;
+         UBRR0H=0x00;
+         UBRR0L=0x05;
 
 
-      // Timer/Counter 0 initialization
-      // Clock source: System Clock
-      // Clock value: 10,800 kHz
-      // Mode: Normal top=0xFF
-      // OC0A output: Disconnected
-      // OC0B output: Disconnected
-      TCCR0A=0x00;
-      TCCR0B=0x05;
-      TCNT0=0x00;
-      OCR0A=0x00;
-      OCR0B=0x00;
+         // Timer/Counter 0 initialization
+         // Clock source: System Clock
+         // Clock value: 10,800 kHz
+         // Mode: Normal top=0xFF
+         // OC0A output: Disconnected
+         // OC0B output: Disconnected
+         TCCR0A=0x00;
+         TCCR0B=0x05;
+         TCNT0=0x00;
+         OCR0A=0x00;
+         OCR0B=0x00;
 
-      // Timer/Counter 0 Interrupt(s) initialization
-      TIMSK0=0x01;
+         // Timer/Counter 0 Interrupt(s) initialization
+         TIMSK0=0x01;
 
-      // Timer/Counter 1 initialization
-      // Clock source: System Clock
-      // Clock value: 11059.200 kHz
-      // Mode: Normal top=FFFFh
-      // OC1A output: Discon.
-      // OC1B output: Discon.
-      // Noise Canceler: Off
-      // Input Capture on Falling Edge
-      // Timer1 Overflow Interrupt: On
-      // Input Capture Interrupt: Off
-      // Compare A Match Interrupt: Off
-      // Compare B Match Interrupt: Off
-      
-      // 110592 / 1024(pr) = 10800 = / 65535 = 0.16479...
-      // Overflow = 6.06805  segundos
-      TCCR1A=0x00;
-      TCCR1B=0x05;    // Prescaler de 1024
-      TCNT1H=0x00;
-      TCNT1L=0x00;
-      ICR1H=0x00;
-      ICR1L=0x00;
-      OCR1AH=0x00;
-      OCR1AL=0x00;
-      OCR1BH=0x00;
-      OCR1BL=0x00;
+         // Timer/Counter 1 initialization
+         // Clock source: System Clock
+         // Clock value: 11059.200 kHz
+         // Mode: Normal top=FFFFh
+         // OC1A output: Discon.
+         // OC1B output: Discon.
+         // Noise Canceler: Off
+         // Input Capture on Falling Edge
+         // Timer1 Overflow Interrupt: On
+         // Input Capture Interrupt: Off
+         // Compare A Match Interrupt: Off
+         // Compare B Match Interrupt: Off
+         
+         // 110592 / 1024(pr) = 10800 = / 65535 = 0.16479...
+         // Overflow = 6.06805  segundos
+         TCCR1A=0x00;
+         TCCR1B=0x05;    // Prescaler de 1024
+         TCNT1H=0x00;
+         TCNT1L=0x00;
+         ICR1H=0x00;
+         ICR1L=0x00;
+         OCR1AH=0x00;
+         OCR1AL=0x00;
+         OCR1BH=0x00;
+         OCR1BL=0x00;
 
-      // Timer/Counter 1 Interrupt(s) initialization
-      TIMSK1=0x01;
+         // Timer/Counter 1 Interrupt(s) initialization
+         TIMSK1=0x01;
 
    // Inicilizar GLCD
       glcd_on();
@@ -1096,9 +665,57 @@ void main(void)
       
       
       // act = autoirzado
-      if(act==1)
+      if( act == 1 )
       {
          
+         // Compueba que tenga ingresado la clave
+         if( i_digitos == 6 ) //Ha escrito seis digitos
+         {
+            bnd_ingresa_clave = 0;   // Regresan las funciones a los botones
+
+            i_digitos = 7;
+
+            if( validar_clave() ){
+
+               // Envia Evento de inicio de sesion
+               printf("AT$TTTRGEV=42,1,24\r\n");
+
+               glcd_clrln(4); 
+               delay_ms( 1500 );
+
+               glcd_clrln(1); 
+               glcd_clrln(2); 
+               glcd_clrln(3); 
+               glcd_clrln(4); 
+               glcd_clrln(5); 
+
+               _laborando = 1;   //Permite interactuar con el sistema
+               num_ruta_sel = 1;
+               envia_estado_login();
+               pantalla = 8;
+            
+            }else{
+
+               //Muestra CLAVE NO VALIDA!
+               glcd_clrln(4); 
+               glcd_puts("NO AUTORIZADO",30,4,0,1,-1);
+               delay_ms( 500 );
+
+               glcd_clrln(3); 
+               glcd_clrln(4); 
+               glcd_clrln(5); 
+
+               _laborando = 0;
+               pantalla = 2;
+               bnd_sin_sesion = 0;
+               bnd_ingresa_clave = 1;   
+
+               i_digitos = 0;
+
+            }
+
+         }
+
          // COMPRUEBA SI TIENE CONEXION AL SERVIDOR
          if( gsm == 1 && conexion_skypatrol == 1 )
          {
@@ -1229,27 +846,14 @@ void main(void)
             delay_ms(1);
             
             // Simulacion de un inicio de sesion
-            glcd_puts("INICIO DE SESION",5,2,0,1,-1);
-            delay_ms( 300 );
-            glcd_puts("*",45,4,0,1,-1);
-            delay_ms( 200 );
-            glcd_puts("*",53,4,0,1,-1);
-            delay_ms( 200 );
-            glcd_puts("*",61,4,0,1,-1);
-            delay_ms( 200 );
-            glcd_puts("*",69,4,0,1,-1);
-            delay_ms( 50 );
-                         
+            glcd_puts("INGRESE SU CODIGO",00,2,0,1,-1);
+            bnd_ingresa_clave = 1;  //Los botones actuan como numeros.
+
             buzz();  
             buzz();
-            
-            
-            glcd_clrln(2); 
-            glcd_clrln(3); 
-            glcd_clrln(4); 
-            glcd_clrln(5);    
-            
-            pantalla = 8; // Le pide que escoja una ruta
+
+            pantalla = 99; // Para que se quede en espera
+                        
          }
 
          // FINALIZO LA RUTA

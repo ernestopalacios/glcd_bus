@@ -188,7 +188,7 @@ int descontarUTC( int _hora, int _dia, int _mes, int _an )
 	}else _hora -= 5; // Si no necesita regresarse un dia simplemente resta cinco horas
 
 	// Comprueba que la hora sea la adecuada
-	if ( _hora < 24 && esFechaValida( _mes, _dia, _an+2000 ) )
+	if ( _hora < 24 && esFechaValida( _mes, _dia, (long)_an+2000 ) )
 	{
 		return 1;
 	  

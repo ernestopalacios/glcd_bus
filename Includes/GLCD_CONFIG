@@ -1,0 +1,67 @@
+/**********************************************\
+ *       Kradac Robotics & Electronics        *
+ *                                            *
+ *  Proyecto:       GLCD BUS LOJA             *
+ *  Programadores:  Ernesto P &&              *
+ *                  						  * 
+ *  version:        0.9.6.2                   *
+ *  Fecha:          11/08/2014                *
+ *                                            *
+ **********************************************
+ *
+ *  
+ *  Libreria para las configuraciones del 
+ *  GLCD Busses Loja
+ *
+ */
+
+
+ #ifndef GLCD_CONFIG_C
+ #define GLCD_CONFIG_C
+
+ /**
+  * @filename: GLCD_CONFIG.c
+  * 
+  * @detail: Archivo donde se alojan las configuraciones para la GLCD_DISPLAY 
+  *          de los buses de la ciudad de Loja.
+  *          
+  */
+
+/////////////////////////  CONFIGURACIONES GLOBALES DEL PROGRAMA //////////////////////
+
+   typedef char int8;    //sirve para definir enteros consigno de 8
+
+   #define VERSION               "ver 0.9.6"
+   #define NOMBRE_PANTALLA       "SITU"
+   #define NUMERO_PANTALLA       "8888"   // Hay que obtener el ID desde el skypatrol
+   #define NUM_RUTAS_ACTIVAS         12
+   #define DELAY_BUZZER_MS          100
+   #define DELAY_BOTONES_MS         100
+   #define INIT_DELAY_GLCD_MS        10
+   #define DELAY_PANTALLA_INI      2000
+   #define DELAY_TXT_SERVIDOR      3000
+   #define TOTAL_RUTAS              100  //Número total de rutas
+   #define MOSTRAR_NUM_RUTA_MS     2000  // Tiempo que se muestra el nombre de la Geocerca
+   #define MOSTRAR_MSN_ENV_MS      1000  // Tiempo que muestra MENSAJE ENVIADO
+
+   #define DESCONEXION_SKYPATROL    180  // Segundos antes que asuma que no tiene conectado un 
+                                         // SkyPatrol, si llega trama serial desde Sky se resetea el contador
+
+   #define RX_BUFFER_SIZE0 200             //BUFFER DE 200 CARACTERES
+   char rx_b0 [RX_BUFFER_SIZE0];           //nombre del buffer 
+
+   # define TXT_BUF_SZ 160
+   char txt_glcd_b0[ TXT_BUF_SZ ];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
+   char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
+   char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
+   
+   /////////////////////////  DEFINIR PUERTOS BOTONES - BUZZER  //////////////////////////
+   #define BT5 PINA.0
+   #define BT4 PINA.1
+   #define BT3 PINA.2
+   #define BT2 PINA.3
+   #define BT1 PINA.4
+   #define buzzer PORTD.4
+//----------------------------------------------------------------------------------------
+
+ #endif
