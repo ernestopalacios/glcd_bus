@@ -67,7 +67,14 @@
       #define RX_BUFFER_SIZE0 200              //BUFFER DE 200 CARACTERES para la recepcion serial  ***
       char rx_b0 [RX_BUFFER_SIZE0];           // nombre del buffer 
 
-      # define TXT_BUF_SZ 160                     // TAMANIO máximo que puede ser el mensaje a la GLCD 
+      char test[12] = {'H','o','l','a',' ','P','T','R',0x00};
+
+      char *ptr_HOLA = test;
+
+
+      // char* ptr_BUFFER_SERIAL = rx_b0;      // Puntero al buffer serial
+
+      # define TXT_BUF_SZ 160                     // TAMANIO maximo que puede ser el mensaje a la GLCD 
       char txt_glcd_b0[ TXT_BUF_SZ ];            // Buffer para almacenar los caracteres a mostrarse en la GLCD
       char i_txt_glcd = 0;             // contador para recorrer el arreglo del buffer
       char i_txt_overflow = 0;        // Si los caracteres son mas de 100 ignora los demas caracteres
