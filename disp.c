@@ -215,7 +215,7 @@ void main(void)
       buzz();
 
       // Dibuja KRADAC
-      bmp_disp(arr,0,0,127,7);
+      bmp_disp(LogoKradac_bmp,0,0,127,7);
       delay_ms( DELAY_PANTALLA_INI );
       glcd_clear();
 
@@ -264,7 +264,7 @@ void main(void)
 
    
    // Muestra vacio
-   bmp_disp(vacio,0,6,25,7);
+   bmp_disp( busVacio_bmp,0,6,25,7);
 
    // Pide el ID del Skypatrol para verificar la pantalla
    printf("AT$TTDEVID?\n\r"); 
@@ -296,6 +296,8 @@ void main(void)
       else
          ruta = num_ruta_sel + 0x40; // pone el caracter 1 = A, 2 = B,
 
+      
+      // Verifica si se ha desconectado el SkyPatrol
       if ( timer_sin_conexion >= DESCONEXION_SKYPATROL )
       {
          timer_sin_conexion = DESCONEXION_SKYPATROL;
@@ -388,13 +390,13 @@ void main(void)
          // COMPRUEBA SI TIENE CONEXION CON EL gps
          if( gps == 'A' && conexion_skypatrol == 1 )
          {     
-            bmp_disp(GPS1,95,0,127,1);   
+            bmp_disp(Full_BMP,95,0,127,1);   
          }
          
          // Sin senal GPS y conectado Sky
          else if ( conexion_skypatrol == 1)
          { 
-            bmp_disp(GPS2,95,0,127,1);
+            bmp_disp(busVacio_bmp,95,0,127,1);
          }
 
          
@@ -426,7 +428,7 @@ void main(void)
                sprintf(fecha,"20%02d-%02d-%02d", Reloj.an, Reloj.mes, Reloj.dia);
 
                glcd_puts(fecha,30,5,0,1,-1); 
-               bmp_disp(chofer,0,6,35,7); // Pone el chofer
+               bmp_disp(Full_BMP,0,6,35,7); // Pone el chofer
             
             }
             else if( _laborando == 0 && bnd_sin_sesion == 0  )
@@ -437,7 +439,7 @@ void main(void)
                glcd_clrln(4); 
                glcd_clrln(7); 
 
-               bmp_disp( vacio, 0, 6, 25, 7);   // Borra el chofer
+               bmp_disp( busVacio_bmp, 0, 6, 25, 7);   // Borra el chofer
                glcd_puts("NO HA INICIADO SESION",0,5,0,1,-2);
                
                

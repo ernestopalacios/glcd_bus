@@ -281,7 +281,7 @@
             bmp_disp(GSM2,0,0,20,1);
          break;
          case 3:
-            bmp_disp(GSM1,0,0,20,1);
+            bmp_disp(Full_BMP,0,0,20,1);
          break;
          case 4:
             bmp_disp(GSM4,0,0,20,1);
