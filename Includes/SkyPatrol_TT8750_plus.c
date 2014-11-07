@@ -27,6 +27,11 @@
  #define SKYPATROL_TT8750_C
 
 
+void prueba_str( struct Tiempo * Prueba ){
+
+	printf("\r Hora PTR: %02d:%02d:%02d END PTR\n",(*Prueba).hora,(*Prueba).minu,(*Prueba).segu );
+}
+
 void prueba_ptr( char *ptr_caracteres ){
 
 	printf("\r\nPUNTERO %s\n END", ptr_caracteres );
@@ -48,7 +53,7 @@ void prueba_ptr( char *ptr_caracteres ){
          
 
          char digito_hora_temp; //Variable temporal para la hora y fecha
-
+         struct Tiempo * ptr_RelojGPS = &RelojGPS;
          
          
          
@@ -358,8 +363,17 @@ void prueba_ptr( char *ptr_caracteres ){
                   // Solo asigna la hora al display si es
                   if( esDiaValido( RelojGPS ) && esTiempoValido( RelojGPS ) )
                   {
-                     Reloj = TiempoEcuador(RelojGPS);
-                     //Reloj = RelojGPS;
+                     
+                     if( TiempoEcuador( ptr_RelojGPS ) )
+                        Reloj = RelojGPS;
+                     
+                     else{
+                        
+                        printf("Fallo al pasar a la hora local\n\r");
+                        printf("\r Hora PTR: %02d:%02d:%02d END PTR\n",RelojGPS.hora,RelojGPS.minu,RelojGPS.segu );
+
+                     }
+
                   }
 
                   

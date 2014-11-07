@@ -122,8 +122,11 @@ void main(void)
 {
    
    char* ptr_BUFFER_SERIAL = rx_b0;
+   struct Tiempo * ptr_Reloj = &Reloj;
    
    int j = 0;
+
+
    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
       #pragma optsize-
       CLKPR=0x80;
@@ -195,6 +198,13 @@ void main(void)
 
          // Timer/Counter 1 Interrupt(s) initialization
          TIMSK1=0x01;
+
+         Reloj.hora = 01;
+         Reloj.minu = 02;
+         Reloj.segu = 03;
+
+         prueba_str( ptr_Reloj );
+
 
    // Inicilizar GLCD
       glcd_on();

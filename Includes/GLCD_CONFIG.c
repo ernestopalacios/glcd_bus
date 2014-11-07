@@ -91,7 +91,7 @@
    //----------------------------------------------------------------------------------------
   
 
-   #define VERSION               "ver 0.9.6"        // BERSION QUE SE MUESTRA EN EL DISPLAY ***
+   #define VERSION               "ver 0.9.7"        // BERSION QUE SE MUESTRA EN EL DISPLAY ***
    #define NOMBRE_PANTALLA       "SITU"
    #define NUMERO_PANTALLA       "8888"             // Hay que obtener el ID desde el skypatrol
    
@@ -167,8 +167,8 @@
      
    //----------------------------------   VARIABLES TIEMPO  ------------------------------------//
    
-   Tiempo Reloj;                 // Crea una estructura de tiempo para el Reloj que se muestra en el Display
-   Tiempo RelojGPS;              // Crea una estructura de tiempo para el Reloj que se recibe desde el GPS
+   struct Tiempo Reloj;                 // Crea una estructura de tiempo para el Reloj que se muestra en el Display
+   struct Tiempo RelojGPS;              // Crea una estructura de tiempo para el Reloj que se recibe desde el GPS
 
 
    // Estas vatribles se usan para obtener la hora desde la cadena de caracteres.

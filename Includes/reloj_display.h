@@ -41,7 +41,7 @@ int esHoraValida( int hora, int minu, int seg );
  * @param Reloj Puntero a la estructura de tiempo
  * @return 1 si es valida 0 si no es valida
  */
-int esTiempoValido( Tiempo Reloj );
+int esTiempoValido( struct Tiempo Reloj );
 
 
 /**
@@ -63,7 +63,7 @@ int esFechaValida(int mes, int dia, unsigned long anio);
  * @param Fecha Estructura de Tiempo a comprobar
  * @return 1 Si la fecha es valida 0 si no lo es
  */
-int esDiaValido( Tiempo Fecha);
+int esDiaValido( struct Tiempo Fecha);
 
 
 /**
@@ -82,12 +82,12 @@ int descontarUTC( int _hora, int _dia, int _mes, int _an );
 
 
 /**
- * @brief Desceunta las cinco horas de Ecuador en una estructura de Tiempo
- * @details Resta las cinco horas tomando en cuenta Fecha y Hora.
+ * @brief Descuenta las 5 horas de Ecuador a la estrucutra de tiempo pasada
+ * @details En el caso de que la operacion de una hora o fecha invalida no realiza la operacion
  * 
- * @param GPS Estrucutra de TIempo
- * @return Regresa una nueva estructura de tiempo corregida la fecha
+ * @param Tiempo Puntero a la estructura de tiempo a la cual restar 5 horas
+ * @return 1 si la operacion fue completada con exito, 0 en caso contrario
  */
-Tiempo TiempoEcuador( Tiempo GPS );
+int TiempoEcuador( struct Tiempo * GPS );
 
 #endif  
