@@ -180,12 +180,10 @@
       muestra_inicieSesion, // 6 Necesita iniciar sesion
       muestra_txtServidor,  // 7 Muestra mensaje desde el Servidor
       muestra_escogerRuta,  // 8 Pide escoger la Ruta
-      muestra_relojSinFecha,// 9 Muestra la hora pero no la fecha
-      
-      
-   };
+      muestra_relojSinFecha// 9 Muestra la hora pero no la fecha
 
-   Pantalla_glcd pantalla = muestra_reloj;       // Numero de pantalla a mostrar en la GLCD
+   } pantalla;
+
    
    // Estas vatribles se usan para obtener la hora desde la cadena de caracteres.
       int8 _seg  = 0;

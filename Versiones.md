@@ -9,13 +9,15 @@ Observaciones:
 
 
 --------------------------       27-10-2014      -------------------------------------------
-version 0.9.7.0
+version 0.9.7.x
 
 - Se añadio el inicio por contraseña, se utiliza un algoritmo simple para comprobar si la clave ingresada es valida.
 
 - Se cambio a Estructuras de datos y se divivio el código en futuras librerias.
 
 - Se cambinaron algunas imagenes y se ahorro un 15% de la memoria del micro.
+
+- Se creo una lista de elementos ENUM para la variable 'pantalla' la cual controla lo que se muestra en la GLCD
 
 
 

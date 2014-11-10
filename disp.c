@@ -6,7 +6,7 @@
  *                  Ernesto P &&              *
  *                  David Novillo             *
  *                  Jeferson C                *
- *  version:        0.9.7.3                   *
+ *  version:        0.9.7.4                   *
  *  Fecha:          11/08/2014                *
  *                                            *
  **********************************************
@@ -122,11 +122,11 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 void main(void)
 {
    
-   char* ptr_BUFFER_SERIAL = rx_b0;
-   struct Tiempo * ptr_Reloj = &Reloj;
-   
    int j = 0;
-
+   char* ptr_BUFFER_SERIAL = rx_b0;
+   struct Tiempo * ptr_Reloj = &Reloj; 
+   pantalla = muestra_reloj;       // Numero de pantalla a mostrar en la GLCD
+   
 
    // CODIGO GENERADO CON EL COMPILADOR CODEVISION
       #pragma optsize-
@@ -200,12 +200,7 @@ void main(void)
          // Timer/Counter 1 Interrupt(s) initialization
          TIMSK1=0x01;
 
-         Reloj.hora = 01;
-         Reloj.minu = 02;
-         Reloj.segu = 03;
-
-         prueba_str( ptr_Reloj );
-
+         
 
    // Inicilizar GLCD
       glcd_on();
