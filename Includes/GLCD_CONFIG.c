@@ -154,7 +154,6 @@
    int decenas_ruta; 
    int centenas_ruta;
    
-   int8 pantalla = 0;       // Numero de pantalla a mostrar en la GLCD
 
    // Estado mecanico
    char bnd_cambio_mecanico = 0;
@@ -170,7 +169,24 @@
    struct Tiempo Reloj;                 // Crea una estructura de tiempo para el Reloj que se muestra en el Display
    struct Tiempo RelojGPS;              // Crea una estructura de tiempo para el Reloj que se recibe desde el GPS
 
+   enum Pantalla_glcd { 
+      
+      muestra_reloj,        // 0 Pantalla por defecto muestra el reloj
+      muestra_pControl,     // 1 Indica el punto de control por el que ha pasado
+      muestra_login,        // 2 Ingrese su codigo
+      muestra_finRuta,      // 3 Muestra el mensaje FIN DE RUTA
+      muestra_iniRuta,      // 4 Muestra INICIO DE RUTA
+      muestra_logout,       // 5 Muestra Salido del Sistema
+      muestra_inicieSesion, // 6 Necesita iniciar sesion
+      muestra_txtServidor,  // 7 Muestra mensaje desde el Servidor
+      muestra_escogerRuta,  // 8 Pide escoger la Ruta
+      muestra_relojSinFecha,// 9 Muestra la hora pero no la fecha
+      
+      
+   };
 
+   Pantalla_glcd pantalla = muestra_reloj;       // Numero de pantalla a mostrar en la GLCD
+   
    // Estas vatribles se usan para obtener la hora desde la cadena de caracteres.
       int8 _seg  = 0;
       int8 _seg1 = 0;    // segundos en unidades y decenas
@@ -354,7 +370,7 @@
                case 1:
                   
                   // Envia Inicio de sesion al servidor
-                  pantalla = 2;                     // Para q muestre en la glcd MENSAJE ENVIADO
+                  pantalla = muestra_login;                     // Para q muestre en la glcd MENSAJE ENVIADO
 
 
                break;
@@ -366,7 +382,7 @@
                   
                   _laborando = 0;     // No se encuentra en laborando.
                   num_ruta_sel = 0;
-                  pantalla=5;             // Muestra mensaje de FIN JORNADA  ***
+                  pantalla = muestra_logout;             // Muestra mensaje de FIN JORNADA  ***
 
                   bnd_sin_sesion = 0;
                   bnd_ingresa_clave = 0;
@@ -448,14 +464,13 @@
             if( num_ruta_sel > NUM_RUTAS_ACTIVAS ) 
                num_ruta_sel = 1;
 
-            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
-               pantalla = 9;
+            // Solo actualiza el caracter de ruta, nada mas
+            if (pantalla == muestra_relojSinFecha) 
+               pantalla = muestra_relojSinFecha;
             else
-               pantalla = 8; // Muestra la pantalla de escoger ruta
+               pantalla = muestra_escogerRuta; // Muestra la pantalla de escoger ruta
                
             
-
-
             delay_ms(DELAY_BOTONES_MS);
          }  
          
@@ -527,10 +542,10 @@
             if(num_ruta_sel <= 0 || num_ruta_sel > NUM_RUTAS_ACTIVAS) 
                num_ruta_sel=NUM_RUTAS_ACTIVAS;
             
-            if (pantalla == 9) // Solo actualiza el caracter de ruta, nada mas
-               pantalla = 9;
+            if (pantalla == muestra_relojSinFecha) // Solo actualiza el caracter de ruta, nada mas
+               pantalla = muestra_relojSinFecha;
             else
-               pantalla = 8; // Muestra la pantalla de escoger ruta
+               pantalla = muestra_escogerRuta; // Muestra la pantalla de escoger ruta
             
             delay_ms( DELAY_BOTONES_MS );
          }  
@@ -607,7 +622,7 @@
                   if ( num_ruta_sel != 0)
                   {
                      aceptar  = 1;         //Ha aceptado la Ruta
-                     pantalla = 4;         // Muestra RUTA ACPETADA
+                     pantalla = muestra_iniRuta;         // Muestra RUTA ACPETADA
                      printf("AT$TTTRGEV=42,1,%d\r\n",num_ruta_sel );
                      //enviar_estado_ruta();
                   }else{
@@ -621,7 +636,7 @@
                   printf("AT$TTTRGEV=42,1,23\r\n");
                   //enviar_estado_ruta();
                   num_ruta_sel = 0;     // Borra el caracter de ruta
-                  pantalla = 3;       // Muestra FIN RUTA 
+                  pantalla = muestra_finRuta;       // Muestra FIN RUTA 
                   btn4 = 0;     // Reinicializa el cntador
                break;
             }

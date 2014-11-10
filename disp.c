@@ -352,7 +352,7 @@ void main(void)
                _laborando = 1;   //Permite interactuar con el sistema
                num_ruta_sel = 1;
                envia_estado_login();
-               pantalla = 8;
+               pantalla = muestra_escogerRuta;
             
             }else{
 
@@ -366,7 +366,7 @@ void main(void)
                glcd_clrln(5); 
 
                _laborando = 0;
-               pantalla = 2;
+               pantalla = muestra_login;
                bnd_sin_sesion = 0;
                bnd_ingresa_clave = 1;   
 
@@ -412,7 +412,7 @@ void main(void)
          }
 
          // Muestra el reloj al conductor
-         if( pantalla == 0 ) 
+         if( pantalla == muestra_reloj ) 
          {
             // SE MUESTRA EL RELOJ CUANDO ESTA LABORANDO
             if (_laborando == 1 )
@@ -471,7 +471,7 @@ void main(void)
          
          //Entra a esta funcion cuando llega un punto de control, 
          //verificando por el evento 18  pantalla = 1
-         else if( pantalla == 1 )
+         else if( pantalla == muestra_pControl )
          {     
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -494,11 +494,11 @@ void main(void)
             glcd_clrln(5);    
                
             //esta variable se pone en 0 para que se vuelva a mostrar el reloj
-            pantalla = 0;  
+            pantalla = muestra_reloj;  
          }
 
          // CHOFER HA INICIADO SESION
-         else if ( pantalla == 2)
+         else if ( pantalla == muestra_login)
          {
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -519,7 +519,7 @@ void main(void)
          }
 
          // FINALIZO LA RUTA
-         else if ( pantalla == 3 )
+         else if ( pantalla == muestra_finRuta )
          {
                
             glcd_clrln(2); 
@@ -544,7 +544,7 @@ void main(void)
             pantalla=0;  
          }
          
-         else if ( pantalla == 4 )
+         else if ( pantalla == muestra_iniRuta )
          {
                
             glcd_clrln(2); 
@@ -567,7 +567,7 @@ void main(void)
             pantalla=0;  
          }
          //  CIERRA SESION
-         else if ( pantalla == 5 )
+         else if ( pantalla == muestra_logout )
          {
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -595,7 +595,7 @@ void main(void)
          }
 
          // Debe iniciar sesion // Aun no implementada
-         else if ( pantalla == 6 )
+         else if ( pantalla == muestra_inicieSesion )
          {
             glcd_clrln(2); 
             glcd_clrln(3); 
@@ -621,7 +621,7 @@ void main(void)
          }
           
          // Mostrar el texto que llego desde el servidor
-         else if ( pantalla == 7)
+         else if ( pantalla == muestra_txtServidor)
          {
             
             glcd_clear(); 
@@ -650,20 +650,20 @@ void main(void)
               txt_glcd_b0[j] = 0x00;
 
             
-            pantalla = 0; // Mostrar el reloj 
+            pantalla = muestra_reloj; // Mostrar el reloj 
          }
 
          // CHOFER HA INICIADO SESION
-         else if ( pantalla == 8 )
+         else if ( pantalla == muestra_escogerRuta )
          {
             
             glcd_puts("ESCOJA SU RUTA",20,5,0,1,-1);
             glcd_puts("  RUTA:  ",30,7,0,1,-1);
 
-            pantalla = 9;
+            pantalla = muestra_relojSinFecha;
          }
 
-         else if ( pantalla == 9 )
+         else if ( pantalla == muestra_relojSinFecha )
          {
             
             // Arma la trama de la  hora
@@ -676,7 +676,7 @@ void main(void)
             glcd_putchar(ruta,79,7,0,1);  
             
             // Se mantiene en esta pantalla hasta que acepte la ruta
-            pantalla = 9;
+            pantalla = muestra_relojSinFecha;
          }
 
       }
