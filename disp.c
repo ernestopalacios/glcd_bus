@@ -19,7 +19,7 @@
  *
  */               
 
-//////////////////  SE AGREGAN LAS LIBRERIAS QUE SE VAN A UTILIZAR ////////////////////
+///////////  SE AGREGAN LAS LIBRERIAS QUE SE VAN A UTILIZAR ///////////////
 #include <mega324.h>
 #include <delay.h>
 #include <stdio.h>
@@ -32,7 +32,7 @@
 
  
 
-////////////////////////////  RUTINA DE INTERRUPCION SERIAL   ////////////////////////////
+///////////////////////  RUTINA DE INTERRUPCION SERIAL   /////////////////////
 /** \brief USART0 Receiver interrupt service routine
  *
  * Captura datos desde el puerto serial UART0
@@ -61,10 +61,10 @@
          #endif
       }
    }
-//-----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
 
-/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
+/////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) ////////////////
 interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
    TCNT0 = 6; 
@@ -74,18 +74,19 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
    {
       time_count = 0;  //reiniciar contador
       
-      Reloj.segu++;              // Aumenta Segundos
-      timer_sin_conexion++;      // Aumenta Segundos Sin que llegue tramas del SkyPatrol
+      Reloj.segu++;            // Aumenta Segundos
+      timer_sin_conexion++;   // Aumenta Segundos Sin que llegue tramas desde 
+                              // SkyPatrol
+     
+      // Pregunta el ID del equipo
+      if( Reloj.segu == 10 ) printf("AT$TTDEVID?\n\r"); 
+      // Pregunta la intensidad de senal
+      if( Reloj.segu == 15 ) printf("AT+CSQ\n\r");      
       
-
-      //Envia las tramas para validar el nombre y la señal del equipo - cada segundo
-
-         if( Reloj.segu == 10 ) printf("AT$TTDEVID?\n\r");  // Pregunta el ID del equipo
-         if( Reloj.segu == 15 ) printf("AT+CSQ\n\r");      // Pregunta la intensidad de senal
       //Envio pra ver antenas, igualar hora y fecha...
-         // Envio cada 20 segundos
-         if ( Reloj.segu == 20 ) printf("AT$TTNETIP?\n\r");
-         if ( Reloj.segu == 5 ) printf("AT$TTGPSQRY=10,0\n\r");   // Igualar la hora
+      // Envia cada minuto en el segundo especificado
+      if ( Reloj.segu == 20 ) printf("AT$TTNETIP?\n\r");
+      if ( Reloj.segu == 5 ) printf("AT$TTGPSQRY=10,0\n\r");
                     
       if ( Reloj.segu > 59)
       {
@@ -105,9 +106,9 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
       }
    }
 }
-//-------------------------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-/////////////////////////////////////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) /////////////////////////////////////////////////
+///////////////// INTERRUPCION DEL TIMER0 (CUENTA CADA SEGUNDO) ////////////
 interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 {
    i_timer_1++;                     // Una interrupcion cada 6.06 seg.
@@ -115,9 +116,9 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//******************************************** PROGRAMA PRINCIPAL *************************************************//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//******************* PROGRAMA PRINCIPAL ************************************//
+///////////////////////////////////////////////////////////////////////////////
 void main(void)
 {
    
@@ -418,14 +419,16 @@ void main(void)
             {
                
                // Arma la trama de la  hora
-               sprintf(reloj_c,"%02d:%02d:%02d", Reloj.hora, Reloj.minu, Reloj.segu);
+               sprintf(reloj_c,"%02d:%02d:%02d", 
+                                Reloj.hora, Reloj.minu, Reloj.segu);
 
                glcd_puts(reloj_c,7,2,0,2,-1);
 
                
 
                // Arma la trama de la  fecha
-               sprintf(fecha,"20%02d-%02d-%02d", Reloj.an, Reloj.mes, Reloj.dia);
+               sprintf(fecha,"20%02d-%02d-%02d", 
+                              Reloj.an, Reloj.mes, Reloj.dia);
 
                glcd_puts(fecha,30,5,0,1,-1); 
                bmp_disp(Full_BMP,0,6,35,7); // Pone el chofer
@@ -460,7 +463,7 @@ void main(void)
             
             if ( conexion_skypatrol == 0 )
             {
-               // Muestra mensaje de desconexión con SkyPatrol
+               // Muestra mensaje de desconexiï¿½n con SkyPatrol
             }
                                     
                         
@@ -537,7 +540,8 @@ void main(void)
             glcd_clrln(4); 
             glcd_clrln(5); 
 
-            pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            pantalla=0;  
          }
          
          else if ( pantalla == 4 )
@@ -559,7 +563,8 @@ void main(void)
             glcd_clrln(4); 
             glcd_clrln(5);     
             
-            pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            pantalla=0;  
          }
          //  CIERRA SESION
          else if ( pantalla == 5 )
@@ -584,11 +589,9 @@ void main(void)
             glcd_clrln(4); 
             glcd_clrln(5);    
             
-            pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            pantalla=0;  
             bnd_sin_sesion = 0; // Vuelve a mostrar NO HA INICIADO SESION
-
-            // CONSIDERAR - Cuando cierre sesion que se pida iniciar o no muestra nada.
-            //pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
          }
 
          // Debe iniciar sesion // Aun no implementada
@@ -613,7 +616,8 @@ void main(void)
             glcd_clrln(4); 
             glcd_clrln(5);    
             
-            pantalla=0;  //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            //esta variable se pone en 0 para que se vuelva a mostrar el reloj
+            pantalla=0;  
          }
           
          // Mostrar el texto que llego desde el servidor
@@ -663,7 +667,8 @@ void main(void)
          {
             
             // Arma la trama de la  hora
-            sprintf(reloj_c,"%02d:%02d:%02d", Reloj.hora, Reloj.minu, Reloj.segu);
+            sprintf(reloj_c,"%02d:%02d:%02d", 
+                             Reloj.hora, Reloj.minu, Reloj.segu);
 
             glcd_puts(reloj_c,7,2,0,2,-1);
 
