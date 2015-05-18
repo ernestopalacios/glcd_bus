@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: KRADAC270315.PCB   08/05/2015  12:35:58
+---------------------------------------------------------------------------
+
+Layer Pair : TopLayer to BottomLayer
+ASCII RoundHoles File : KRADAC270315.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        0.6mm (23.622mil)        Round          25               215.96 mm (8.50 Inch)
+T2        0.7mm (27.559mil)        Round          2                2.00 mm (0.08 Inch)
+T3        0.8mm (31.496mil)        Round          6                101.60 mm (4.00 Inch)
+T4        0.9mm (35.433mil)        Round          6                50.84 mm (2.00 Inch)
+T5        1mm (39.37mil)           Round          51               395.53 mm (15.57 Inch)
+T6        1.1mm (43.307mil)        Round          7                234.95 mm (9.25 Inch)
+T7        1.2mm (47.244mil)        Round          20               171.72 mm (6.76 Inch)
+T8        1.3mm (51.181mil)        Round          2                12.70 mm (0.50 Inch)
+T9        3mm (118.11mil)          Round          4                241.00 mm (9.49 Inch)
+T10       3.5mm (137.795mil)       Round          4                320.00 mm (12.60 Inch)
+---------------------------------------------------------------------------
+Totals                                            127              1746.30 mm (68.75 Inch)
+
+Total Processing Time (hh:mm:ss) : 00:00:00

@@ -1,0 +1,25 @@
+------------------------------------------------------------------------------------------
+Gerber File Extension Report For: KRADAC270315.GBR   08/05/2015  12:26:42
+------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------
+Layer Extension     Layer Description                      
+------------------------------------------------------------------------------------------
+.GTL                TopLayer                                
+.GBL                BottomLayer                             
+.GPB                Bottom Pad Master                       
+.GPT                Top Pad Master                          
+.GTO                TopOverlay                              
+.GTP                TopPaste                                
+.GTS                TopSolder                               
+.GBS                BottomSolder                            
+.GBP                BottomPaste                             
+.GBO                BottomOverlay                           
+.GKO                KeepOutLayer                            
+.GM1                Mechanical1                             
+.GM2                Mechanical2                             
+.GM3                Mechanical3                             
+.GM4                Mechanical4                             
+.GD1                Drill Drawing                           
+------------------------------------------------------------------------------------------

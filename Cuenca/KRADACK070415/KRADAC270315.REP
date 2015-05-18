@@ -1,0 +1,360 @@
+*************************************************************
+FileName = KRADAC270315.GBR
+AutoAperture = True
+*************************************************************
+Generating : TopLayer
+      File : KRADAC270315.GTL
+
+    Adding Layer      : TopLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+*************************************************************
+
+*************************************************************
+Generating : BottomLayer
+      File : KRADAC270315.GBL
+
+    Adding Layer      : BottomLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+    D44
+    D45
+*************************************************************
+
+*************************************************************
+Generating : Bottom Pad Master
+      File : KRADAC270315.GPB
+
+    Adding Layer      : BottomLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+*************************************************************
+
+*************************************************************
+Generating : Top Pad Master
+      File : KRADAC270315.GPT
+
+    Adding Layer      : TopLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+*************************************************************
+
+*************************************************************
+Generating : TopOverlay
+      File : KRADAC270315.GTO
+
+    Adding Layer      : TopOverlay
+
+
+Used DCodes :
+    D46
+    D47
+*************************************************************
+
+*************************************************************
+Generating : TopPaste
+      File : KRADAC270315.GTP
+
+    Adding Layer      : TopPaste
+
+    Adding Layer      : TopLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : TopSolder
+      File : KRADAC270315.GTS
+
+    Adding Layer      : TopSolder
+
+    Adding Layer      : TopLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D48
+    D49
+    D50
+    D51
+    D52
+    D53
+    D54
+    D55
+    D56
+    D57
+    D58
+    D59
+    D60
+    D61
+    D62
+    D63
+    D64
+*************************************************************
+
+*************************************************************
+Generating : BottomSolder
+      File : KRADAC270315.GBS
+
+    Adding Layer      : BottomSolder
+
+    Adding Layer      : BottomLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D48
+    D49
+    D50
+    D51
+    D52
+    D53
+    D54
+    D55
+    D56
+    D57
+    D58
+    D59
+    D60
+    D61
+    D62
+    D63
+    D64
+    D65
+    D66
+    D67
+    D68
+    D69
+    D70
+    D71
+    D72
+    D73
+    D74
+    D75
+    D76
+*************************************************************
+
+*************************************************************
+Generating : BottomPaste
+      File : KRADAC270315.GBP
+
+    Adding Layer      : BottomPaste
+
+    Adding Layer      : BottomLayer
+
+    Adding Layer      : MultiLayer
+
+
+Used DCodes :
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+*************************************************************
+
+*************************************************************
+Generating : BottomOverlay
+      File : KRADAC270315.GBO
+
+    Adding Layer      : BottomOverlay
+
+
+Used DCodes :
+    D46
+    D77
+    D78
+    D79
+*************************************************************
+
+*************************************************************
+Generating : KeepOutLayer
+      File : KRADAC270315.GKO
+
+    Adding Layer      : KeepOutLayer
+
+
+Used DCodes :
+    D46
+    D77
+*************************************************************
+
+*************************************************************
+Generating : Mechanical1
+      File : KRADAC270315.GM1
+
+    Adding Layer      : Mechanical1
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical2
+      File : KRADAC270315.GM2
+
+    Adding Layer      : Mechanical2
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical3
+      File : KRADAC270315.GM3
+
+    Adding Layer      : Mechanical3
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical4
+      File : KRADAC270315.GM4
+
+    Adding Layer      : Mechanical4
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Drill Drawing
+      File : KRADAC270315.GD1
+
+    Adding Drill Pair : TopLayer-BottomLayer
+
+    Adding Layer      : DrillDrawing
+
+
+Used DCodes :
+    D47
+    D80
+    D81
+*************************************************************
+

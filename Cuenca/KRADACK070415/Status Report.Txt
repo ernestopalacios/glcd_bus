@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [Free Documents]
+   Generated File[KRADAC270315.TXT]
+   Generated File[KRADAC270315.LDP]
+   Generated File[KRADAC270315.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 12:35:59 On 08/05/2015
